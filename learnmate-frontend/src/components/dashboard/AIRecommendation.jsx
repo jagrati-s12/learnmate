@@ -7,21 +7,22 @@ export default function AIRecommendation() {
       <div className="ai-heading">
         <div className="ai-spark">✦</div>
         <div>
-          <h3>AI Recommendation</h3>
-          <p>Based on your recent activity</p>
+          <h3>AI Study Recommendation</h3>
+          <p>Based on your SSC JE Civil activity</p>
         </div>
       </div>
 
       <div className="ai-message">
-        <strong>Focus on Sliding Window</strong>
+        <strong>Focus on Soil Mechanics</strong>
         <p>
-          You scored 55% on your last set. I recommend reviewing the concept
-          and solving 5 easy questions before moving to medium difficulty.
+          Your recent Soil Mechanics accuracy is lower than your Surveying
+          and Transportation performance. Review soil properties, shear
+          strength and bearing capacity, then solve 10 PYQs.
         </p>
       </div>
 
       <NavLink to="/learn/ai-tutor" className="primary-button">
-        <Bot size={17} /> Ask AI Tutor
+        <Bot size={17} /> Ask Civil AI Tutor
       </NavLink>
     </section>
   );

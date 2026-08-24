@@ -7,11 +7,14 @@ export default function SettingsPage({ section }) {
       ? "Profile Settings"
       : section === "security"
         ? "Account & Security"
-        : "Preferences";
+        : "Study Preferences";
 
   return (
     <div className="page">
-      <PageIntro title={title} subtitle="Manage your account and study experience." />
+      <PageIntro
+        title={title}
+        subtitle="Customize your SSC JE Civil preparation experience."
+      />
 
       <section className="card settings-card">
         {section === "profile" ? (
@@ -20,9 +23,11 @@ export default function SettingsPage({ section }) {
               <div className="profile-avatar">AS</div>
               <button className="secondary-button">Change Photo</button>
             </div>
+
             <label>Full Name<input defaultValue="Arav Sharma" /></label>
-            <label>Email<input defaultValue="arav.sharma@example.com" /></label>
-            <label>Class / Year<input defaultValue="B.Tech / 3rd Year" /></label>
+            <label>Exam<input defaultValue="SSC JE" /></label>
+            <label>Branch<input defaultValue="Civil Engineering" /></label>
+
             <button className="primary-button">Save Changes</button>
           </>
         ) : section === "security" ? (
@@ -35,27 +40,45 @@ export default function SettingsPage({ section }) {
               "Delete Account"
             ].map((item) => (
               <button className="setting-row" key={item}>
-                {item}<ChevronRight size={17} />
+                {item}
+                <ChevronRight size={17} />
               </button>
             ))}
           </>
         ) : (
           <>
             <label>
-              Appearance
-              <select><option>System</option><option>Light</option><option>Dark</option></select>
+              Target Exam
+              <select><option>SSC JE Civil</option></select>
             </label>
-            <label>
-              Language
-              <select><option>English</option><option>Hindi</option></select>
-            </label>
+
             <label>
               Daily Study Goal
-              <select><option>2 hours</option><option>3 hours</option><option>4 hours</option></select>
+              <select>
+                <option>2 hours</option>
+                <option>3 hours</option>
+                <option>4 hours</option>
+                <option>6 hours</option>
+              </select>
             </label>
+
             <label>
-              Reminder to Study
-              <select><option>Every day</option><option>Weekdays</option></select>
+              Primary Focus
+              <select>
+                <option>General Engineering - Civil</option>
+                <option>Reasoning</option>
+                <option>General Awareness</option>
+              </select>
+            </label>
+
+            <label>
+              Study Mode
+              <select>
+                <option>Balanced</option>
+                <option>Weak Topics First</option>
+                <option>Mock Test Focus</option>
+                <option>Revision Focus</option>
+              </select>
             </label>
           </>
         )}

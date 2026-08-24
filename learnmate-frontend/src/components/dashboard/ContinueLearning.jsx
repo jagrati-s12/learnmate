@@ -7,7 +7,7 @@ export default function ContinueLearning({ subjects }) {
     <section className="card large-card">
       <div className="card-header">
         <div>
-          <h3>Continue Learning</h3>
+          <h3>Continue SSC JE Civil</h3>
           <p>Pick up where you left off</p>
         </div>
         <NavLink to="/learn/textbook" className="text-link">
@@ -16,13 +16,15 @@ export default function ContinueLearning({ subjects }) {
       </div>
 
       <div className="continue-list">
-        {subjects.slice(0, 4).map((s) => (
-          <div className="continue-row" key={s.name}>
-            <div className={`subject-icon ${s.color}`}>{s.icon}</div>
+        {subjects.slice(0, 4).map((subject) => (
+          <div className="continue-row" key={subject.name}>
+            <div className={`subject-icon ${subject.color}`}>
+              {subject.icon}
+            </div>
             <div className="row-main">
-              <strong>{s.name}</strong>
-              <span>{s.topics} topics · {s.progress}% complete</span>
-              <ProgressBar value={s.progress} color={s.color} />
+              <strong>{subject.name}</strong>
+              <span>{subject.topics} topics · {subject.progress}% complete</span>
+              <ProgressBar value={subject.progress} color={subject.color} />
             </div>
             <button className="circle-arrow">
               <ChevronRight size={17} />

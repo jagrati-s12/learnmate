@@ -9,7 +9,7 @@ export default function Topbar({ title, setOpen }) {
 
       <div>
         <h1>{title.charAt(0).toUpperCase() + title.slice(1)}</h1>
-        <p>Learn smarter. Make progress every day.</p>
+        <p>Prepare smarter. Crack SSC JE Civil.</p>
       </div>
 
       <div className="top-actions">

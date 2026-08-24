@@ -4,41 +4,43 @@ export default function TopicContent() {
   return (
     <div className="page">
       <div className="breadcrumb">
-        My Textbook <ChevronRight size={13} /> DSA <ChevronRight size={13} /> Arrays
+        SSC JE Civil <ChevronRight size={13} /> Soil Mechanics <ChevronRight size={13} /> Soil Properties
       </div>
 
       <section className="card topic-content">
         <div className="topic-content-header">
-          <span className="eyebrow">2.1 INTRODUCTION</span>
-          <h2>Introduction to Arrays</h2>
-          <p>Learn the concept, examples and key points.</p>
+          <span className="eyebrow">SOIL MECHANICS</span>
+          <h2>Soil Properties</h2>
+          <p>Concepts, formulas, examples and SSC JE-focused revision.</p>
         </div>
 
         <div className="tabs">
           <button className="tab active">Learn</button>
           <button className="tab">Examples</button>
-          <button className="tab">Notes</button>
+          <button className="tab">PYQs</button>
           <button className="tab">Summary</button>
         </div>
 
         <article>
-          <h3>Overview</h3>
+          <h3>What to Learn</h3>
           <p>
-            An array is a collection of elements of the same type stored in
-            contiguous memory locations. Elements can be accessed using an index.
+            Study relationships between void ratio, porosity, degree of
+            saturation, water content, specific gravity and unit weights.
           </p>
 
-          <h3>Key Points</h3>
+          <h3>SSC JE Focus</h3>
           <ul>
-            <li>Arrays store multiple elements of the same data type.</li>
-            <li>Elements are stored in contiguous memory locations.</li>
-            <li>Indexing usually starts from 0.</li>
-            <li>Accessing an element takes O(1) time.</li>
+            <li>Memorize the standard relationships and definitions.</li>
+            <li>Practice numerical questions involving phase diagrams.</li>
+            <li>Understand saturated, partially saturated and dry soil conditions.</li>
+            <li>Use dimensional checks while solving numerical problems.</li>
           </ul>
 
-          <h3>Example</h3>
-          <pre>{`int arr[] = {10, 20, 30, 40, 50};
-int index = 2;  // 30`}</pre>
+          <h3>Revision Strategy</h3>
+          <p>
+            Read the concept, revise the formula sheet, solve 5 basic
+            numericals and then attempt previous-year questions.
+          </p>
         </article>
 
         <div className="content-actions">

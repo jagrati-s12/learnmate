@@ -5,7 +5,10 @@ import { questions } from "../../data/data";
 export default function PracticeQuestions() {
   return (
     <div className="page">
-      <PageIntro title="Practice Questions" subtitle="Strengthen your understanding through practice." />
+      <PageIntro
+        title="SSC JE Civil PYQs & Practice"
+        subtitle="Practice previous-year style questions and strengthen weak areas."
+      />
 
       <section className="card">
         <div className="practice-toolbar">
@@ -15,21 +18,29 @@ export default function PracticeQuestions() {
             <button className="tab">Medium</button>
             <button className="tab">Hard</button>
           </div>
+
           <button className="filter-button">
             <SlidersHorizontal size={15} /> Filters
           </button>
         </div>
 
         <div className="question-list">
-          {questions.map(([q, d], i) => (
-            <div className="question-row" key={q}>
-              <span className="question-index">{i + 1}</span>
+          {questions.map(([question, difficulty, subject], index) => (
+            <div className="question-row" key={question}>
+              <span className="question-index">{index + 1}</span>
+
               <div>
-                <strong>{q}</strong>
-                <span>Arrays · Question {i + 1}</span>
+                <strong>{question}</strong>
+                <span>{subject} · SSC JE Civil</span>
               </div>
-              <span className={`difficulty ${d.toLowerCase()}`}>{d}</span>
-              <button className="circle-arrow"><ChevronRight size={17} /></button>
+
+              <span className={`difficulty ${difficulty.toLowerCase()}`}>
+                {difficulty}
+              </span>
+
+              <button className="circle-arrow">
+                <ChevronRight size={17} />
+              </button>
             </div>
           ))}
         </div>

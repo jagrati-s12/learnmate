@@ -6,16 +6,16 @@ export default function WeeklyActivity() {
     <section className="card">
       <div className="card-header">
         <div>
-          <h3>Weekly Activity</h3>
-          <p>Your study consistency</p>
+          <h3>Weekly Study Activity</h3>
+          <p>Your SSC JE preparation consistency</p>
         </div>
       </div>
 
       <div className="activity-chart">
-        {activity.map((value, i) => (
-          <div className="bar-wrap" key={i}>
+        {activity.map((value, index) => (
+          <div className="bar-wrap" key={index}>
             <div className="bar" style={{ height: `${value}%` }} />
-            <span>{days[i]}</span>
+            <span>{days[index]}</span>
           </div>
         ))}
       </div>

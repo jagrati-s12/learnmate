@@ -4,23 +4,29 @@ import PageIntro from "../common/PageIntro";
 
 export default function AITutor() {
   const [input, setInput] = useState("");
+
   const [messages, setMessages] = useState([
-    { role: "user", text: "Explain Kadane's Algorithm with an example." },
+    {
+      role: "user",
+      text: "Explain the difference between permeability and seepage velocity."
+    },
     {
       role: "ai",
-      text: "Sure! Kadane's Algorithm is used to find the maximum sum subarray in an array.\n\n1. Initialize current_sum and max_sum with the first element.\n2. Iterate from the second element.\n3. Update current_sum = max(arr[i], current_sum + arr[i]).\n4. Update max_sum at each step.\n\nExample: [-2, 3, -4, 5, -1, 2, -3] → maximum sum = 6."
+      text:
+        "Permeability describes how easily water can flow through soil, while seepage velocity is the average velocity of water through the voids. I can explain the formula, assumptions and solve a numerical SSC JE Civil example."
     }
   ]);
 
   function send() {
     if (!input.trim()) return;
 
-    setMessages((m) => [
-      ...m,
+    setMessages((current) => [
+      ...current,
       { role: "user", text: input },
       {
         role: "ai",
-        text: "Great question. I would send this message to your FastAPI AI endpoint and return a personalized answer here."
+        text:
+          "Your question is ready to be sent to the LearnMate Civil AI backend. The production version can return an SSC JE-focused explanation, formula, solved example and related PYQs."
       }
     ]);
 
@@ -29,13 +35,16 @@ export default function AITutor() {
 
   return (
     <div className="page">
-      <PageIntro title="AI Tutor" subtitle="Your personal AI teacher." />
+      <PageIntro
+        title="Civil AI Tutor"
+        subtitle="Ask doubts from SSC JE Civil, reasoning or general awareness."
+      />
 
       <section className="card chat-card">
         <div className="chat-messages">
-          {messages.map((m, i) => (
-            <div className={`chat-row ${m.role}`} key={i}>
-              <div className="chat-bubble">{m.text}</div>
+          {messages.map((message, index) => (
+            <div className={`chat-row ${message.role}`} key={index}>
+              <div className="chat-bubble">{message.text}</div>
             </div>
           ))}
         </div>
@@ -43,11 +52,13 @@ export default function AITutor() {
         <div className="chat-input">
           <input
             value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && send()}
-            placeholder="Ask anything about your current topic..."
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={(event) => event.key === "Enter" && send()}
+            placeholder="Ask a Civil Engineering doubt..."
           />
-          <button onClick={send}><Bot size={18} /></button>
+          <button onClick={send}>
+            <Bot size={18} />
+          </button>
         </div>
       </section>
     </div>

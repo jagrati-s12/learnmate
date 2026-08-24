@@ -4,14 +4,14 @@ import ResourcePage from "../components/resources/ResourcePage";
 export default function Bookmarks() {
   return (
     <ResourcePage
-      title="Bookmarks"
+      title="Saved Resources"
       icon={<Bookmark />}
       items={[
-        "Top 50 DSA Questions",
-        "Dynamic Programming Patterns",
-        "DBMS Interview Questions",
-        "Operating System Notes",
-        "Computer Networking Cheatsheet"
+        "SSC JE Civil Previous Year Questions",
+        "Civil Engineering Formula Sheet",
+        "Surveying Numerical Practice",
+        "RCC Design Questions",
+        "Transportation Engineering Revision"
       ]}
     />
   );

@@ -7,19 +7,29 @@ import { subjects } from "../../data/data";
 export default function MyTextbook() {
   return (
     <div className="page">
-      <PageIntro title="My Textbook" subtitle="All your subjects in one place." action="+ Add Subject" />
+      <PageIntro
+        title="SSC JE Civil Syllabus"
+        subtitle="Your Civil Engineering subjects and preparation progress."
+        action="+ Add Topic"
+      />
+
       <div className="subject-grid">
-        {subjects.map((s) => (
-          <div className="subject-card card" key={s.name}>
-            <div className={`subject-icon ${s.color}`}>{s.icon}</div>
+        {subjects.map((subject) => (
+          <div className="subject-card card" key={subject.name}>
+            <div className={`subject-icon ${subject.color}`}>
+              {subject.icon}
+            </div>
+
             <div className="subject-card-content">
-              <h3>{s.name}</h3>
-              <p>{s.topics} chapters · {s.progress}% complete</p>
-              <ProgressBar value={s.progress} color={s.color} />
+              <h3>{subject.name}</h3>
+              <p>{subject.topics} topics · {subject.progress}% complete</p>
+
+              <ProgressBar value={subject.progress} color={subject.color} />
+
               <div className="subject-footer">
-                <span>{s.progress}%</span>
+                <span>{subject.progress}%</span>
                 <NavLink to="/learn/topics">
-                  Continue <ChevronRight size={14} />
+                  Study <ChevronRight size={14} />
                 </NavLink>
               </div>
             </div>

@@ -6,6 +6,7 @@ import Topics from "./components/learn/Topics";
 import TopicContent from "./components/learn/TopicContent";
 import PracticeQuestions from "./components/learn/PracticeQuestions";
 import AITutor from "./components/learn/AITutor";
+import MockTest from "./components/test/MockTest";
 import Progress from "./pages/Progress";
 import Performance from "./pages/Performance";
 import Calendar from "./pages/Calendar";
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/learn/topic/:id" element={<TopicContent />} />
         <Route path="/learn/practice" element={<PracticeQuestions />} />
         <Route path="/learn/ai-tutor" element={<AITutor />} />
+        <Route path="/test/mock" element={<MockTest />} />
 
         <Route path="/track/progress" element={<Progress />} />
         <Route path="/track/performance" element={<Performance />} />

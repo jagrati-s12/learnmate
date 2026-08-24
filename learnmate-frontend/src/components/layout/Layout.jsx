@@ -10,11 +10,16 @@ export default function Layout({ children }) {
   const title =
     location.pathname === "/"
       ? "Dashboard"
-      : location.pathname.split("/").filter(Boolean).pop()?.replaceAll("-", " ") || "Dashboard";
+      : location.pathname
+          .split("/")
+          .filter(Boolean)
+          .pop()
+          ?.replaceAll("-", " ") || "Dashboard";
 
   return (
     <div className="app-shell">
       <Sidebar open={open} setOpen={setOpen} />
+
       <main className="main">
         <Topbar title={title} setOpen={setOpen} />
         {children}

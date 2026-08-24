@@ -1,5 +1,11 @@
 import SimpleTrack from "../components/track/SimpleTrack";
 
 export default function Performance() {
-  return <SimpleTrack title="Performance" subtitle="Understand your learning performance." type="performance" />;
+  return (
+    <SimpleTrack
+      title="Mock & Question Performance"
+      subtitle="Understand your accuracy, speed and subject-wise performance."
+      type="performance"
+    />
+  );
 }
