@@ -1,41 +1,34 @@
-# LearnMate — SSC JE Civil Edition
+# LearnMate AI — SSC JE Civil Preparation Platform
 
-This version replaces the original DSA-focused content with an SSC JE Civil preparation experience.
+> An AI-powered personalized learning and test-preparation platform for SSC JE Civil Engineering aspirants.
 
-## What changed
+LearnMate is designed to go beyond a traditional learning platform. Instead of only showing study material and test scores, it tracks **accuracy, question-solving time, topic performance, progress, and learning patterns** to provide personalized recommendations.
 
-- Dashboard → SSC JE Civil preparation dashboard
-- Subjects → Civil Engineering subjects
-- Practice → Civil PYQs/practice
-- AI Tutor → Civil-focused AI Tutor
-- Goals → SSC JE preparation goals
-- Notes → Civil Engineering notes
-- Flashcards → Civil formulas/concepts
-- Settings → SSC JE Civil preferences
-- Sidebar/topbar → SSC JE Civil branding
-- Exam countdown → fetched from backend
+---
 
-## Exam countdown API
+## 🎯 Vision
 
-The frontend expects:
+The goal of LearnMate is simple:
 
-GET http://localhost:8000/api/exam
+> **Don't just tell a student their score. Tell them what the score means, where they are losing time, what they are strong at, what they need to improve, and what they should study next.**
 
-Response:
+The platform follows this learning loop:
 
-{
-  "exam_date": "YYYY-MM-DD"
-}
-
-Keep the real exam date in your backend/database rather than hardcoding it in React.
-
-## Existing CSS
-
-The component class names are intentionally compatible with the existing UI. Keep your current CSS and add styles only for new classes if needed:
-
-- .exam-focus-card
-- .focus-grid
-
-## Important next step
-
-For a production version, move dashboard numbers such as syllabus percentage, PYQs solved, study hours, streak and AI recommendations to the backend/database as well. Then every value becomes user-specific instead of demo data.
+```text
+Learn
+  ↓
+Practice
+  ↓
+Take Tests
+  ↓
+Track Accuracy + Time
+  ↓
+Analyze Performance
+  ↓
+Identify Strengths & Weaknesses
+  ↓
+AI Recommendations
+  ↓
+Personalized Study Plan
+  ↓
+Learn Again
