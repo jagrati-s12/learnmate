@@ -8,12 +8,12 @@ import {
   Play,
   Send,
 } from "lucide-react";
-import PageIntro from "../common/PageIntro";
-import TestTimer from "./TestTimer";
-import QuestionTimer from "./QuestionTimer";
+import PageIntro from "../common/PageIntro.jsx";
+import TestTimer from "./TestTimer.jsx";
+import QuestionTimer from "./QuestionTimer.jsx";
 import TestAnalytics from "./TestAnalytics.jsx";
-import { mockTestQuestions, testConfig } from "../../data/data";
-import { buildTopicAnalytics } from "./testAnalytics";
+import { mockTestQuestions, testConfig } from "../../data/data.js";
+import { buildTopicAnalytics } from "./testAnalytics.js";
 
 
 export default function MockTest() {
