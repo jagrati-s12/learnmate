@@ -1,45 +1,43 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.api.v1 import api_router
+from app.config import settings
 
 app = FastAPI(
-    title="LearnMate AI API",
-    description="API for SSC JE Civil Engineering preparation platform",
+    title="LEARNMATE AI",
+    description="SSC JE Civil Engineering Preparation Platform",
     version="0.1.0",
 )
 
-# CORS configuration
-origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
-
+# Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# Include API router
+app.include_router(api_router, prefix="/api/v1")
+
 
 @app.get("/")
-async def root():
+def root():
+    """Root endpoint"""
     return {
-        "message": "LearnMate AI API",
-        "version": "0.1.0",
-        "status": "active"
+        "app": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "status": "running"
     }
 
 
 @app.get("/health")
-async def health_check():
+def health_check():
+    """Health check endpoint"""
     return {"status": "healthy"}
 
 
-# API routes will be added in subsequent phases
-# from app.api.v1 import auth, questions, tests, progress
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)

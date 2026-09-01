@@ -1,66 +1,58 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { LandingPage } from './pages/public/LandingPage';
+import { LoginPage } from './pages/public/LoginPage';
+import { RegisterPage } from './pages/public/RegisterPage';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { DashboardPage } from './pages/student/DashboardPage';
+import { SubjectsPage } from './pages/student/SubjectsPage';
+import { TopicsPage } from './pages/student/TopicsPage';
+import { PracticePage } from './pages/student/PracticePage';
+import { MockTestPage } from './pages/student/MockTestPage';
+import { ResultsPage } from './pages/student/ResultsPage';
+import { ProgressPage } from './pages/student/ProgressPage';
+import { BookmarksPage } from './pages/student/BookmarksPage';
+import { ProfilePage } from './pages/student/ProfilePage';
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </div>
-    </Router>
-  )
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
+            {/* Protected Routes (Student Dashboard) */}
+            <Route
+              element={
+                <ProtectedRoute>
+                  <DashboardLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/subjects" element={<SubjectsPage />} />
+              <Route path="/subjects/:subjectId/topics" element={<TopicsPage />} />
+              <Route path="/practice" element={<PracticePage />} />
+              <Route path="/practice/:topicId" element={<PracticePage />} />
+              <Route path="/tests" element={<MockTestPage />} />
+              <Route path="/mock-test" element={<MockTestPage />} />
+              <Route path="/tests/:testId" element={<MockTestPage />} />
+              <Route path="/results" element={<ResultsPage />} />
+              <Route path="/results/:attemptId" element={<ResultsPage />} />
+              <Route path="/progress" element={<ProgressPage />} />
+              <Route path="/bookmarks" element={<BookmarksPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
+  );
 }
 
-function LandingPage() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-4xl font-bold text-gray-900 mb-4">
-        LearnMate AI
-      </h1>
-      <p className="text-xl text-gray-600 mb-8">
-        SSC JE Civil Engineering Preparation Platform
-      </p>
-      <div className="flex gap-4">
-        <a
-          href="/login"
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-        >
-          Login
-        </a>
-        <a
-          href="/register"
-          className="px-6 py-3 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition"
-        >
-          Register
-        </a>
-      </div>
-    </div>
-  )
-}
-
-function LoginPage() {
-  return (
-    <div className="flex items-center justify-center min-h-screen p-8">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Login</h2>
-        <p className="text-gray-600">Login form coming in Phase 1</p>
-      </div>
-    </div>
-  )
-}
-
-function RegisterPage() {
-  return (
-    <div className="flex items-center justify-center min-h-screen p-8">
-      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">Register</h2>
-        <p className="text-gray-600">Registration form coming in Phase 1</p>
-      </div>
-    </div>
-  )
-}
-
-export default App
+export default App;
