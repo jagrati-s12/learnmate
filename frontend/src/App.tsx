@@ -1,19 +1,36 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
+import { AdminRoute } from './components/auth/AdminRoute';
 import { LandingPage } from './pages/public/LandingPage';
 import { LoginPage } from './pages/public/LoginPage';
 import { RegisterPage } from './pages/public/RegisterPage';
-import { DashboardLayout } from './components/layout/DashboardLayout';
-import { DashboardPage } from './pages/student/DashboardPage';
-import { SubjectsPage } from './pages/student/SubjectsPage';
-import { TopicsPage } from './pages/student/TopicsPage';
-import { PracticePage } from './pages/student/PracticePage';
-import { MockTestPage } from './pages/student/MockTestPage';
-import { ResultsPage } from './pages/student/ResultsPage';
-import { ProgressPage } from './pages/student/ProgressPage';
-import { BookmarksPage } from './pages/student/BookmarksPage';
-import { ProfilePage } from './pages/student/ProfilePage';
+
+// Admin Pages
+import { AdminLayout } from './components/layout/AdminLayout';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminHierarchyPage } from './pages/admin/AdminHierarchyPage';
+import { AdminQuestionsPage } from './pages/admin/AdminQuestionsPage';
+import { AdminMockTestsPage } from './pages/admin/AdminMockTestsPage';
+
+// Collab Pages (Friend's UI)
+import CollabLayout from './collab/components/layout/Layout';
+import CollabDashboard from './collab/components/dashboard/Dashboard';
+import MyTextbook from './collab/components/learn/MyTextbook';
+import Topics from './collab/components/learn/Topics';
+import TopicContent from './collab/components/learn/TopicContent';
+import PracticeQuestions from './collab/components/learn/PracticeQuestions';
+import AITutor from './collab/components/learn/AITutor';
+import CollabMockTest from './collab/components/test/MockTest';
+import Progress from './collab/pages/Progress';
+import Performance from './collab/pages/Performance';
+import Calendar from './collab/pages/Calendar';
+import Goals from './collab/pages/Goals';
+import Notes from './collab/pages/Notes';
+import Bookmarks from './collab/pages/Bookmarks';
+import Flashcards from './collab/pages/Flashcards';
+import DoubtSolver from './collab/pages/DoubtSolver';
+import SettingsPage from './collab/components/settings/SettingsPage';
 
 function App() {
   return (
@@ -26,27 +43,47 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
-            {/* Protected Routes (Student Dashboard) */}
+            {/* Admin Routes */}
+            <Route element={<AdminRoute />}>
+              <Route element={<AdminLayout />}>
+                <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+                <Route path="/admin/hierarchy" element={<AdminHierarchyPage />} />
+                <Route path="/admin/questions" element={<AdminQuestionsPage />} />
+                <Route path="/admin/mock-tests" element={<AdminMockTestsPage />} />
+              </Route>
+            </Route>
+
+            {/* Protected Student Routes (Friend's UI Integrated) */}
             <Route
               element={
                 <ProtectedRoute>
-                  <DashboardLayout />
+                  <CollabLayout />
                 </ProtectedRoute>
               }
             >
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/subjects" element={<SubjectsPage />} />
-              <Route path="/subjects/:subjectId/topics" element={<TopicsPage />} />
-              <Route path="/practice" element={<PracticePage />} />
-              <Route path="/practice/:topicId" element={<PracticePage />} />
-              <Route path="/tests" element={<MockTestPage />} />
-              <Route path="/mock-test" element={<MockTestPage />} />
-              <Route path="/tests/:testId" element={<MockTestPage />} />
-              <Route path="/results" element={<ResultsPage />} />
-              <Route path="/results/:attemptId" element={<ResultsPage />} />
-              <Route path="/progress" element={<ProgressPage />} />
-              <Route path="/bookmarks" element={<BookmarksPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/dashboard" element={<CollabDashboard />} />
+
+              <Route path="/learn/textbook" element={<MyTextbook />} />
+              <Route path="/learn/topics" element={<Topics />} />
+              <Route path="/learn/topic/:id" element={<TopicContent />} />
+              <Route path="/learn/practice" element={<PracticeQuestions />} />
+              <Route path="/learn/ai-tutor" element={<AITutor />} />
+              <Route path="/test/mock" element={<CollabMockTest />} />
+
+              <Route path="/track/progress" element={<Progress />} />
+              <Route path="/track/performance" element={<Performance />} />
+              <Route path="/track/calendar" element={<Calendar />} />
+              <Route path="/track/goals" element={<Goals />} />
+
+              <Route path="/resources/notes" element={<Notes />} />
+              <Route path="/resources/bookmarks" element={<Bookmarks />} />
+              <Route path="/resources/flashcards" element={<Flashcards />} />
+              <Route path="/resources/doubt-solver" element={<DoubtSolver />} />
+
+              <Route path="/settings/profile" element={<SettingsPage section="profile" />} />
+              <Route path="/settings/preferences" element={<SettingsPage section="preferences" />} />
+              <Route path="/settings/security" element={<SettingsPage section="security" />} />
             </Route>
           </Routes>
         </div>

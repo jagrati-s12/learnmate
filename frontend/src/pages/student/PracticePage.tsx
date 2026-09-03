@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Topbar } from '../../components/layout/Topbar';
 import { Button } from '../../components/ui/Button';
 import { Icons } from '../../assets/icons';
 import { practiceAPI, PracticeSession } from '../../api/practice';
 import { AnswerResult } from '../../api/questions';
-import { subjectsAPI, Topic } from '../../api/subjects';
 
 export const PracticePage: React.FC = () => {
-  const { topicId } = useParams();
+  const { topicId: paramTopicId } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [session, setSession] = useState<PracticeSession | null>(null);
-  const [topic, setTopic] = useState<Topic | null>(null);
+  const [topicName, setTopicName] = useState<string>('Topic');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -23,29 +23,18 @@ export const PracticePage: React.FC = () => {
 
   useEffect(() => {
     const startPractice = async () => {
-      if (!topicId) return;
+      const activeTopicId = paramTopicId || searchParams.get('topic_id');
+      if (!activeTopicId) return;
       try {
         setLoading(true);
-        const tid = parseInt(topicId);
-        // Try to get topic info first
-        try {
-          const allSubjects = await subjectsAPI.getAllSubjects();
-          for (const s of allSubjects) {
-            const found = s.topics?.find(t => t.id === tid);
-            if (found) {
-              setTopic(found);
-              break;
-            }
-          }
-        } catch {
-          // Continue even if topic info fails
-        }
+        const tid = parseInt(activeTopicId);
 
         const newSession = await practiceAPI.startSession({
           topic_id: tid,
           num_questions: 10,
         });
         setSession(newSession);
+        setTopicName(newSession.topic_name || 'Topic');
         setStartTime(Date.now());
       } catch (err: any) {
         setError(err.message || 'Failed to start practice session');
@@ -55,7 +44,7 @@ export const PracticePage: React.FC = () => {
     };
 
     startPractice();
-  }, [topicId]);
+  }, [paramTopicId, searchParams]);
 
   if (loading) {
     return (
@@ -160,7 +149,7 @@ export const PracticePage: React.FC = () => {
 
   return (
     <>
-      <Topbar title={`Practice • ${topic?.name || session.topic_name || 'Topic'}`} />
+      <Topbar title={`Practice • ${topicName || session.topic_name || 'Topic'}`} />
 
       <div className="flex-1 overflow-auto p-6">
         <div className="max-w-4xl mx-auto">

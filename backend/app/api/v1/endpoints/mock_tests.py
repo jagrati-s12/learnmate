@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import random
@@ -6,9 +6,63 @@ from datetime import datetime
 
 from app import schemas, models
 from app.database import get_db
-from app.auth import get_current_active_user
+from app.auth import get_current_active_user, get_current_admin_user
 
 router = APIRouter()
+
+
+@router.post("/generate", response_model=schemas.MockTestResponse)
+def generate_mock_test(
+    data: schemas.MockTestGenerateRequest,
+    current_user: models.User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Generate a dynamic mock test by picking random questions.
+    Admin only (or we can allow users to generate custom tests).
+    """
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Not authorized to generate global mock tests")
+
+    # Build query for questions based on hierarchy
+    q_query = db.query(models.Question)
+    
+    if data.subject_id:
+        q_query = q_query.join(models.Topic).join(models.Chapter).filter(models.Chapter.subject_id == data.subject_id)
+    elif data.branch_id:
+        q_query = q_query.join(models.Topic).join(models.Chapter).join(models.Subject).filter(models.Subject.branch_id == data.branch_id)
+    elif data.exam_id:
+        q_query = q_query.join(models.Topic).join(models.Chapter).join(models.Subject).join(models.Branch).filter(models.Branch.exam_id == data.exam_id)
+
+    available_questions = q_query.all()
+    
+    if len(available_questions) < data.total_questions:
+        raise HTTPException(status_code=400, detail=f"Not enough questions available. Found {len(available_questions)}, requested {data.total_questions}")
+
+    selected_questions = random.sample(available_questions, data.total_questions)
+
+    mock_test = models.MockTest(
+        name=data.name,
+        description=data.description,
+        test_type=data.test_type,
+        duration_minutes=data.duration_minutes,
+        total_marks=data.total_marks,
+        negative_marking=data.negative_marking
+    )
+    db.add(mock_test)
+    db.commit()
+    db.refresh(mock_test)
+
+    for order, sq in enumerate(selected_questions, start=1):
+        mtq = models.MockTestQuestion(
+            mock_test_id=mock_test.id,
+            question_id=sq.id,
+            question_order=order
+        )
+        db.add(mtq)
+    
+    db.commit()
+    return mock_test
 
 
 @router.get("/", response_model=List[schemas.MockTestResponse])
@@ -89,7 +143,8 @@ def start_mock_test(
             "description": mock_test.description,
             "test_type": mock_test.test_type,
             "duration_minutes": mock_test.duration_minutes,
-            "total_marks": mock_test.total_marks
+            "total_marks": mock_test.total_marks,
+            "negative_marking": mock_test.negative_marking
         },
         "started_at": attempt.started_at,
         "total_questions": len(questions),
@@ -123,9 +178,13 @@ def submit_mock_test(
     correct_count = 0
     incorrect_count = 0
     unattempted_count = 0
-    total_score = 0
+    total_score = 0.0
 
     answer_dict = {a.question_id: a for a in answers}
+
+    # Get the mock test to get negative marking
+    mock_test = db.query(models.MockTest).filter(models.MockTest.id == attempt.mock_test_id).first()
+    negative_marking = mock_test.negative_marking if mock_test else 0.25
 
     # Get all questions in this test
     test_questions = db.query(models.MockTestQuestion).filter(
@@ -168,9 +227,10 @@ def submit_mock_test(
             unattempted_count += 1
         elif is_correct:
             correct_count += 1
-            total_score += question.marks
+            total_score += float(question.marks)
         else:
             incorrect_count += 1
+            total_score -= float(negative_marking)
 
     # Update attempt
     attempt.completed_at = datetime.utcnow()
@@ -297,6 +357,7 @@ def get_mock_test_result(
         "mock_test_name": mock_test.name if mock_test else "Unknown",
         "score": attempt.score,
         "total_marks": mock_test.total_marks if mock_test else 0,
+        "negative_marking": mock_test.negative_marking if mock_test else 0.25,
         "total_questions": attempt.total_questions,
         "correct_answers": attempt.correct_answers,
         "incorrect_answers": attempt.incorrect_answers,
@@ -305,3 +366,56 @@ def get_mock_test_result(
         "total_time_seconds": attempt.total_time_seconds,
         "questions": questions_data
     }
+@router.post("/", response_model=schemas.MockTestResponse)
+def create_mock_test(
+    data: schemas.MockTestCreate,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user)
+):
+    """
+    Create a new empty mock test (Admin only).
+    """
+    mock_test = models.MockTest(**data.model_dump())
+    db.add(mock_test)
+    db.commit()
+    db.refresh(mock_test)
+    return mock_test
+
+@router.put("/{test_id}", response_model=schemas.MockTestResponse)
+def update_mock_test(
+    test_id: int,
+    data: schemas.MockTestUpdate,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user)
+):
+    """
+    Update an existing mock test metadata (Admin only).
+    """
+    mock_test = db.query(models.MockTest).filter(models.MockTest.id == test_id).first()
+    if not mock_test:
+        raise HTTPException(status_code=404, detail="Mock test not found")
+
+    update_data = data.model_dump(exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(mock_test, field, value)
+
+    db.commit()
+    db.refresh(mock_test)
+    return mock_test
+
+@router.delete("/{test_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_mock_test(
+    test_id: int,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user)
+):
+    """
+    Delete a mock test (Admin only).
+    """
+    mock_test = db.query(models.MockTest).filter(models.MockTest.id == test_id).first()
+    if not mock_test:
+        raise HTTPException(status_code=404, detail="Mock test not found")
+
+    db.delete(mock_test)
+    db.commit()
+    return None

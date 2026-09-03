@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Topbar } from '../../components/layout/Topbar';
 import { Button } from '../../components/ui/Button';
 import { mockTestsAPI, MockTest } from '../../api/mockTests';
 
 export const MockTestPage: React.FC = () => {
   const navigate = useNavigate();
+  const { testId } = useParams<{ testId: string }>();
   const timerRef = useRef<any | null>(null);
   const [test, setTest] = useState<MockTest | null>(null);
   const [questions, setQuestions] = useState<any[]>([]);
@@ -16,54 +17,23 @@ export const MockTestPage: React.FC = () => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [isTestStarted, setIsTestStarted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [result, setResult] = useState<any>(null);
+  
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadTest = async () => {
-      try {
-        setLoading(true);
-        const testData = await mockTestsAPI.getAllTests();
-        if (testData.length > 0) {
-          setTest(testData[0]); // Use first test for now
-        } else {
-          // Create a mock test object for development
-          setTest({
-            id: 1,
-            name: 'SSC JE Civil Engineering Mock Test',
-            description: 'Full syllabus practice test',
-            test_type: 'full_syllabus' as any,
-            duration_minutes: 120, // 2 hours
-            total_marks: 200
-          });
-        }
-      } catch (err: any) {
-        setError(err.message || 'Failed to load mock tests');
-        // Fallback to mock data
-        setTest({
-          id: 1,
-          name: 'SSC JE Civil Engineering Mock Test',
-          description: 'Full syllabus practice test',
-          test_type: 'full_syllabus' as any,
-          duration_minutes: 120,
-          total_marks: 200
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (!testId) {
+        navigate('/tests');
+        return;
+    }
 
-    loadTest();
-  }, []);
-
-  useEffect(() => {
-    if (test && !isTestStarted) {
+    if (!isTestStarted) {
       const startTest = async () => {
         try {
           setLoading(true);
-          const testData = await mockTestsAPI.startTest(test.id);
+          const testData = await mockTestsAPI.startTest(Number(testId));
+          setTest(testData.mock_test);
           setAttemptId(testData.attempt_id);
           setQuestions(testData.questions);
           setTimeRemaining(testData.mock_test.duration_minutes * 60);
@@ -78,7 +48,7 @@ export const MockTestPage: React.FC = () => {
 
       startTest();
     }
-  }, [test, isTestStarted]);
+  }, [testId, navigate, isTestStarted]);
 
   const startTimer = () => {
     if (timerRef.current) {
@@ -142,12 +112,11 @@ export const MockTestPage: React.FC = () => {
             selected_option: optionLabel,
           }));
 
-        const resultData = await mockTestsAPI.submitTest(
+        await mockTestsAPI.submitTest(
           attemptId as number,
           answerSubmissions
         );
-        setResult(resultData);
-        setShowResults(true);
+        navigate(`/results/${attemptId}`);
       } catch (err: any) {
         setError(err.message || 'Failed to submit test');
       } finally {
@@ -166,7 +135,7 @@ export const MockTestPage: React.FC = () => {
   const answeredCount = Object.values(answers).filter((ans) => ans !== null).length;
   const markedCount = markedQuestions.size;
 
-  if (loading || !test) {
+  if (loading || (!test && !error)) {
     return (
       <>
         <Topbar title="Mock Test" />
@@ -198,74 +167,10 @@ export const MockTestPage: React.FC = () => {
     );
   }
 
-  if (showResults && result) {
-    stopTimer();
-    return (
-      <>
-        <Topbar title="Test Results" />
-        <div className="flex-1 overflow-auto p-6">
-          <div className="max-w-2xl mx-auto">
-            <div className="bg-white border border-gray-200 rounded-xl p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Test Completed!
-              </h2>
-
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="space-y-4">
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Score:</span> {result.score} / {result.total_marks}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Accuracy:</span> {result.accuracy}%
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Correct Answers:</span> {result.correct_answers}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Incorrect Answers:</span> {result.incorrect_answers}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Unattempted:</span> {result.unattempted}
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Total Questions:</span> {result.total_questions}
-                  </p>
-                  <p className="text-lg text-gray-700">
-                    <span className="font-semibold">Time Taken:</span>{' '}
-                    {formatTime(result.total_time_seconds)}
-                  </p>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 p-6 rounded-lg mb-8">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Performance Summary
-                </h3>
-                <p className="text-gray-600">
-                  You scored {result.score} out of {result.total_marks} marks
-                  ({result.accuracy}% accuracy) in this mock test.
-                </p>
-              </div>
-
-              <Button
-                variant="primary"
-                onClick={() => navigate('/dashboard')}
-                className="w-full"
-              >
-                Go to Dashboard
-              </Button>
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
-      <Topbar title={`Mock Test • ${test.name}`} />
+      <Topbar title={`Mock Test • ${test?.name || 'Loading'}`} />
       <div className="flex-1 overflow-hidden p-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
           {/* Question Area */}

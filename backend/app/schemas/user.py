@@ -1,25 +1,20 @@
 """User-related Pydantic schemas"""
 from pydantic import BaseModel, Field, field_validator
-from email_validator import validate_email, EmailNotValidError
+import re
 from typing import Optional
 from datetime import datetime
 
 
 def _validate_email_address(value: str) -> str:
     """
-    Validate an email address using the `email-validator` package directly.
-    Pydantic 2.13's `EmailStr` has a known incompatibility with
-    `email-validator` 2.3.0 on Python 3.14, so we use the library's own
-    callable and skip DNS deliverability checks (we only need syntax +
-    normalized form for the database).
+    Validate an email address.
     """
     if not value or not isinstance(value, str):
         raise ValueError("Email is required")
-    try:
-        info = validate_email(value, check_deliverability=False)
-    except EmailNotValidError as exc:
-        raise ValueError(str(exc))
-    return info.normalized
+    # Simple regex for email validation
+    if not re.match(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", value):
+        raise ValueError("Email is not valid")
+    return value.strip().lower()
 
 
 class UserCreate(BaseModel):

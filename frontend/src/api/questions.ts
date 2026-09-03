@@ -18,6 +18,10 @@ export interface Question {
   question_text: string;
   difficulty: DifficultyLevel;
   marks: number;
+  is_pyq?: boolean;
+  year?: number;
+  shift?: string;
+  source?: string;
   options: QuestionOption[];
 }
 
@@ -45,8 +49,11 @@ export const questionsAPI = {
   // Get questions with filtering
   async getQuestions(params: {
     topic_id?: number;
+    chapter_id?: number;
     subject_id?: number;
+    branch_id?: number;
     difficulty?: DifficultyLevel;
+    is_pyq?: boolean;
     limit?: number;
     shuffle?: boolean;
   } = {}): Promise<Question[]> {

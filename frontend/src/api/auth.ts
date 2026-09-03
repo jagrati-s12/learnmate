@@ -40,14 +40,14 @@ export const authAPI = {
 
   // Login user
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    // FastAPI's OAuth2PasswordRequestForm expects form-data
-    const formData = new FormData();
+    // FastAPI's OAuth2PasswordRequestForm expects x-www-form-urlencoded
+    const formData = new URLSearchParams();
     formData.append('username', credentials.email);
     formData.append('password', credentials.password);
 
-    const response = await apiClient.post<AuthResponse>('/auth/login', formData, {
+    const response = await apiClient.post<AuthResponse>('/auth/login', formData.toString(), {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
 

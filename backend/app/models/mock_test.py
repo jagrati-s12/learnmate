@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum, Float
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -21,6 +21,7 @@ class MockTest(Base):
     test_type = Column(Enum(MockTestType), default=MockTestType.FULL_SYLLABUS)
     duration_minutes = Column(Integer, nullable=False)  # Total duration in minutes
     total_marks = Column(Integer, nullable=False)
+    negative_marking = Column(Float, default=0.25) # e.g. 0.25
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

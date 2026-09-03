@@ -7,7 +7,7 @@ export const Sidebar: React.FC = () => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: Icons.Home },
-    { path: '/subjects', label: 'Subjects', icon: Icons.BookOpen },
+    { path: '/exams', label: 'Exams & Syllabus', icon: Icons.BookOpen },
     { path: '/practice', label: 'Practice', icon: Icons.PenTool },
     { path: '/tests', label: 'Mock Tests', icon: Icons.Clock },
     { path: '/progress', label: 'Progress', icon: Icons.BarChart },

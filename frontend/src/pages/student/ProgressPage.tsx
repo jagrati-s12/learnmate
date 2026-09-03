@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Topbar } from '../../components/layout/Topbar';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
-import { subjectsAPI } from '../../api/subjects';
+import { hierarchyAPI } from '../../api/hierarchy';
 
 interface SubjectProgress {
   name: string;
@@ -21,7 +21,7 @@ export const ProgressPage: React.FC = () => {
       try {
         setLoading(true);
         // Get all subjects with topics to calculate progress
-        const subjectsData = await subjectsAPI.getAllSubjects();
+        const subjectsData = await hierarchyAPI.getSubjects();
         setSubjects(subjectsData);
       } catch (err: any) {
         setError(err.message || 'Failed to load progress data');
@@ -64,9 +64,16 @@ export const ProgressPage: React.FC = () => {
 
   // Calculate subject-wise performance
   const subjectPerformance: SubjectProgress[] = subjects.map((subject) => {
-    const totalQuestions = subject.topics?.reduce((sum: number, topic: any) => {
-      return sum + (topic.question_count || 0);
-    }, 0) || 0;
+    let totalQuestions = 0;
+    if (subject.chapters) {
+      subject.chapters.forEach((chapter: any) => {
+        if (chapter.topics) {
+          chapter.topics.forEach((topic: any) => {
+            totalQuestions += (topic.question_count || 0);
+          });
+        }
+      });
+    }
 
     // For now, attempted is 0 (would need user progress API in future)
     const attempted = 0;

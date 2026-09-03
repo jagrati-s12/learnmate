@@ -1,136 +1,129 @@
 """
 Database seeding script for LEARNMATE AI.
-Populates the database with SSC JE Civil Engineering subjects, topics, and sample questions.
+Populates the database with SSC JE Civil Engineering subjects, chapters, topics, and sample questions.
 """
 from sqlalchemy.orm import Session
 from app.database import SessionLocal, engine, Base
-from app.models import Subject, Topic, Question, QuestionOption
+from app.models import Exam, Branch, Subject, Chapter, Topic, Question, QuestionOption
 from app.models.question import DifficultyLevel
 
 
 def seed_subjects_and_topics(db: Session):
-    """Create SSC JE Civil Engineering subjects and topics"""
+    # 1. Create Exam
+    exam = Exam(name="SSC JE", description="Staff Selection Commission Junior Engineer Exam")
+    db.add(exam)
+    db.flush()
+
+    # 2. Create Branch
+    branch = Branch(exam_id=exam.id, name="Civil Engineering", description="Civil Engineering Branch")
+    db.add(branch)
+    db.flush()
 
     subjects_data = [
         {
             "name": "Building Materials",
             "icon": "🏗️",
             "description": "Construction materials, their properties and applications",
-            "topics": [
-                "Cement",
-                "Aggregates",
-                "Bricks and Blocks",
-                "Concrete",
-                "Steel",
-                "Timber",
-                "Paints and Varnishes"
+            "chapters": [
+                {
+                    "name": "Cement",
+                    "topics": ["Types of Cement", "Properties", "Tests on Cement"]
+                },
+                {
+                    "name": "Concrete",
+                    "topics": ["Workability", "Mix Design", "Tests on Concrete"]
+                }
             ]
         },
         {
             "name": "Structural Engineering",
             "icon": "🌉",
             "description": "Structural analysis and design of buildings and bridges",
-            "topics": [
-                "Structural Analysis",
-                "RCC Design",
-                "Steel Structure Design",
-                "Timber Structure",
-                "Bridges"
+            "chapters": [
+                {
+                    "name": "Structural Analysis",
+                    "topics": ["Determinacy", "SFD and BMD", "Deflection"]
+                },
+                {
+                    "name": "RCC Design",
+                    "topics": ["Beams", "Slabs", "Columns", "Footings"]
+                }
             ]
         },
         {
             "name": "Geotechnical Engineering",
             "icon": "⛰️",
             "description": "Soil mechanics and foundation engineering",
-            "topics": [
-                "Soil Mechanics",
-                "Foundation Engineering",
-                "Earth Pressure",
-                "Bearing Capacity",
-                "Slope Stability"
-            ]
-        },
-        {
-            "name": "Environmental Engineering",
-            "icon": "💧",
-            "description": "Water supply, sanitation, and environmental management",
-            "topics": [
-                "Water Supply",
-                "Sanitary Engineering",
-                "Sewage Treatment",
-                "Air Pollution",
-                "Noise Pollution"
-            ]
-        },
-        {
-            "name": "Transportation Engineering",
-            "icon": "🛣️",
-            "description": "Highways, railways, and transportation systems",
-            "topics": [
-                "Highway Planning",
-                "Traffic Engineering",
-                "Pavement Design",
-                "Railways",
-                "Bridges"
+            "chapters": [
+                {
+                    "name": "Soil Mechanics",
+                    "topics": ["Properties of Soil", "Permeability", "Compaction"]
+                }
             ]
         },
         {
             "name": "Fluid Mechanics & Hydraulics",
             "icon": "🌊",
             "description": "Fluid behavior, flow measurement, and hydraulic structures",
-            "topics": [
-                "Fluid Properties",
-                "Fluid Statics",
-                "Fluid Kinematics",
-                "Fluid Dynamics",
-                "Open Channel Flow",
-                "Hydraulic Machines"
+            "chapters": [
+                {
+                    "name": "Fluid Dynamics",
+                    "topics": ["Bernoulli's Equation", "Flow Measurement"]
+                }
             ]
         },
         {
             "name": "Surveying",
             "icon": "📐",
             "description": "Measurement and mapping of land surfaces",
-            "topics": [
-                "Chain Surveying",
-                "Compass Surveying",
-                "Theodolite",
-                "Levelling",
-                "Modern Surveying"
+            "chapters": [
+                {
+                    "name": "Levelling",
+                    "topics": ["Types of Levelling", "Instruments", "Calculations"]
+                }
             ]
         }
     ]
 
-    for subj_data in subjects_data:
+    for subj_idx, subj_data in enumerate(subjects_data):
         subject = Subject(
+            branch_id=branch.id,
             name=subj_data["name"],
             icon=subj_data["icon"],
             description=subj_data["description"],
-            display_order=subjects_data.index(subj_data)
+            display_order=subj_idx
         )
         db.add(subject)
-        db.flush()  # Get subject.id
+        db.flush()
 
-        for idx, topic_name in enumerate(subj_data["topics"]):
-            topic = Topic(
+        for chap_idx, chap_data in enumerate(subj_data["chapters"]):
+            chapter = Chapter(
                 subject_id=subject.id,
-                name=topic_name,
-                display_order=idx
+                name=chap_data["name"],
+                display_order=chap_idx
             )
-            db.add(topic)
+            db.add(chapter)
+            db.flush()
+
+            for top_idx, topic_name in enumerate(chap_data["topics"]):
+                topic = Topic(
+                    chapter_id=chapter.id,
+                    name=topic_name,
+                    display_order=top_idx
+                )
+                db.add(topic)
 
     db.commit()
-    print(f"✓ Seeded {len(subjects_data)} subjects with topics")
+    print(f"✓ Seeded {len(subjects_data)} subjects with chapters and topics")
 
 
 def seed_sample_questions(db: Session):
-    """Create sample questions for each topic"""
-
     # Sample questions database
     questions_data = [
         # Structural Analysis
         {
-            "topic_name": "Structural Analysis",
+            "topic_name": "SFD and BMD",
+            "chapter_name": "Structural Analysis",
             "subject_name": "Structural Engineering",
             "question_text": "A simply supported beam of span 8 m carries a uniformly distributed load of 20 kN/m over its entire length. The maximum bending moment in the beam will be:",
             "explanation": "For a simply supported beam with uniformly distributed load (UDL), the maximum bending moment occurs at the center and is given by: M = wL²/8\n\nWhere: w = 20 kN/m, L = 8 m\nM = (20 × 8²)/8 = (20 × 64)/8 = 160 kN-m",
@@ -142,11 +135,15 @@ def seed_sample_questions(db: Session):
                 ("C", "180 kN-m"),
                 ("D", "200 kN-m")
             ],
-            "correct": "B"
+            "correct": "B",
+            "is_pyq": True,
+            "year": 2019,
+            "shift": "Shift 1"
         },
         # RCC Design
         {
-            "topic_name": "RCC Design",
+            "topic_name": "Beams",
+            "chapter_name": "RCC Design",
             "subject_name": "Structural Engineering",
             "question_text": "The minimum percentage of steel to be provided in an RCC beam is:",
             "explanation": "According to IS 456:2000, the minimum area of tension reinforcement in a beam should be: As_min = (0.85/σsy) × bd = 0.85bd/σsy\n\nFor Fe415 steel, this works out to be approximately 0.20% of the gross cross-sectional area.",
@@ -158,14 +155,18 @@ def seed_sample_questions(db: Session):
                 ("C", "0.20%"),
                 ("D", "0.25%")
             ],
-            "correct": "C"
+            "correct": "C",
+            "is_pyq": False,
+            "year": None,
+            "shift": None
         },
         # Soil Mechanics
         {
-            "topic_name": "Soil Mechanics",
+            "topic_name": "Properties of Soil",
+            "chapter_name": "Soil Mechanics",
             "subject_name": "Geotechnical Engineering",
             "question_text": "The angle of internal friction for a saturated cohesive soil is:",
-            "explanation": "For saturated cohesive soils, the angle of internal friction (φ) is approximately zero, which is a fundamental property used in soil mechanics. This is why such soils are analyzed using undrained shear strength (cu) parameters.",
+            "explanation": "For saturated cohesive soils, the angle of internal friction (φ) is approximately zero.",
             "difficulty": DifficultyLevel.MEDIUM,
             "marks": 1,
             "options": [
@@ -174,14 +175,18 @@ def seed_sample_questions(db: Session):
                 ("C", "20°"),
                 ("D", "30°")
             ],
-            "correct": "A"
+            "correct": "A",
+            "is_pyq": True,
+            "year": 2020,
+            "shift": "Shift 2"
         },
         # Hydraulics
         {
-            "topic_name": "Fluid Dynamics",
+            "topic_name": "Bernoulli's Equation",
+            "chapter_name": "Fluid Dynamics",
             "subject_name": "Fluid Mechanics & Hydraulics",
             "question_text": "Bernoulli's equation is applicable to:",
-            "explanation": "Bernoulli's equation is applicable to:\n1. Steady flow\n2. Incompressible flow\n3. Inviscid (frictionless) flow\n4. Flow along a streamline\n\nIt represents the conservation of energy in fluid flow.",
+            "explanation": "Bernoulli's equation represents conservation of energy in steady, incompressible, and inviscid flow.",
             "difficulty": DifficultyLevel.EASY,
             "marks": 1,
             "options": [
@@ -190,14 +195,18 @@ def seed_sample_questions(db: Session):
                 ("C", "Unsteady, compressible, inviscid flow"),
                 ("D", "Any type of flow")
             ],
-            "correct": "B"
+            "correct": "B",
+            "is_pyq": False,
+            "year": None,
+            "shift": None
         },
         # Surveying
         {
-            "topic_name": "Levelling",
+            "topic_name": "Calculations",
+            "chapter_name": "Levelling",
             "subject_name": "Surveying",
             "question_text": "In levelling, the term 'backsight' means:",
-            "explanation": "In levelling operations:\n- Backsight (BS): The first reading taken on a known elevation point (benchmark) after setting up the instrument\n- Foresight (FS): The last reading taken on a new point before shifting the instrument\n- Intermediate sight (IS): Any other reading taken between BS and FS",
+            "explanation": "Backsight (BS): The first reading taken on a known elevation point.",
             "difficulty": DifficultyLevel.EASY,
             "marks": 1,
             "options": [
@@ -206,34 +215,39 @@ def seed_sample_questions(db: Session):
                 ("C", "Any intermediate staff reading"),
                 ("D", "Reading taken on the staff held at the instrument station")
             ],
-            "correct": "A"
+            "correct": "A",
+            "is_pyq": True,
+            "year": 2018,
+            "shift": "Morning"
         }
     ]
 
     for q_data in questions_data:
-        # Find subject and topic
         subject = db.query(Subject).filter(Subject.name == q_data["subject_name"]).first()
-        topic = db.query(Topic).filter(
-            Topic.subject_id == subject.id,
-            Topic.name == q_data["topic_name"]
-        ).first()
+        if not subject:
+            continue
+        chapter = db.query(Chapter).filter(Chapter.subject_id == subject.id, Chapter.name == q_data["chapter_name"]).first()
+        if not chapter:
+            continue
+        topic = db.query(Topic).filter(Topic.chapter_id == chapter.id, Topic.name == q_data["topic_name"]).first()
 
-        if not subject or not topic:
-            print(f"⚠ Skipping question - subject/topic not found: {q_data['topic_name']}")
+        if not topic:
+            print(f"⚠ Skipping question - topic not found: {q_data['topic_name']}")
             continue
 
-        # Create question
         question = Question(
             topic_id=topic.id,
             question_text=q_data["question_text"],
             explanation=q_data["explanation"],
             difficulty=q_data["difficulty"],
-            marks=q_data["marks"]
+            marks=q_data["marks"],
+            is_pyq=q_data["is_pyq"],
+            year=q_data["year"],
+            shift=q_data["shift"]
         )
         db.add(question)
         db.flush()
 
-        # Create options
         for label, text in q_data["options"]:
             option = QuestionOption(
                 question_id=question.id,
@@ -246,40 +260,28 @@ def seed_sample_questions(db: Session):
     db.commit()
     print(f"✓ Seeded {len(questions_data)} sample questions")
 
-
 def main():
-    """Main seeding function"""
     print("=" * 60)
     print("LEARNMATE AI - Database Seeding")
     print("=" * 60)
 
-    # Create all tables
     print("\n1. Creating database tables...")
     Base.metadata.create_all(bind=engine)
     print("✓ Tables created successfully")
 
-    # Create session
     db = SessionLocal()
 
     try:
-        # Seed subjects and topics
         print("\n2. Seeding subjects and topics...")
         seed_subjects_and_topics(db)
-
-        # Seed sample questions
         print("\n3. Seeding sample questions...")
         seed_sample_questions(db)
-
-        print("\n" + "=" * 60)
-        print("✓ Database seeding completed successfully!")
-        print("=" * 60)
-
+        print("\n✓ Database seeding completed successfully!")
     except Exception as e:
         print(f"\n✗ Error during seeding: {e}")
         db.rollback()
     finally:
         db.close()
-
 
 if __name__ == "__main__":
     main()

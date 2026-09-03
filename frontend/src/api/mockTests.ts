@@ -12,9 +12,10 @@ export interface MockTest {
   id: number;
   name: string;
   description?: string;
-  test_type: MockTestType;
+  test_type: MockTestType | string;
   duration_minutes: number;
   total_marks: number;
+  negative_marking?: number;
 }
 
 export interface MockTestStartResponse {
@@ -39,16 +40,16 @@ export interface MockTestSubmissionResult {
 
 export interface QuestionReview {
   id: number;
-  topic_id: number;
+  topic_id?: number;
   question_text: string;
   difficulty: string;
   marks: number;
   options: Array<{ id: number; option_text: string; option_label: string }>;
   explanation?: string;
   correct_option: string;
-  user_answer?: string;
-  is_correct?: boolean;
-  time_taken_seconds?: number;
+  user_answer?: string | null;
+  is_correct?: boolean | null;
+  time_taken_seconds?: number | null;
 }
 
 export interface MockTestAttempt {
@@ -70,6 +71,7 @@ export interface MockTestResult {
   mock_test_name: string;
   score: number;
   total_marks: number;
+  negative_marking?: number;
   total_questions: number;
   correct_answers: number;
   incorrect_answers: number;
@@ -77,6 +79,47 @@ export interface MockTestResult {
   accuracy: number;
   total_time_seconds: number;
   questions: QuestionReview[];
+}
+
+export interface QuestionPaletteItem {
+  question_id: number;
+  question_order: number;
+  status: 'answered' | 'marked' | 'unanswered';
+  marked_for_review: boolean;
+}
+
+export interface QuestionPalette {
+  attempt_id: number;
+  questions: QuestionPaletteItem[];
+  summary: {
+    total: number;
+    answered: number;
+    marked: number;
+    unanswered: number;
+  };
+}
+
+export interface MockTestAnalytics {
+  attempt_id: number;
+  subject_performance: {
+    subject: string;
+    correct: number;
+    total: number;
+    accuracy: number;
+    marks_obtained: number;
+  }[];
+  difficulty_performance: {
+    difficulty: string;
+    correct: number;
+    total: number;
+    accuracy: number;
+  }[];
+  time_analysis: {
+    total_time_seconds: number;
+    average_time_per_question: number;
+    fastest_question: number;
+    slowest_question: number;
+  };
 }
 
 export const mockTestsAPI = {
@@ -110,6 +153,39 @@ export const mockTestsAPI = {
   // Get detailed result for a specific attempt
   async getTestResult(attemptId: number): Promise<MockTestResult> {
     const response = await apiClient.get<MockTestResult>(`/mock-tests/result/${attemptId}`);
+    return response.data;
+  },
+
+  // --- Advanced Mock Test Features ---
+
+  async getQuestionPalette(testId: number, attemptId: number): Promise<QuestionPalette> {
+    const response = await apiClient.get<QuestionPalette>(
+      `/mock-tests/${testId}/palette`,
+      { params: { attempt_id: attemptId } }
+    );
+    return response.data;
+  },
+
+  async markForReview(testId: number, attemptId: number, questionId: number): Promise<{ question_id: number; marked_for_review: boolean }> {
+    const response = await apiClient.post<{ question_id: number; marked_for_review: boolean }>(
+      `/mock-tests/${testId}/mark-for-review`,
+      null,
+      { params: { attempt_id: attemptId, question_id: questionId } }
+    );
+    return response.data;
+  },
+
+  async autoSubmit(testId: number, attemptId: number): Promise<{ attempt_id: number; auto_submitted: boolean; message: string }> {
+    const response = await apiClient.post<{ attempt_id: number; auto_submitted: boolean; message: string }>(
+      `/mock-tests/${testId}/auto-submit`,
+      null,
+      { params: { attempt_id: attemptId } }
+    );
+    return response.data;
+  },
+
+  async getAnalytics(testId: number, attemptId: number): Promise<MockTestAnalytics> {
+    const response = await apiClient.get<MockTestAnalytics>(`/mock-tests/${testId}/analytics/${attemptId}`);
     return response.data;
   },
 };

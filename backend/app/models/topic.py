@@ -8,7 +8,7 @@ class Topic(Base):
     __tablename__ = "topics"
 
     id = Column(Integer, primary_key=True, index=True)
-    subject_id = Column(Integer, ForeignKey("subjects.id", ondelete="CASCADE"), nullable=False, index=True)
+    chapter_id = Column(Integer, ForeignKey("chapters.id", ondelete="CASCADE"), nullable=False, index=True)
     name = Column(String, nullable=False, index=True)
     description = Column(Text, nullable=True)
     display_order = Column(Integer, default=0)
@@ -16,8 +16,8 @@ class Topic(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Relationships
-    subject = relationship("Subject", back_populates="topics")
+    chapter = relationship("Chapter", back_populates="topics")
     questions = relationship("Question", back_populates="topic", cascade="all, delete-orphan")
 
     def __repr__(self):
-        return f"<Topic(id={self.id}, name={self.name}, subject_id={self.subject_id})>"
+        return f"<Topic(id={self.id}, name={self.name}, chapter_id={self.chapter_id})>"

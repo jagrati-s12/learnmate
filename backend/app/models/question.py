@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.database import Base
@@ -20,6 +20,13 @@ class Question(Base):
     explanation = Column(Text, nullable=True)
     difficulty = Column(Enum(DifficultyLevel), default=DifficultyLevel.MEDIUM)
     marks = Column(Integer, default=1)
+
+    # PYQ Metadata
+    is_pyq = Column(Boolean, default=False)
+    year = Column(Integer, nullable=True)
+    shift = Column(String(50), nullable=True)
+    source = Column(String(200), nullable=True)
+
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

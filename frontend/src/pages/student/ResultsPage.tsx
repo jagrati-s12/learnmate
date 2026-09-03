@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Topbar } from '../../components/layout/Topbar';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
@@ -7,6 +7,7 @@ import { mockTestsAPI, MockTestResult } from '../../api/mockTests';
 
 export const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { attemptId } = useParams<{ attemptId: string }>();
   const [result, setResult] = useState<MockTestResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -22,15 +23,18 @@ export const ResultsPage: React.FC = () => {
         // 2. Location state: location.state?.attemptId
         // 3. Or fetch latest attempt
 
-        // For now, let's get the user's latest attempt
-        const attempts = await mockTestsAPI.getUserAttempts();
-        if (attempts.length > 0) {
-          const latestAttempt = attempts[0];
-          const detailedResult = await mockTestsAPI.getTestResult(latestAttempt.attempt_id);
+        if (attemptId) {
+          const detailedResult = await mockTestsAPI.getTestResult(Number(attemptId));
           setResult(detailedResult);
         } else {
-          // No attempts yet - show empty state
-          setResult(null);
+          const attempts = await mockTestsAPI.getUserAttempts();
+          if (attempts.length > 0) {
+            const latestAttempt = attempts[0];
+            const detailedResult = await mockTestsAPI.getTestResult(latestAttempt.attempt_id);
+            setResult(detailedResult);
+          } else {
+            setResult(null);
+          }
         }
       } catch (err: any) {
         setError(err.message || 'Failed to load test results');

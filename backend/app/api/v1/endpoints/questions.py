@@ -1,46 +1,55 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import random
 
 from app import schemas, models
 from app.database import get_db
+from app.auth import get_current_admin_user
+
 
 router = APIRouter()
-
 
 @router.get("/", response_model=List[schemas.QuestionWithOptions])
 def get_questions(
     topic_id: Optional[int] = None,
+    chapter_id: Optional[int] = None,
     subject_id: Optional[int] = None,
+    branch_id: Optional[int] = None,
     difficulty: Optional[str] = None,
+    is_pyq: Optional[bool] = None,
     limit: int = Query(10, ge=1, le=100),
     shuffle: bool = False,
     db: Session = Depends(get_db)
 ):
     """
     Get questions with options (without revealing correct answers).
-    Supports filtering by topic, subject, difficulty.
+    Supports filtering by topic, chapter, subject, branch, difficulty, pyq status.
     """
     query = db.query(models.Question)
 
     if topic_id:
         query = query.filter(models.Question.topic_id == topic_id)
-
-    if subject_id:
-        # Get all topic IDs for this subject
-        topic_ids = db.query(models.Topic.id).filter(models.Topic.subject_id == subject_id).all()
-        topic_ids = [t[0] for t in topic_ids]
-        if topic_ids:
-            query = query.filter(models.Question.topic_id.in_(topic_ids))
-        else:
-            return []
+    elif chapter_id:
+        topic_ids = [t.id for t in db.query(models.Topic.id).filter(models.Topic.chapter_id == chapter_id).all()]
+        query = query.filter(models.Question.topic_id.in_(topic_ids if topic_ids else [-1]))
+    elif subject_id:
+        chapter_ids = [c.id for c in db.query(models.Chapter.id).filter(models.Chapter.subject_id == subject_id).all()]
+        topic_ids = [t.id for t in db.query(models.Topic.id).filter(models.Topic.chapter_id.in_(chapter_ids if chapter_ids else [-1])).all()]
+        query = query.filter(models.Question.topic_id.in_(topic_ids if topic_ids else [-1]))
+    elif branch_id:
+        subject_ids = [s.id for s in db.query(models.Subject.id).filter(models.Subject.branch_id == branch_id).all()]
+        chapter_ids = [c.id for c in db.query(models.Chapter.id).filter(models.Chapter.subject_id.in_(subject_ids if subject_ids else [-1])).all()]
+        topic_ids = [t.id for t in db.query(models.Topic.id).filter(models.Topic.chapter_id.in_(chapter_ids if chapter_ids else [-1])).all()]
+        query = query.filter(models.Question.topic_id.in_(topic_ids if topic_ids else [-1]))
 
     if difficulty:
         query = query.filter(models.Question.difficulty == difficulty)
 
+    if is_pyq is not None:
+        query = query.filter(models.Question.is_pyq == is_pyq)
+
     if shuffle:
-        # Get all matching questions and shuffle
         questions = query.all()
         random.shuffle(questions)
         questions = questions[:limit]
@@ -58,6 +67,10 @@ def get_questions(
             question_text=q.question_text,
             difficulty=q.difficulty,
             marks=q.marks,
+            is_pyq=bool(q.is_pyq),
+            year=q.year,
+            shift=q.shift,
+            source=q.source,
             options=[schemas.QuestionOptionResponse(
                 id=opt.id,
                 option_text=opt.option_text,
@@ -67,7 +80,6 @@ def get_questions(
 
     return result
 
-
 @router.get("/{question_id}", response_model=schemas.QuestionDetail)
 def get_question_detail(
     question_id: int,
@@ -75,7 +87,6 @@ def get_question_detail(
 ):
     """
     Get a single question with all details including correct answer and explanation.
-    This should only be used for review after submission, not for practice.
     """
     question = db.query(models.Question).filter(models.Question.id == question_id).first()
     if not question:
@@ -93,15 +104,18 @@ def get_question_detail(
         question_text=question.question_text,
         difficulty=question.difficulty,
         marks=question.marks,
+        is_pyq=bool(question.is_pyq),
+        year=question.year,
+        shift=question.shift,
+        source=question.source,
         options=[schemas.QuestionOptionResponse(
             id=opt.id,
             option_text=opt.option_text,
             option_label=opt.option_label
         ) for opt in options],
         explanation=question.explanation,
-        correct_option=correct_option
+        correct_option=correct_option or ""
     )
-
 
 @router.post("/submit", response_model=schemas.AnswerResult)
 def submit_answer(
@@ -110,13 +124,11 @@ def submit_answer(
 ):
     """
     Submit an answer for a question and get the result.
-    Returns whether the answer is correct, the correct option, and explanation.
     """
     question = db.query(models.Question).filter(models.Question.id == answer.question_id).first()
     if not question:
         raise HTTPException(status_code=404, detail="Question not found")
 
-    # Get correct option
     correct_option_obj = db.query(models.QuestionOption).filter(
         models.QuestionOption.question_id == question.id,
         models.QuestionOption.is_correct == 1
@@ -135,3 +147,80 @@ def submit_answer(
         selected_option=answer.selected_option,
         time_taken_seconds=answer.time_taken_seconds
     )
+
+@router.post("/", response_model=schemas.QuestionDetail)
+def create_question(
+    question_in: schemas.QuestionCreate,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user),
+):
+    """
+    Create a new question with options (Admin only).
+    """
+    # Create the question
+    question_data = question_in.model_dump(exclude={"options"})
+    question = models.Question(**question_data)
+    db.add(question)
+    db.commit()
+    db.refresh(question)
+
+    # Create the options
+    for opt in question_in.options:
+        option = models.QuestionOption(
+            question_id=question.id,
+            **opt.model_dump()
+        )
+        db.add(option)
+    
+    db.commit()
+    
+    return get_question_detail(question.id, db)
+
+@router.put("/{question_id}", response_model=schemas.QuestionDetail)
+def update_question(
+    question_id: int,
+    question_in: schemas.QuestionUpdate,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user),
+):
+    """
+    Update a question and its options (Admin only).
+    """
+    question = db.query(models.Question).filter(models.Question.id == question_id).first()
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+        
+    update_data = question_in.model_dump(exclude={"options"}, exclude_unset=True)
+    for field, value in update_data.items():
+        setattr(question, field, value)
+        
+    if question_in.options is not None:
+        # Delete old options
+        db.query(models.QuestionOption).filter(models.QuestionOption.question_id == question_id).delete()
+        # Add new options
+        for opt in question_in.options:
+            option = models.QuestionOption(
+                question_id=question.id,
+                **opt.model_dump()
+            )
+            db.add(option)
+            
+    db.commit()
+    return get_question_detail(question.id, db)
+    
+@router.delete("/{question_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_question(
+    question_id: int,
+    db: Session = Depends(get_db),
+    current_admin: models.User = Depends(get_current_admin_user),
+):
+    """
+    Delete a question (Admin only).
+    """
+    question = db.query(models.Question).filter(models.Question.id == question_id).first()
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+
+    db.delete(question)
+    db.commit()
+    return None
