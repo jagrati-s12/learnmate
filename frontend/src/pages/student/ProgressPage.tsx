@@ -40,7 +40,7 @@ export const ProgressPage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading progress...</p>
+            <p className="text-[#C8BFB2]">Loading progress...</p>
           </div>
         </div>
       </>
@@ -104,7 +104,7 @@ export const ProgressPage: React.FC = () => {
               <h2 className="text-lg font-semibold">Performance Trend</h2>
             </CardHeader>
             <CardBody>
-              <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
+              <div className="h-64 bg-[#28211C] rounded-lg flex items-center justify-center text-[#968C80]">
                 📈 Performance chart will appear here
               </div>
             </CardBody>
@@ -119,13 +119,13 @@ export const ProgressPage: React.FC = () => {
               {subjectPerformance.length > 0 ? (
                 <div className="space-y-4">
                   {subjectPerformance.map((subject) => (
-                    <div key={subject.name} className="border border-gray-200 rounded-lg p-4">
+                    <div key={subject.name} className="border border-[rgba(243,237,227,0.08)] rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-gray-900">{subject.name}</h3>
+                        <h3 className="font-semibold text-[#F3EDE3]">{subject.name}</h3>
                         <div className={`text-lg font-semibold ${
                           subject.accuracy >= 75 ? 'text-green-600' :
-                          subject.accuracy >= 50 ? 'text-blue-600' :
-                          subject.attempted === 0 ? 'text-gray-400' : 'text-orange-600'
+                          subject.accuracy >= 50 ? 'text-[#C9A66B]' :
+                          subject.attempted === 0 ? 'text-[#968C80]' : 'text-orange-600'
                         }`}>
                           {subject.accuracy > 0 ? `${subject.accuracy}%` : '—'}
                         </div>
@@ -135,20 +135,20 @@ export const ProgressPage: React.FC = () => {
                         <div
                           className={`h-full transition-all ${
                             subject.accuracy >= 75 ? 'bg-green-500' :
-                            subject.accuracy >= 50 ? 'bg-blue-500' :
+                            subject.accuracy >= 50 ? 'bg-[#2B2419]0' :
                             subject.attempted === 0 ? 'bg-gray-300' : 'bg-orange-500'
                           }`}
                           style={{ width: `${subject.accuracy}%` }}
                         />
                       </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-4 text-sm text-[#C8BFB2]">
                         <span>{subject.total} questions available</span>
                         <span>•</span>
                         <span className={`font-medium ${
                           subject.accuracy >= 75 ? 'text-green-600' :
-                          subject.accuracy >= 50 ? 'text-blue-600' :
-                          subject.attempted === 0 ? 'text-gray-500' : 'text-orange-600'
+                          subject.accuracy >= 50 ? 'text-[#C9A66B]' :
+                          subject.attempted === 0 ? 'text-[#968C80]' : 'text-orange-600'
                         }`}>
                           {subject.level}
                         </span>
@@ -157,7 +157,7 @@ export const ProgressPage: React.FC = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600 text-center py-8">
+                <p className="text-[#C8BFB2] text-center py-8">
                   No subjects available yet. Start practicing to see your progress!
                 </p>
               )}

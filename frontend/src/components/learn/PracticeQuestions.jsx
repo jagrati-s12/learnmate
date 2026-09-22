@@ -63,7 +63,7 @@ export default function PracticeQuestions() {
     groupedQuestions[tid].push(q);
   });
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading questions...</div>;
+  if (loading) return <div className="p-8 text-center text-[#968C80]">Loading questions...</div>;
 
   return (
     <div className="page">
@@ -94,7 +94,7 @@ export default function PracticeQuestions() {
         
         <div className="question-list-container">
           {Object.keys(groupedQuestions).length === 0 && (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-[#968C80]">
               No questions found. Try running the PDF extractor and ingestion scripts!
             </div>
           )}
@@ -104,19 +104,19 @@ export default function PracticeQuestions() {
             const meta = topicMap[tId] || { subjectName: "Unknown Subject", topicName: `Topic #${tId}` };
             return (
               <div key={tId} className="mb-8">
-                <div className="bg-gray-50 border-x border-t border-gray-200 px-4 py-2 rounded-t-lg">
-                  <h3 className="font-bold text-gray-800 text-sm">
-                    {meta.subjectName} <ChevronRight size={12} className="inline text-gray-400" /> {meta.topicName}
+                <div className="bg-[#28211C] border-x border-t border-[rgba(243,237,227,0.08)] px-4 py-2 rounded-t-lg">
+                  <h3 className="font-bold text-[#F3EDE3] text-sm">
+                    {meta.subjectName} <ChevronRight size={12} className="inline text-[#968C80]" /> {meta.topicName}
                   </h3>
                 </div>
-                <div className="question-list !mt-0 !rounded-t-none border border-gray-200">
+                <div className="question-list !mt-0 !rounded-t-none border border-[rgba(243,237,227,0.08)]">
                   {groupQ.map((q, index) => (
                     <div className="question-row border-b last:border-b-0" key={q.id}>
                       <span className="question-index">{index + 1}</span>
 
                       <div className="flex-1">
-                        <strong className="block text-gray-900">{q.question_text.length > 80 ? q.question_text.substring(0, 80) + "..." : q.question_text}</strong>
-                        <span className="text-xs text-gray-500 mt-1">{q.is_pyq ? 'PYQ' : 'Practice'} {q.year ? `(${q.year})` : ''}</span>
+                        <strong className="block text-[#F3EDE3]">{q.question_text.length > 80 ? q.question_text.substring(0, 80) + "..." : q.question_text}</strong>
+                        <span className="text-xs text-[#968C80] mt-1">{q.is_pyq ? 'PYQ' : 'Practice'} {q.year ? `(${q.year})` : ''}</span>
                       </div>
 
                       <span className={`difficulty ${(q.difficulty || "medium").toLowerCase()}`}>

@@ -144,7 +144,7 @@ export default function Dashboard() {
               />
             ))}
             {goals.length === 0 && (
-              <p className="text-gray-500 text-sm italic py-2">No goals set yet.</p>
+              <p className="text-[#968C80] text-sm italic py-2">No goals set yet.</p>
             )}
           </div>
         </section>

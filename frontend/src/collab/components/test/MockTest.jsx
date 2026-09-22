@@ -7,7 +7,8 @@ import {
   Pause,
   Play,
   Send,
-  Loader2
+  Loader2,
+  Brain
 } from "lucide-react";
 import PageIntro from "../common/PageIntro.jsx";
 import TestTimer from "./TestTimer.jsx";
@@ -28,6 +29,22 @@ export default function MockTest() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [running, setRunning] = useState(true);
   const [submitted, setSubmitted] = useState(false);
+  const [generating, setGenerating] = useState(false);
+
+  const handleGenerateAI = async () => {
+    try {
+      setGenerating(true);
+      setError(null);
+      const newTest = await mockTestsAPI.generateAITest({ branch_id: 2, total_questions: 100 });
+      setTestList([newTest, ...testList]);
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Failed to generate AI Test');
+      console.error(err);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const [resultData, setResultData] = useState(null);
 
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
@@ -167,7 +184,7 @@ export default function MockTest() {
   // VIEW STATES
 
   if (loading && !selectedTest) {
-    return <div className="p-8 text-center text-gray-500">Loading tests...</div>;
+    return <div className="p-8 text-center text-[#968C80]">Loading tests...</div>;
   }
 
   // State 1: Test Selection
@@ -179,13 +196,23 @@ export default function MockTest() {
           subtitle="Select a dynamic test to start practicing."
         />
         {error && <div className="text-red-500 mb-4">{error}</div>}
-        <div className="flex flex-col gap-4">
+              <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Available Mock Tests</h2>
+        <button
+          onClick={handleGenerateAI}
+          disabled={generating}
+          className="flex flex-row items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50"
+        >
+          {generating ? "Analyzing..." : "Generate AI Test"}
+        </button>
+      </div>
+      <div className="flex flex-col gap-4">
           {testList.map(t => (
              <section className="card flex items-center justify-between p-6" key={t.id}>
                <div>
                  <h3 className="font-semibold text-lg">{t.name}</h3>
-                 <p className="text-gray-500 text-sm mt-1">{t.description}</p>
-                 <div className="flex gap-4 mt-3 text-sm text-gray-600">
+                 <p className="text-[#968C80] text-sm mt-1">{t.description}</p>
+                 <div className="flex gap-4 mt-3 text-sm text-[#C8BFB2]">
                     <span>{t.duration_minutes} mins</span>
                     <span>{t.total_marks} Marks</span>
                  </div>
@@ -196,7 +223,7 @@ export default function MockTest() {
              </section>
           ))}
           {testList.length === 0 && (
-             <div className="p-8 text-center text-gray-500">No mock tests available in the database yet.</div>
+             <div className="p-8 text-center text-[#968C80]">No mock tests available in the database yet.</div>
           )}
         </div>
       </div>
@@ -205,7 +232,7 @@ export default function MockTest() {
 
   // State 2: Submitting / Loading Test
   if (loading && selectedTest && !submitted) {
-     return <div className="p-8 text-center text-gray-500 flex flex-col items-center">
+     return <div className="p-8 text-center text-[#968C80] flex flex-col items-center">
        <Loader2 size={32} className="animate-spin mb-4" />
        {attemptData ? "Submitting exam..." : "Starting exam..."}
      </div>;
@@ -223,19 +250,19 @@ export default function MockTest() {
         {resultData && (
           <section className="card mb-6 flex gap-8 p-6">
              <div>
-                <span className="block text-sm text-gray-500">Score</span>
+                <span className="block text-sm text-[#968C80]">Score</span>
                 <strong className="text-2xl">{resultData.score} / {resultData.total_marks}</strong>
              </div>
              <div>
-                <span className="block text-sm text-gray-500">Accuracy</span>
+                <span className="block text-sm text-[#968C80]">Accuracy</span>
                 <strong className="text-2xl">{resultData.accuracy}%</strong>
              </div>
              <div>
-                <span className="block text-sm text-gray-500">Correct Answers</span>
+                <span className="block text-sm text-[#968C80]">Correct Answers</span>
                 <strong className="text-2xl text-green-600">{resultData.correct_answers}</strong>
              </div>
              <div>
-                <span className="block text-sm text-gray-500">Incorrect</span>
+                <span className="block text-sm text-[#968C80]">Incorrect</span>
                 <strong className="text-2xl text-red-600">{resultData.incorrect_answers}</strong>
              </div>
           </section>

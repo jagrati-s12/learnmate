@@ -188,4 +188,8 @@ export const mockTestsAPI = {
     const response = await apiClient.get<MockTestAnalytics>(`/mock-tests/${testId}/analytics/${attemptId}`);
     return response.data;
   },
+  generateAITest: async (data: { branch_id: number, total_questions?: number, adaptation_weight?: number }) => {
+    const response = await apiClient.post<MockTest>('/mock-tests/generate-personalized', data);
+    return response.data;
+  },
 };

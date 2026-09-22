@@ -42,7 +42,7 @@ export const ExamsPage: React.FC = () => {
             >
               <CardBody>
                 <h3 className="text-xl font-bold">{exam.name}</h3>
-                {exam.description && <p className="text-gray-600 mt-2">{exam.description}</p>}
+                {exam.description && <p className="text-[#C8BFB2] mt-2">{exam.description}</p>}
               </CardBody>
             </Card>
           ))}

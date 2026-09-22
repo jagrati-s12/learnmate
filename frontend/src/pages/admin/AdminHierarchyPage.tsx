@@ -84,7 +84,7 @@ export const AdminHierarchyPage: React.FC = () => {
                     <p className="text-sm text-slate-500">{exam.description || 'No description'}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
+                    <button className="p-2 text-slate-400 hover:text-[#C9A66B] transition-colors">
                       <Icons.Settings className="w-4 h-4" />
                     </button>
                     <button onClick={() => handleDeleteExam(exam.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors">
@@ -107,7 +107,7 @@ export const AdminHierarchyPage: React.FC = () => {
                 type="text"
                 value={newExamName}
                 onChange={(e) => setNewExamName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className="w-full px-3 py-2 border border-[rgba(243,237,227,0.10)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="e.g. JEE Advanced"
                 required
               />
@@ -117,7 +117,7 @@ export const AdminHierarchyPage: React.FC = () => {
               <textarea
                 value={newExamDesc}
                 onChange={(e) => setNewExamDesc(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className="w-full px-3 py-2 border border-[rgba(243,237,227,0.10)] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
                 placeholder="Exam description..."
                 rows={3}
               />

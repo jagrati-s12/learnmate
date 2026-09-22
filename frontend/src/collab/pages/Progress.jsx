@@ -41,14 +41,14 @@ export default function Progress() {
                   <h3 className="font-medium text-lg text-slate-800">
                     {sub.subject}
                   </h3>
-                  <span className="text-sm font-bold text-blue-600">
+                  <span className="text-sm font-bold text-[#C9A66B]">
                     {sub.progress}%
                   </span>
                 </div>
 
                 <div className="w-full bg-slate-100 rounded-full h-2.5 mb-3">
                   <div
-                    className="bg-blue-600 h-2.5 rounded-full transition-all duration-1000"
+                    className="bg-[#C9A66B] h-2.5 rounded-full transition-all duration-1000"
                     style={{ width: `${sub.progress}%` }}
                   ></div>
                 </div>

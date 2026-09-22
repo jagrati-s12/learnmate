@@ -62,7 +62,7 @@ export default function Goals() {
 
       {loading ? (
         <div className="flex justify-center p-8">
-          <Loader2 className="animate-spin text-blue-500" size={32} />
+          <Loader2 className="animate-spin text-[#C9A66B]" size={32} />
         </div>
       ) : (
         <div className="goal-cards">
@@ -96,7 +96,7 @@ export default function Goals() {
             );
           })}
           {goals.length === 0 && (
-            <div className="p-8 text-center text-gray-500 w-full col-span-2">
+            <div className="p-8 text-center text-[#968C80] w-full col-span-2">
               No goals added yet. Stay focused!
             </div>
           )}

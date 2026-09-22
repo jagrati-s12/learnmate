@@ -9,7 +9,7 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #171411;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -27,15 +27,95 @@ body {
 #root {
   width: 100%;
 }
+
+/* ============================================
+   THEME VARIABLES - Light & Dark Mode
+   ============================================ */
+
+:root[data-theme="dark"] {
+  --bg-primary: #171411;
+  --bg-secondary: #211C18;
+  --bg-surface: #28211C;
+  --bg-elevated: #302821;
+  
+  --text-primary: #F3EDE3;
+  --text-secondary: #C8BFB2;
+  --text-muted: #968C80;
+  
+  --accent-primary: #C9A66B;
+  --accent-secondary: #A8895C;
+  
+  --border-subtle: rgba(243, 237, 227, 0.08);
+  --border-default: rgba(243, 237, 227, 0.10);
+  
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.18);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #F8F6F3;
+  --bg-secondary: #FFFFFF;
+  --bg-surface: #FDFCFB;
+  --bg-elevated: #F5F3F0;
+  
+  --text-primary: #211C18;
+  --text-secondary: #4A4541;
+  --text-muted: #7A7470;
+  
+  --accent-primary: #A8895C;
+  --accent-secondary: #8A7049;
+  
+  --border-subtle: rgba(33, 28, 24, 0.08);
+  --border-default: rgba(33, 28, 24, 0.12);
+  
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Apply CSS variables */
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.sidebar {
+  background: var(--bg-primary);
+  border-right: 1px solid var(--border-subtle);
+}
+
+.topbar {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+}
+
+.nav-item {
+  color: var(--text-secondary);
+}
+
+.nav-item:hover {
+  background: var(--bg-elevated);
+  color: var(--accent-primary);
+}
+
+.nav-item.active {
+  background: var(--bg-surface);
+  color: var(--accent-primary);
+}
+
+
 * {
     box-sizing: border-box
 }
 
 body {
     margin: 0;
-    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f7f8fc;
-    color: #1e2230
+    font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -0.01em;
+    background: #171411; /* Modern lighter gray */
+    color: #F3EDE3
 }
 
 button,
@@ -59,12 +139,36 @@ button {
     top: 0;
     bottom: 0;
     width: 240px;
-    background: #fff;
+    background: #211C18;
     border-right: 1px solid #e9eaf0;
     padding: 22px 14px;
     display: flex;
     flex-direction: column;
     z-index: 20
+}
+
+.sidebar nav {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 8px;
+    margin-right: -8px;
+}
+
+.sidebar nav::-webkit-scrollbar {
+    width: 5px;
+}
+
+.sidebar nav::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb {
+    background: rgba(243, 237, 227, 0.15);
+    border-radius: 3px;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb:hover {
+    background: rgba(243, 237, 227, 0.25);
 }
 
 .brand {
@@ -77,8 +181,8 @@ button {
 .brand-mark {
     width: 31px;
     height: 31px;
-    border-radius: 9px;
-    background: linear-gradient(135deg, #7047ef, #a78bfa);
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #C9A66B, #D8B87C);
     color: #fff;
     display: grid;
     place-items: center;
@@ -93,45 +197,45 @@ button {
 .brand span {
     display: block;
     font-size: 10px;
-    color: #8b8e9c;
+    color: #968C80;
     margin-top: 2px
 }
 
 .nav-section {
     font-size: 9px;
     font-weight: 800;
-    color: #a2a4ae;
+    color: #968C80;
     letter-spacing: .12em;
     padding: 18px 11px 7px
 }
 
 .nav-item {
     height: 38px;
-    border-radius: 9px;
+    border-radius: 9999px;
     display: flex;
     align-items: center;
     gap: 11px;
     padding: 0 11px;
-    color: #626675;
+    color: #C8BFB2;
     text-decoration: none;
     font-size: 12px;
     margin: 2px 0
 }
 
 .nav-item:hover {
-    background: #f5f3ff;
-    color: #6542dd
+    background: #2B2419;
+    color: #A8895C
 }
 
 .nav-item.active {
-    background: #eee9ff;
-    color: #6240df;
+    background: #302821;
+    color: #8A7049;
     font-weight: 700
 }
 
 .sidebar-user {
     margin-top: auto;
-    border-top: 1px solid #eee;
+    border-top: 1px solid rgba(243, 237, 227, 0.08);
     padding: 15px 7px 3px;
     display: flex;
     gap: 10px;
@@ -142,8 +246,8 @@ button {
 .top-avatar {
     display: grid;
     place-items: center;
-    background: #e8eaf0;
-    color: #545866;
+    background: #302821;
+    color: #C8BFB2;
     font-weight: 700;
     border-radius: 50%
 }
@@ -161,7 +265,7 @@ button {
 
 .sidebar-user span {
     font-size: 10px;
-    color: #9295a0
+    color: #968C80
 }
 
 .main {
@@ -172,7 +276,7 @@ button {
 
 .topbar {
     height: 74px;
-    background: #fff;
+    background: #211C18;
     border-bottom: 1px solid #ececf2;
     display: flex;
     align-items: center;
@@ -188,7 +292,7 @@ button {
 
 .topbar p {
     font-size: 10px;
-    color: #9295a0;
+    color: #968C80;
     margin: 4px 0 0
 }
 
@@ -202,8 +306,8 @@ button {
     width: 35px;
     height: 35px;
     border: 1px solid #e9e9ef;
-    background: #fff;
-    border-radius: 9px;
+    background: #211C18;
+    border-radius: 9999px;
     color: #6f7280;
     display: grid;
     place-items: center;
@@ -260,27 +364,27 @@ button {
 .hero p,
 .page-intro p {
     font-size: 12px;
-    color: #858896;
+    color: #C8BFB2;
     margin: 0
 }
 
 .exam-card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
-    border-radius: 14px;
+    background: #211C18;
+    border: 1px solid rgba(243, 237, 227, 0.08);
+    border-radius: 16px;
     padding: 13px 17px;
     display: flex;
     gap: 10px;
     align-items: center;
-    box-shadow: 0 4px 16px rgba(42, 36, 72, .03)
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.22)
 }
 
 .exam-icon {
     width: 37px;
     height: 37px;
-    border-radius: 10px;
-    background: #f0ebff;
-    color: #7049e7;
+    border-radius: 12px;
+    background: #302821;
+    color: #C9A66B;
     display: grid;
     place-items: center
 }
@@ -308,8 +412,8 @@ button {
 }
 
 .stat-card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
+    background: #211C18;
+    border: 1px solid rgba(243, 237, 227, 0.08);
     border-radius: 13px;
     padding: 17px;
     display: flex;
@@ -320,9 +424,9 @@ button {
 .stat-icon {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
-    background: #f0ecff;
-    color: #714be7;
+    border-radius: 12px;
+    background: #302821;
+    color: #C9A66B;
     display: grid;
     place-items: center
 }
@@ -360,11 +464,11 @@ button {
 }
 
 .card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
-    border-radius: 14px;
+    background: #211C18;
+    border: 1px solid rgba(243, 237, 227, 0.08);
+    border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 3px 14px rgba(40, 36, 72, .025)
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18)
 }
 
 .card-header {
@@ -381,13 +485,13 @@ button {
 
 .card-header p {
     font-size: 10px;
-    color: #9295a0;
+    color: #968C80;
     margin: 4px 0 0
 }
 
 .text-link {
     font-size: 10px;
-    color: #6945df;
+    color: #C9A66B;
     text-decoration: none;
     display: flex;
     align-items: center;
@@ -405,7 +509,7 @@ button {
 .subject-icon {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: 12px;
     display: grid;
     place-items: center;
     font-size: 10px;
@@ -414,7 +518,7 @@ button {
 }
 
 .purple {
-    background: #eee9ff;
+    background: #302821;
     color: #6d49e3
 }
 
@@ -462,7 +566,7 @@ button {
 
 .progress-track {
     height: 5px;
-    background: #ececf2;
+    background: #28211C;
     border-radius: 20px;
     overflow: hidden
 }
@@ -470,7 +574,7 @@ button {
 .progress-fill {
     height: 100%;
     border-radius: 20px;
-    background: #7652e9
+    background: #C9A66B
 }
 
 .progress-fill.blue {
@@ -496,9 +600,9 @@ button {
 .circle-arrow {
     width: 29px;
     height: 29px;
-    border: 1px solid #ececf2;
+    border: 1px solid rgba(243, 237, 227, 0.08);
     border-radius: 50%;
-    background: #fff;
+    background: #211C18;
     color: #767986;
     display: grid;
     place-items: center
@@ -517,9 +621,9 @@ button {
 .ai-spark {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
-    background: #eee8ff;
-    color: #321f68;
+    border-radius: 12px;
+    background: #302821;
+    color: #8A7049;
     display: grid;
     place-items: center
 }
@@ -535,7 +639,7 @@ button {
 }
 
 .ai-message {
-    background: #f5f2ff;
+    background: #2B2419;
     border-radius: 12px;
     padding: 15px;
     margin: 17px 0
@@ -556,7 +660,7 @@ button {
 .secondary-button,
 .filter-button {
     border: 0;
-    border-radius: 9px;
+    border-radius: 9999px;
     padding: 9px 13px;
     font-size: 10px;
     display: inline-flex;
@@ -566,13 +670,13 @@ button {
 }
 
 .primary-button {
-    background: #7047e7;
+    background: #C9A66B;
     color: #fff
 }
 
 .secondary-button,
 .filter-button {
-    background: #fff;
+    background: #211C18;
     border: 1px solid #e5e5eb;
     color: #666976
 }
@@ -625,7 +729,7 @@ button {
     width: 25px;
     min-height: 5px;
     border-radius: 6px 6px 0 0;
-    background: linear-gradient(to top, #d9cffd, #7652e9)
+    background: linear-gradient(to top, #E8D4A8, #C9A66B)
 }
 
 .bar-wrap span {
@@ -677,7 +781,7 @@ button {
 }
 
 .subject-footer a {
-    color: #6945df;
+    color: #C9A66B;
     text-decoration: none;
     display: flex;
     align-items: center
@@ -701,7 +805,7 @@ button {
     border: 1px solid #e4e4eb;
     border-radius: 8px;
     padding: 9px 11px;
-    background: #fff;
+    background: #211C18;
     color: #555866;
     font-size: 11px
 }
@@ -723,7 +827,7 @@ button {
 
 .tab.active {
     color: #6b45df;
-    border-bottom: 2px solid #7047e7;
+    border-bottom: 2px solid #C9A66B;
     font-weight: 700
 }
 
@@ -814,7 +918,7 @@ button {
 
 .topic-content article h3 {
     font-size: 13px;
-    color: #272a35;
+    color: #F3EDE3;
     margin-top: 22px
 }
 
@@ -823,9 +927,9 @@ button {
 }
 
 .topic-content pre {
-    background: #f7f7fb;
+    background: #211C18;
     border: 1px solid #ededf2;
-    border-radius: 9px;
+    border-radius: 9999px;
     padding: 15px;
     font-size: 10px;
     overflow: auto
@@ -928,15 +1032,15 @@ button {
 .chat-bubble {
     max-width: 72%;
     padding: 12px 15px;
-    border-radius: 14px;
+    border-radius: 16px;
     white-space: pre-line;
     font-size: 11px;
     line-height: 1.65;
-    background: #f3f1fa
+    background: #F3F4F6
 }
 
 .chat-row.user .chat-bubble {
-    background: #7047e7;
+    background: #C9A66B;
     color: #fff;
     border-bottom-right-radius: 4px
 }
@@ -948,14 +1052,14 @@ button {
 .chat-input {
     display: flex;
     gap: 8px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid rgba(243, 237, 227, 0.08);
     padding-top: 14px
 }
 
 .chat-input input {
     flex: 1;
     border: 1px solid #e3e3e9;
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 12px;
     font-size: 11px;
     outline: none
@@ -964,8 +1068,8 @@ button {
 .chat-input button {
     width: 42px;
     border: 0;
-    border-radius: 10px;
-    background: #7047e7;
+    border-radius: 12px;
+    background: #C9A66B;
     color: #fff
 }
 
@@ -983,7 +1087,7 @@ button {
 .goal-icon {
     width: 38px;
     height: 38px;
-    border-radius: 10px;
+    border-radius: 12px;
     display: grid;
     place-items: center;
     flex: none
@@ -1009,7 +1113,7 @@ button {
 .big-placeholder {
     height: 300px;
     border: 1px dashed #dddde6;
-    border-radius: 10px;
+    border-radius: 12px;
     display: grid;
     place-items: center;
     color: #9a9ca7;
@@ -1036,9 +1140,9 @@ button {
 .resource-icon {
     width: 35px;
     height: 35px;
-    border-radius: 9px;
+    border-radius: 9999px;
     background: #eeeaff;
-    color: #7047e7;
+    color: #C9A66B;
     display: grid;
     place-items: center
 }
@@ -1071,7 +1175,7 @@ button {
 
 .flashcard>span {
     font-size: 9px;
-    color: #7450e6;
+    color: #C9A66B;
     font-weight: 800;
     letter-spacing: .12em
 }
@@ -1095,7 +1199,7 @@ button {
 
 .flash-actions button {
     border: 1px solid #e4e4eb;
-    background: #fff;
+    background: #211C18;
     border-radius: 8px;
     padding: 9px 15px;
     font-size: 10px
@@ -1132,7 +1236,7 @@ button {
     border-radius: 50%;
     display: grid;
     place-items: center;
-    background: #e8eaf0;
+    background: #302821;
     color: #555866;
     font-size: 20px;
     font-weight: 700
@@ -1145,7 +1249,7 @@ button {
     align-items: center;
     border: 0;
     border-bottom: 1px solid #eeeef3;
-    background: #fff;
+    background: #211C18;
     padding: 17px 4px;
     font-size: 11px;
     color: #4e515d
@@ -1333,9 +1437,9 @@ button {
 
 .test-timer {
   padding: 10px 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid rgba(243, 237, 227, 0.10);
+  border-radius: 12px;
+  background: #211C18;
 }
 
 .test-timer strong {
@@ -1351,11 +1455,11 @@ button {
 }
 
 .question-timer {
-  color: #667085;
+  color: #968C80;
 }
 
 .question-timer strong {
-  color: #101828;
+  color: #F3EDE3;
   font-variant-numeric: tabular-nums;
 }
 
@@ -1388,7 +1492,7 @@ button {
 .question-topic {
   display: block;
   margin-top: 4px;
-  color: #667085;
+  color: #968C80;
   font-size: 12px;
 }
 
@@ -1409,9 +1513,9 @@ button {
   align-items: center;
   gap: 13px;
   padding: 14px 16px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background: #fff;
+  border: 1px solid rgba(243, 237, 227, 0.10);
+  border-radius: 12px;
+  background: #211C18;
   text-align: left;
   cursor: pointer;
 }
@@ -1464,9 +1568,9 @@ button {
 
 .palette-number {
   aspect-ratio: 1;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(243, 237, 227, 0.10);
   border-radius: 8px;
-  background: #fff;
+  background: #211C18;
   cursor: pointer;
 }
 
@@ -1483,7 +1587,7 @@ button {
 .palette-legend {
   display: grid;
   gap: 8px;
-  color: #667085;
+  color: #968C80;
   font-size: 12px;
 }
 
@@ -1521,13 +1625,13 @@ button {
   flex-direction: column;
   gap: 6px;
   padding: 17px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid rgba(243, 237, 227, 0.10);
   border-radius: 12px;
-  background: #fff;
+  background: #211C18;
 }
 
 .analytics-insight span {
-  color: #667085;
+  color: #968C80;
   font-size: 12px;
 }
 
@@ -1536,7 +1640,7 @@ button {
 }
 
 .analytics-insight small {
-  color: #667085;
+  color: #968C80;
   line-height: 1.45;
 }
 
@@ -1564,7 +1668,7 @@ button {
 
 .topic-analysis-main span,
 .topic-analysis-time span {
-  color: #667085;
+  color: #968C80;
   font-size: 12px;
   margin-top: 4px;
 }
@@ -1579,7 +1683,7 @@ button {
   padding: 6px 9px;
   border-radius: 999px;
   background: #f2f4f7;
-  color: #475467;
+  color: #968C80;
   font-size: 12px;
   font-weight: 700;
 }
@@ -1614,7 +1718,7 @@ button {
 .focus-grid > div {
   padding: 15px;
   border: 1px solid #eef0f3;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
 .focus-grid span,
@@ -1625,7 +1729,7 @@ button {
 
 .focus-grid span,
 .focus-grid small {
-  color: #667085;
+  color: #968C80;
   font-size: 12px;
 }
 
@@ -1754,17 +1858,17 @@ button {
   position: absolute;
   right: -12px;
   top: 25px;
-  background: #fff;
-  border: 1px solid #e9eaf0;
+  background: #211C18;
+  border: 1px solid rgba(243, 237, 227, 0.08);
   border-radius: 50%;
-  color: #a2a4ae;
+  color: #968C80;
   cursor: pointer;
   z-index: 30;
 }
 
 .collapse-toggle:hover {
-  color: #6240df;
-  border-color: #6240df;
+  color: #8A7049;
+  border-color: #8A7049;
 }
 
 @media(max-width:760px) {
@@ -1787,8 +1891,8 @@ button {
   bottom: calc(100% + 5px);
   left: 10px;
   width: 220px;
-  background: #fff;
-  border: 1px solid #e9eaf0;
+  background: #211C18;
+  border: 1px solid rgba(243, 237, 227, 0.08);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   padding: 8px 0;
@@ -1807,7 +1911,7 @@ button {
   align-items: center;
   gap: 10px;
   padding: 10px 16px;
-  color: #545866;
+  color: #C8BFB2;
   font-size: 12px;
   text-decoration: none;
   cursor: pointer;
@@ -1818,8 +1922,8 @@ button {
 }
 
 .user-menu-item:hover {
-  background: #f5f3ff;
-  color: #6542dd;
+  background: #2B2419;
+  color: #A8895C;
 }
 
 .user-menu-item.logout {

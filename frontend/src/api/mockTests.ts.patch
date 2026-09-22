@@ -1,0 +1,12 @@
+--- src/api/mockTests.ts
++++ src/api/mockTests.ts
+@@ -48,4 +48,13 @@
+   getAnalytics: async (testId: number, attemptId: number) => {
+     const response = await api.get(`/mock-tests/${testId}/analytics/${attemptId}`);
+     return response.data;
++  },
++  
++  generateAITest: async (data: { branch_id: number, total_questions?: number, adaptation_weight?: number }) => {
++    const response = await api.post('/mock-tests/generate-personalized', data);
++    return response.data;
+   }

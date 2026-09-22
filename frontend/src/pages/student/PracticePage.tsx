@@ -53,7 +53,7 @@ export const PracticePage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading practice session...</p>
+            <p className="text-[#C8BFB2]">Loading practice session...</p>
           </div>
         </div>
       </>
@@ -86,8 +86,8 @@ export const PracticePage: React.FC = () => {
         <Topbar title="Practice Mode" />
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Session Complete!</h2>
-            <p className="text-gray-600 mb-6">You've completed all questions in this practice session.</p>
+            <h2 className="text-2xl font-semibold text-[#F3EDE3] mb-4">Session Complete!</h2>
+            <p className="text-[#C8BFB2] mb-6">You've completed all questions in this practice session.</p>
             <Button variant="primary" onClick={() => navigate('/subjects')}>
               Back to Subjects
             </Button>
@@ -162,22 +162,22 @@ export const PracticePage: React.FC = () => {
             ← Exit Practice
           </Button>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-8 mb-6">
-            <div className="flex justify-between items-center pb-4 mb-6 border-b border-gray-200">
-              <span className="font-semibold text-gray-700">
+          <div className="bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-xl p-8 mb-6">
+            <div className="flex justify-between items-center pb-4 mb-6 border-b border-[rgba(243,237,227,0.08)]">
+              <span className="font-semibold text-[#C8BFB2]">
                 Question {currentIndex + 1} of {session.questions.length}
               </span>
               <div className="flex gap-2">
-                <span className="bg-blue-50 text-blue-600 px-3 py-1 rounded-md text-sm font-medium capitalize">
+                <span className="bg-[#2B2419] text-[#C9A66B] px-3 py-1 rounded-md text-sm font-medium capitalize">
                   {currentQuestion.difficulty}
                 </span>
-                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-md text-sm font-medium">
+                <span className="bg-[#302821] text-[#C8BFB2] px-3 py-1 rounded-md text-sm font-medium">
                   {currentQuestion.marks} {currentQuestion.marks === 1 ? 'mark' : 'marks'}
                 </span>
               </div>
             </div>
 
-            <div className="text-lg leading-relaxed text-gray-900 mb-8 whitespace-pre-line">
+            <div className="text-lg leading-relaxed text-[#F3EDE3] mb-8 whitespace-pre-line">
               {currentQuestion.question_text}
             </div>
 
@@ -199,8 +199,8 @@ export const PracticePage: React.FC = () => {
                         : showIncorrect
                         ? 'border-red-500 bg-red-50'
                         : isSelected
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-500 hover:bg-blue-50'
+                        ? 'border-blue-500 bg-[#2B2419]'
+                        : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-[#2B2419]'
                     } ${showResult ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${
@@ -209,8 +209,8 @@ export const PracticePage: React.FC = () => {
                         : showIncorrect
                         ? 'bg-red-500 text-white'
                         : isSelected
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-gray-100 text-gray-700'
+                        ? 'bg-[#2B2419]0 text-white'
+                        : 'bg-[#302821] text-[#C8BFB2]'
                     }`}>
                       {option.option_label}
                     </div>
@@ -222,7 +222,7 @@ export const PracticePage: React.FC = () => {
               })}
             </div>
 
-            <div className="flex gap-3 mt-8 pt-6 border-t border-gray-200">
+            <div className="flex gap-3 mt-8 pt-6 border-t border-[rgba(243,237,227,0.08)]">
               {!showResult ? (
                 <>
                   <Button variant="primary" onClick={handleSubmit}>
@@ -244,18 +244,18 @@ export const PracticePage: React.FC = () => {
               <div className={`mt-6 p-6 border rounded-lg ${
                 result.is_correct
                   ? 'bg-green-50 border-green-200'
-                  : 'bg-blue-50 border-blue-200'
+                  : 'bg-[#2B2419] border-[rgba(201,166,107,0.16)]'
               }`}>
                 <div className={`font-semibold mb-2 ${
                   result.is_correct ? 'text-green-900' : 'text-blue-900'
                 }`}>
                   {result.is_correct ? '✓ Correct!' : '✗ Incorrect'}
                 </div>
-                <div className="text-gray-700 mb-2">
+                <div className="text-[#C8BFB2] mb-2">
                   <strong>Correct Answer: {result.correct_option}</strong>
                 </div>
                 {result.explanation && (
-                  <div className="text-gray-700 whitespace-pre-line">
+                  <div className="text-[#C8BFB2] whitespace-pre-line">
                     {result.explanation}
                   </div>
                 )}

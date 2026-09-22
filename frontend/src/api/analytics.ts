@@ -24,5 +24,9 @@ export const analyticsAPI = {
   getTopicProgress: async () => {
     const response = await api.get('/analytics/topic-progress');
     return response.data;
-  }
+  },
+  getAIProfile: async (): Promise<{ profile: string }> => {
+    const response = await api.get<{profile: string}>('/analytics/ai-profile');
+    return response.data;
+  },
 };

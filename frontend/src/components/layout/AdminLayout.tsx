@@ -11,7 +11,7 @@ export const AdminLayout: React.FC = () => {
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* We can use a custom admin topbar or reuse the existing one with passed props if it supports it, but reusing it works for now or simplified inline: */}
-        <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
+        <header className="h-16 bg-[#211C18] border-b border-slate-200 px-6 flex items-center justify-between shrink-0">
           <h2 className="text-lg font-semibold text-slate-800">Admin Control Center</h2>
           <div className="flex items-center gap-4">
             <span className="text-sm text-slate-600 font-medium">{user?.email} (Admin)</span>

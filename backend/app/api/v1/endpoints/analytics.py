@@ -4,6 +4,7 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 
 from app.database import get_db
+from app.services.ai_personality import generate_student_profile
 from app.models.user import User
 from app.models.attempt import MockTestAttempt, QuestionAttempt
 from app.models.question import Question
@@ -203,3 +204,18 @@ def get_topic_progress(
         })
         
     return result
+
+@router.get("/ai-profile")
+def get_ai_profile(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # Reuse existing data functions (hackish but avoids duplication for now)
+    perf_data = get_performance(current_user, db)
+    weekly_data = get_weekly_activity(current_user, db)
+    
+    profile_text = generate_student_profile(perf_data, weekly_data)
+    
+    return {
+        "profile": profile_text
+    }

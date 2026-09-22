@@ -56,7 +56,7 @@ export default function Topics() {
     ? topics
     : topics.filter(t => t.subject_name === selectedSubject);
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading topics...</div>;
+  if (loading) return <div className="p-8 text-center text-[#968C80]">Loading topics...</div>;
 
   return (
     <div className="page">
@@ -99,7 +99,7 @@ export default function Topics() {
             </NavLink>
           ))}
           {filteredTopics.length === 0 && (
-            <div className="p-8 text-center text-gray-500">No topics found for this subject.</div>
+            <div className="p-8 text-center text-[#968C80]">No topics found for this subject.</div>
           )}
         </div>
       </section>

@@ -45,7 +45,7 @@ export default function SimpleTrack({ title, subtitle, type }) {
                     ? "Module Progress Overview"
                     : "SSC JE Performance Overview"}
               </h3>
-              <p className="text-gray-500 text-sm mt-1">Detailed visualization (Coming Soon)</p>
+              <p className="text-[#968C80] text-sm mt-1">Detailed visualization (Coming Soon)</p>
             </div>
         </div>
 

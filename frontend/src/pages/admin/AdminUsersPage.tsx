@@ -108,14 +108,14 @@ export const AdminUsersPage: React.FC = () => {
                       users.map((user) => (
                         <tr
                           key={user.id}
-                          className={`hover:bg-slate-50 transition-colors ${selectedUser === user.id ? 'bg-blue-100/50' : ''}`}
+                          className={`hover:bg-slate-50 transition-colors ${selectedUser === user.id ? 'bg-[#302821]/50' : ''}`}
                         >
                           <td className="p-4">
                             <div className="font-medium text-slate-800">{user.full_name}</div>
                             <div className="text-sm text-slate-500">{user.email}</div>
                           </td>
                           <td className="p-4">
-                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.is_admin ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-700'}`}>
+                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${user.is_admin ? 'bg-[#302821] text-blue-700' : 'bg-slate-100 text-slate-700'}`}>
                               {user.is_admin ? 'Admin' : 'Student'}
                             </span>
                           </td>
@@ -178,7 +178,7 @@ export const AdminUsersPage: React.FC = () => {
                         <div className="text-xs text-slate-500 mt-1 uppercase font-semibold">Qs Attempted</div>
                       </div>
                       <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 text-center">
-                        <div className="text-2xl font-bold text-blue-600">{userProgress.overall.overall_accuracy}%</div>
+                        <div className="text-2xl font-bold text-[#C9A66B]">{userProgress.overall.overall_accuracy}%</div>
                         <div className="text-xs text-slate-500 mt-1 uppercase font-semibold">Avg Accuracy</div>
                       </div>
                     </div>
@@ -222,7 +222,7 @@ export const AdminUsersPage: React.FC = () => {
                                 <span className="text-slate-500">
                                   {new Date(test.completed_at).toLocaleDateString()}
                                 </span>
-                                <span className="font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                                <span className="font-semibold px-2 py-0.5 rounded-full bg-[#302821] text-blue-700">
                                   {test.score} / {test.total_questions}
                                 </span>
                               </div>

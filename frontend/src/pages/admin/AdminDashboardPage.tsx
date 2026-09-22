@@ -35,7 +35,7 @@ export const AdminDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 rounded-lg text-blue-600">
+            <div className="p-3 bg-[#302821] rounded-lg text-[#C9A66B]">
               <Icons.User className="w-6 h-6" />
             </div>
             <div>
@@ -63,7 +63,7 @@ export const AdminDashboardPage: React.FC = () => {
 
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-purple-100 rounded-lg text-purple-600">
+            <div className="p-3 bg-[#302821] rounded-lg text-[#C9A66B]">
               <Icons.PenTool className="w-6 h-6" />
             </div>
             <div>
