@@ -38,7 +38,7 @@ export const SubjectsPage: React.FC = () => {
     <>
       <Topbar title={`Subjects for ${branch?.name || 'Branch'}`} />
       <div className="flex-1 overflow-auto p-6">
-        <button className="mb-4 text-blue-600" onClick={() => navigate(`/exams/${branch?.exam_id}/branches`)}>&larr; Back to Branches</button>
+        <button className="mb-4 text-[#C9A66B]" onClick={() => navigate(`/exams/${branch?.exam_id}/branches`)}>&larr; Back to Branches</button>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {subjects.map((subject) => (
             <Card
@@ -48,7 +48,7 @@ export const SubjectsPage: React.FC = () => {
             >
               <CardBody>
                 <h3 className="text-xl font-bold">{subject.name}</h3>
-                <p className="text-sm text-gray-600 mt-2">{subject.chapters?.length || 0} chapters</p>
+                <p className="text-sm text-[#C8BFB2] mt-2">{subject.chapters?.length || 0} chapters</p>
               </CardBody>
             </Card>
           ))}

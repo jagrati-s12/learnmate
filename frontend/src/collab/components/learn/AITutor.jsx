@@ -79,10 +79,10 @@ export default function AITutor() {
 
   return (
     <div className="page flex flex-col items-center max-w-5xl mx-auto min-h-[80vh] py-6 px-4">
-      {/* Updated Main Branch Header UI */}
-      <div className="w-full text-center px-4 py-8 bg-white rounded-t-2xl border border-gray-100 shadow-sm z-10 relative">
+      {/* Header UI */}
+      <div className="w-full text-center px-4 py-8 bg-[#211C18] rounded-t-2xl border border-gray-800 shadow-sm z-10 relative">
         <div className="relative inline-flex mb-6">
-          <div className="absolute inset-0 bg-blue-100 rounded-full blur-xl opacity-60"></div>
+          <div className="absolute inset-0 bg-[#302821] rounded-full blur-xl opacity-60"></div>
           <div className="relative bg-gradient-to-tr from-blue-600 to-indigo-600 w-20 h-20 rounded-2xl flex items-center justify-center transform rotate-3 shadow-lg">
             <Bot size={36} className="text-white transform -rotate-3" />
           </div>
@@ -91,35 +91,35 @@ export default function AITutor() {
           </div>
         </div>
 
-        <h1 className="text-3xl font-extrabold text-gray-900 mb-4 tracking-tight">
+        <h1 className="text-3xl font-extrabold text-[#F3EDE3] mb-4 tracking-tight">
           Your Personal <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">AI Civil Engineering</span> Tutor
         </h1>
 
-        <p className="text-gray-600 text-lg mb-8 max-w-lg mx-auto leading-relaxed">
-          We're hard at work training our advanced AI models specifically on SSC JE and ESE civil engineering concepts to help you study smarter.
+        <p className="text-[#C8BFB2] text-lg mb-8 max-w-lg mx-auto leading-relaxed">
+          Ask questions, get step-by-step solutions for soil mechanics, structural analysis, IS Code provisions, and SSC JE concepts.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left max-w-4xl mx-auto">
-          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <MessageSquare size={20} className="text-blue-500 mb-3" />
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm">Instant Doubt Solving</h3>
-            <p className="text-xs text-gray-500">Stuck on a tricky soil mechanics numerical? Get step-by-step guidance instantly.</p>
+          <div className="p-4 rounded-xl bg-[#28211C] border border-gray-800">
+            <MessageSquare size={20} className="text-[#C9A66B] mb-3" />
+            <h3 className="font-semibold text-[#F3EDE3] mb-1 text-sm">Instant Doubt Solving</h3>
+            <p className="text-xs text-[#968C80]">Stuck on a tricky soil mechanics numerical? Get step-by-step guidance instantly.</p>
           </div>
-          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
+          <div className="p-4 rounded-xl bg-[#28211C] border border-gray-800">
             <BookOpen size={20} className="text-indigo-500 mb-3" />
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm">Concept Simplifier</h3>
-            <p className="text-xs text-gray-500">Complex IS Code provisions explained with simple, real-world examples.</p>
+            <h3 className="font-semibold text-[#F3EDE3] mb-1 text-sm">Concept Simplifier</h3>
+            <p className="text-xs text-[#968C80]">Complex IS Code provisions explained with simple, real-world examples.</p>
           </div>
-          <div className="p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <Clock size={20} className="text-purple-500 mb-3" />
-            <h3 className="font-semibold text-gray-900 mb-1 text-sm">24/7 Availability</h3>
-            <p className="text-xs text-gray-500">Your dedicated study partner, ready whenever you sit down to prepare.</p>
+          <div className="p-4 rounded-xl bg-[#28211C] border border-gray-800">
+            <Clock size={20} className="text-[#C9A66B] mb-3" />
+            <h3 className="font-semibold text-[#F3EDE3] mb-1 text-sm">24/7 Availability</h3>
+            <p className="text-xs text-[#968C80]">Your dedicated study partner, ready whenever you sit down to prepare.</p>
           </div>
         </div>
       </div>
 
       {/* Embedded Working Chat Interface */}
-      <section className="card chat-card flex flex-col w-full shadow-sm border border-t-0 border-gray-100 rounded-b-2xl rounded-t-none -mt-2 bg-white" style={{ height: '500px' }}>
+      <section className="card chat-card flex flex-col w-full shadow-sm border border-t-0 border-gray-800 rounded-b-2xl rounded-t-none -mt-3 relative z-0" style={{ backgroundColor: 'var(--bg-card)', height: '500px' }}>
         <div className="chat-messages flex-1 overflow-y-auto p-4 flex flex-col gap-4">
           {messages.map((message, index) => (
             <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`} key={index}>
@@ -127,18 +127,18 @@ export default function AITutor() {
                 className={`max-w-[85%] md:max-w-[75%] rounded-2xl px-4 py-3 ${
                   message.role === 'user'
                     ? 'bg-blue-600 text-white rounded-br-none'
-                    : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                    : 'bg-[#28211C] text-[#F3EDE3] border border-gray-800 rounded-bl-none'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1 opacity-80 text-xs">
                   {message.role === 'user' ? <User size={12} /> : <Bot size={12} />}
                   {message.role === 'user' ? 'You' : 'AI Tutor'}
                 </div>
-                <div className="text-sm leading-relaxed overflow-x-auto">
+                <div className="text-sm leading-relaxed overflow-x-auto text-[#F3EDE3]">
                   {message.role === 'user' ? (
                     <div className="whitespace-pre-wrap">{message.text}</div>
                   ) : (
-                    <div className="markdown-body">
+                    <div className="markdown-body dark-theme-markdown">
                       <ReactMarkdown
                         remarkPlugins={[remarkGfm, remarkMath]}
                         rehypePlugins={[rehypeKatex]}
@@ -153,18 +153,18 @@ export default function AITutor() {
           ))}
           {loading && (
             <div className="flex justify-start">
-               <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-gray-100 text-gray-800 rounded-bl-none flex items-center gap-2">
-                 <Loader2 size={16} className="animate-spin text-gray-500" />
-                 <span className="text-sm text-gray-500">Thinking...</span>
+               <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-[#28211C] border border-gray-800 text-[#F3EDE3] rounded-bl-none flex items-center gap-2">
+                 <Loader2 size={16} className="animate-spin text-[#C9A66B]" />
+                 <span className="text-sm text-[#968C80]">Thinking...</span>
                </div>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
 
-        <div className="chat-input p-4 border-t border-gray-100 flex gap-2 bg-gray-50 rounded-b-2xl">
+        <div className="chat-input p-4 border-t border-gray-800 flex gap-2 bg-[#211C18] rounded-b-2xl">
           <input
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-full outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 bg-white"
+            className="flex-1 px-4 py-3 border border-gray-700 bg-[#28211C] text-[#F3EDE3] placeholder-[#968C80] rounded-full outline-none focus:border-[#C9A66B] focus:ring-1 focus:ring-[#C9A66B]"
             value={input}
             onChange={(event) => setInput(event.target.value)}
             onKeyDown={(event) => event.key === "Enter" && send()}
@@ -172,11 +172,11 @@ export default function AITutor() {
             disabled={loading}
           />
           <button
-            className="!rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-50 bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+            className="!rounded-full w-12 h-12 flex items-center justify-center disabled:opacity-50 bg-[#C9A66B] hover:bg-[#A8895C] text-[#171411] transition-colors"
             onClick={send}
             disabled={!input.trim() || loading}
           >
-            <Bot size={18} />
+            <Bot size={20} />
           </button>
         </div>
       </section>

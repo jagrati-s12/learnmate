@@ -24,21 +24,21 @@ export default function AIRecommendation() {
         <Sparkles size={100} />
       </div>
       <div className="ai-heading">
-        <div className="ai-spark bg-blue-600 text-white shadow-lg shadow-blue-500/30 font-serif mr-3">✦</div>
+        <div className="ai-spark bg-[#C9A66B] text-white shadow-lg shadow-blue-500/30 font-serif mr-3">✦</div>
         <div>
           <h3 className="text-blue-900 font-bold">AI Study Recommendation</h3>
           <p className="text-blue-700/70 text-sm font-medium">Based on your SSC JE Civil activity</p>
         </div>
       </div>
 
-      <div className="ai-message bg-white/80 backdrop-blur border border-white p-4 rounded-lg my-4 shadow-sm z-10 relative">
-        <strong className="text-gray-900 block mb-1">{rec ? rec.title : "Analyzing your performance..."}</strong>
-        <p className="text-gray-700 text-sm leading-relaxed">
+      <div className="ai-message bg-[#211C18]/80 backdrop-blur border border-white p-4 rounded-lg my-4 shadow-sm z-10 relative">
+        <strong className="text-[#F3EDE3] block mb-1">{rec ? rec.title : "Analyzing your performance..."}</strong>
+        <p className="text-[#C8BFB2] text-sm leading-relaxed">
           {rec ? rec.rationale : "Please wait while we crunch your recent test numbers to build a personalized study vector."}
         </p>
       </div>
 
-      <NavLink to="/learn/ai-tutor" className="primary-button z-10 relative bg-blue-600 hover:bg-blue-700 text-white shadow shadow-blue-500/20 border-none transition-all hover:-translate-y-0.5">
+      <NavLink to="/learn/ai-tutor" className="primary-button z-10 relative bg-[#C9A66B] hover:bg-[#A8895C] text-white shadow shadow-blue-500/20 border-none transition-all hover:-translate-y-0.5">
         <Bot size={17} /> {rec ? rec.action : "Ask Civil AI Tutor"}
       </NavLink>
     </section>

@@ -4,23 +4,40 @@ import { Topbar } from '../../components/layout/Topbar';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody, CardHeader } from '../../components/ui/Card';
 import { Icons } from '../../assets/icons';
+import { Brain } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { analyticsAPI } from '../../api/analytics';
 import { mockTestsAPI, MockTestAttempt } from '../../api/mockTests';
 
 export const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [attempts, setAttempts] = useState<MockTestAttempt[]>([]);
+  const [aiProfile, setAiProfile] = useState<string | null>(null);
+  const [loadingAi, setLoadingAi] = useState(false);
+
 
   useEffect(() => {
+    
     const loadStats = async () => {
       try {
         const userAttempts = await mockTestsAPI.getUserAttempts();
         setAttempts(userAttempts);
-      } catch (err) {
-        // Silently fail - we still show user data even if attempts fail to load
+      } catch (err) {}
+      
+      try {
+        setLoadingAi(true);
+        const aiData = await analyticsAPI.getAIProfile();
+        if (aiData && aiData.profile) {
+          setAiProfile(aiData.profile);
+        }
+      } catch (e) {
+        console.error('Failed to load AI profile', e);
+      } finally {
+        setLoadingAi(false);
       }
     };
+
 
     if (user) {
       loadStats();
@@ -33,7 +50,7 @@ export const ProfilePage: React.FC = () => {
         <Topbar title="My Profile" />
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
-            <p className="text-gray-600">Loading user data...</p>
+            <p className="text-[#C8BFB2]">Loading user data...</p>
           </div>
         </div>
       </>
@@ -73,16 +90,43 @@ export const ProfilePage: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold">{user.full_name}</h2>
-                <div className="flex items-center gap-3 text-gray-500">
+                <div className="flex items-center gap-3 text-[#968C80]">
                   <Icons.User className="w-4 h-4" />
                   <span>{user.email}</span>
                 </div>
                 {user.is_admin && (
-                  <div className="flex items-center gap-2 text-sm text-blue-600">
-                    <span className="bg-blue-100 px-2 py-0.5 rounded-full text-xs font-medium">Admin</span>
+                  <div className="flex items-center gap-2 text-sm text-[#C9A66B]">
+                    <span className="bg-[#302821] px-2 py-0.5 rounded-full text-xs font-medium">Admin</span>
                   </div>
                 )}
               </div>
+            </CardBody>
+          </Card>
+
+
+          {/* AI Personality */}
+          <Card className="mb-6 border-[rgba(201,166,107,0.16)]">
+            <CardHeader className="bg-[#2B2419] flex flex-row items-center gap-2 border-b-0 pb-0">
+              <Brain className="w-5 h-5 text-[#C9A66B]" />
+              <h2 className="text-lg font-semibold text-blue-900 border-none m-0">AI Test Personality Profile</h2>
+            </CardHeader>
+            <CardBody>
+              {loadingAi ? (
+                <div className="flex justify-center py-4">
+                  <div className="animate-pulse flex space-x-2 items-center">
+                    <Brain className="text-blue-300 w-5 h-5" />
+                    <span className="text-blue-400">Analyzing past tests...</span>
+                  </div>
+                </div>
+              ) : aiProfile ? (
+                <div className="whitespace-pre-line text-[#C8BFB2] leading-relaxed">
+                  {aiProfile}
+                </div>
+              ) : (
+                <div className="text-[#968C80] italic">
+                  Take more mock tests to enable your AI Personality Profile!
+                </div>
+              )}
             </CardBody>
           </Card>
 
@@ -90,28 +134,28 @@ export const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Tests Taken</div>
-                <div className="text-2xl font-bold text-blue-600">{testsTaken}</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Tests Taken</div>
+                <div className="text-2xl font-bold text-[#C9A66B]">{testsTaken}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Total Score</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Total Score</div>
                 <div className="text-2xl font-bold text-green-600">{totalScore}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Questions</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Questions</div>
                 <div className="text-2xl font-bold text-indigo-600">{totalQuestions}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Accuracy</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Accuracy</div>
                 <div className="text-2xl font-bold text-orange-600">
                   {accuracy > 0 ? `${accuracy}%` : '—'}
                 </div>
@@ -127,42 +171,42 @@ export const ProfilePage: React.FC = () => {
             <CardBody>
               <div className="space-y-3">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
                     <Icons.User className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-gray-900">Full Name</p>
-                    <p className="text-gray-600">{user.full_name}</p>
+                    <p className="font-medium text-[#F3EDE3]">Full Name</p>
+                    <p className="text-[#C8BFB2]">{user.full_name}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
                     <Icons.User className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-gray-900">Email</p>
-                    <p className="text-gray-600">{user.email}</p>
+                    <p className="font-medium text-[#F3EDE3]">Email</p>
+                    <p className="text-[#C8BFB2]">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
                     <Icons.Clock className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-gray-900">Member Since</p>
-                    <p className="text-gray-600">{memberSince}</p>
+                    <p className="font-medium text-[#F3EDE3]">Member Since</p>
+                    <p className="text-[#C8BFB2]">{memberSince}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
+                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
                     <Icons.CheckCircle className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-gray-900">Account Status</p>
-                    <p className="text-gray-600">
+                    <p className="font-medium text-[#F3EDE3]">Account Status</p>
+                    <p className="text-[#C8BFB2]">
                       {user.is_active ? 'Active' : 'Inactive'}
                     </p>
                   </div>

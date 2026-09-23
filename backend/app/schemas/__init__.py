@@ -71,3 +71,4 @@ __all__ = [
     "MockTestResult",
     "MockTestGenerateRequest",
 ]
+from .ai_test import PersonalizedTestRequest

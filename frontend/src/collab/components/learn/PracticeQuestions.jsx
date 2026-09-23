@@ -27,7 +27,7 @@ export default function PracticeQuestions() {
     ? questions
     : questions.filter(q => q.difficulty.toLowerCase() === difficultyFilter.toLowerCase());
 
-  if (loading) return <div className="p-8 text-center text-gray-500">Loading questions...</div>;
+  if (loading) return <div className="p-8 text-center text-[#968C80]">Loading questions...</div>;
 
   return (
     <div className="page">
@@ -75,7 +75,7 @@ export default function PracticeQuestions() {
             </div>
           ))}
           {filteredQuestions.length === 0 && (
-            <div className="p-8 text-center text-gray-500">
+            <div className="p-8 text-center text-[#968C80]">
               No questions found. Try running the PDF extractor and ingestion scripts!
             </div>
           )}

@@ -1,9 +1,11 @@
-import { Menu, Search, Bell, LogOut } from "lucide-react";
+import { Menu, Search, Bell, LogOut, Moon, Sun } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Topbar({ title, setOpen }) {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -27,6 +29,13 @@ export default function Topbar({ title, setOpen }) {
         <button className="icon-button notification">
           <Bell size={18} />
           <span />
+        </button>
+        <button
+          className="icon-button"
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <button className="icon-button" onClick={handleLogout} title="Logout">
           <LogOut size={18} />

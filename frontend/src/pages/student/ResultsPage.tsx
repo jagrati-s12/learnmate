@@ -53,7 +53,7 @@ export const ResultsPage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading results...</p>
+            <p className="text-[#C8BFB2]">Loading results...</p>
           </div>
         </div>
       </>
@@ -85,9 +85,9 @@ export const ResultsPage: React.FC = () => {
         <Topbar title="Test Results" />
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
-            <div className="bg-gray-50 p-8 rounded-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">No Test Results Yet</h2>
-              <p className="text-gray-600 mb-6">
+            <div className="bg-[#28211C] p-8 rounded-lg">
+              <h2 className="text-2xl font-bold text-[#F3EDE3] mb-4">No Test Results Yet</h2>
+              <p className="text-[#C8BFB2] mb-6">
                 You haven't taken any mock tests yet. Take a mock test to see your results here.
               </p>
               <Button variant="primary" onClick={() => navigate('/mock-test')}>
@@ -126,42 +126,42 @@ export const ResultsPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Total Score</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Total Score</div>
                 <div className="text-3xl font-bold">{result.score}/{result.total_marks}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Correct</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Correct</div>
                 <div className="text-3xl font-bold text-green-600">{result.correct_answers}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Incorrect</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Incorrect</div>
                 <div className="text-3xl font-bold text-red-600">{result.incorrect_answers}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Unattempted</div>
-                <div className="text-3xl font-bold text-gray-400">{result.unattempted}</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Unattempted</div>
+                <div className="text-3xl font-bold text-[#968C80]">{result.unattempted}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Accuracy</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Accuracy</div>
                 <div className="text-3xl font-bold">{result.accuracy}%</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-gray-600 mb-1">Time Taken</div>
+                <div className="text-sm text-[#C8BFB2] mb-1">Time Taken</div>
                 <div className="text-3xl font-bold">{formatTime(result.total_time_seconds)}</div>
               </CardBody>
             </Card>
@@ -175,7 +175,7 @@ export const ResultsPage: React.FC = () => {
                 <Button variant="primary" size="sm">
                   Review All Questions
                 </Button>
-                <span className="text-sm text-gray-500">
+                <span className="text-sm text-[#968C80]">
                   {result.questions.length} questions
                 </span>
               </div>
@@ -187,7 +187,7 @@ export const ResultsPage: React.FC = () => {
                   return (
                     <div
                       key={q.id}
-                      className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors cursor-pointer"
+                      className="flex items-center gap-4 p-4 border border-[rgba(243,237,227,0.08)] rounded-lg hover:border-blue-500 hover:bg-[#2B2419] transition-colors cursor-pointer"
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${
                         isCorrect
@@ -197,10 +197,10 @@ export const ResultsPage: React.FC = () => {
                         {isCorrect ? '✓' : '✗'}
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-gray-900">
+                        <div className="font-semibold text-[#F3EDE3]">
                           Question {index + 1}
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-sm text-[#C8BFB2]">
                           Your answer: {q.user_answer || 'Not Attempted'}
                           {!isCorrect && q.correct_option && q.user_answer && (
                             ` • Correct answer: ${q.correct_option}`

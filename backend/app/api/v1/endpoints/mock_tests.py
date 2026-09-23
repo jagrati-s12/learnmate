@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 
 from app import schemas, models
 from app.database import get_db
+from app.services.ai_test_generator import generate_personalized_test_distribution, build_mock_test_from_distribution
 from app.auth import get_current_active_user, get_current_admin_user
 
 router = APIRouter()
@@ -419,3 +420,48 @@ def delete_mock_test(
     db.delete(mock_test)
     db.commit()
     return None
+
+@router.post("/generate-personalized", response_model=schemas.MockTestResponse)
+def generate_personalized_mock_test(
+    data: schemas.PersonalizedTestRequest,
+    current_user: models.User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Generate an AI personalized mock test based on PYQ weightage and user's weakness profile.
+    """
+
+    # Enforce minimum 4 test attempts before AI can generate
+    user_attempts_count = db.query(models.MockTestAttempt).filter(
+        models.MockTestAttempt.user_id == current_user.id,
+        models.MockTestAttempt.completed_at.isnot(None)
+    ).count()
+    
+    REQUIRED_TESTS = 4
+    if user_attempts_count < REQUIRED_TESTS:
+        remaining = REQUIRED_TESTS - user_attempts_count
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Please complete {remaining} more mock test{'s' if remaining > 1 else ''} first so our AI can accurately analyze your weak and strong topics!"
+        )
+
+    # 1. Get ideal distribution
+    distribution = generate_personalized_test_distribution(
+        db=db,
+        user_id=current_user.id,
+        branch_id=data.branch_id,
+        total_questions=data.total_questions,
+        adaptation_weight=data.adaptation_weight
+    )
+    
+    # 2. Build the test
+    mock_test = build_mock_test_from_distribution(
+        db=db,
+        user_id=current_user.id,
+        name=data.name or "AI Personalized Mock Test",
+        description=data.description,
+        total_questions=data.total_questions,
+        distribution=distribution
+    )
+    
+    return mock_test
