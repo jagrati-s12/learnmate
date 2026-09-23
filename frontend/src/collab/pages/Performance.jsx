@@ -47,17 +47,17 @@ export default function Performance() {
       {/* AI Test Personality */}
       <div className="card mb-6 border-2 border-[#C9A66B]/20 shadow-md bg-gradient-to-br from-[#211C18] to-[#28211C]">
         <div className="border-b border-[#C9A66B]/20 pb-4 mb-4 flex items-center gap-2">
-          <Brain className="text-[#C9A66B]" size={24} />
-          <h3 className="font-semibold text-lg text-[#F3EDE3] m-0">AI Copilot Analysis</h3>
-          <Sparkles className="text-[#C9A66B] w-4 h-4 ml-auto" />
+          <Brain className="text-theme-accent-primary" size={24} />
+          <h3 className="font-semibold text-lg text-theme-text-primary m-0">AI Copilot Analysis</h3>
+          <Sparkles className="text-theme-accent-primary w-4 h-4 ml-auto" />
         </div>
-        <div className="text-[#C8BFB2] leading-relaxed max-w-prose whitespace-pre-line">
+        <div className="text-theme-text-secondary leading-relaxed max-w-prose whitespace-pre-line">
           {loadingAi ? (
-            <div className="animate-pulse flex items-center gap-2 text-[#C9A66B] italic"><Brain className="w-4 h-4"/> Analyzing your performance trends...</div>
+            <div className="animate-pulse flex items-center gap-2 text-theme-accent-primary italic"><Brain className="w-4 h-4"/> Analyzing your performance trends...</div>
           ) : aiProfile ? (
             aiProfile
           ) : (
-            <span className="italic text-[#968C80] text-sm">Attempt more tests to unlock your AI test-taking personality report.</span>
+            <span className="italic text-theme-text-muted text-sm">Attempt more tests to unlock your AI test-taking personality report.</span>
           )}
         </div>
       </div>
@@ -101,18 +101,18 @@ export default function Performance() {
             <div className="card">
               <div className="flex items-center gap-2 mb-4 border-b border-[rgba(243,237,227,0.08)] pb-4">
                 <AlertCircle className="text-red-400" />
-                <h3 className="font-semibold text-lg text-[#F3EDE3]">
+                <h3 className="font-semibold text-lg text-theme-text-primary">
                   Focus Areas (Weak Topics)
                 </h3>
               </div>
               <div className="space-y-4">
                 {performanceData.weakTopics.map((topic, i) => (
-                  <div key={i} className="flex justify-between items-center bg-[#28211C] p-3 rounded-lg border border-red-500/20">
+                  <div key={i} className="flex justify-between items-center bg-theme-bg-surface p-3 rounded-lg border border-red-500/20">
                     <div>
-                      <div className="font-medium text-[#F3EDE3]">
+                      <div className="font-medium text-theme-text-primary">
                         {topic.name}
                       </div>
-                      <div className="text-xs text-[#968C80]">
+                      <div className="text-xs text-theme-text-muted">
                         {topic.totalAttempted} questions attempted
                       </div>
                     </div>
@@ -120,12 +120,12 @@ export default function Performance() {
                       <div className="text-lg font-bold text-red-400">
                         {topic.accuracy}%
                       </div>
-                      <div className="text-xs text-[#968C80]">accuracy</div>
+                      <div className="text-xs text-theme-text-muted">accuracy</div>
                     </div>
                   </div>
                 ))}
                 {performanceData.weakTopics.length === 0 && (
-                  <div className="text-[#968C80] text-sm py-2">No weak topics identified yet. Keep practicing!</div>
+                  <div className="text-theme-text-muted text-sm py-2">No weak topics identified yet. Keep practicing!</div>
                 )}
               </div>
             </div>
@@ -133,18 +133,18 @@ export default function Performance() {
             <div className="card">
               <div className="flex items-center gap-2 mb-4 border-b border-[rgba(243,237,227,0.08)] pb-4">
                 <Target className="text-green-400" />
-                <h3 className="font-semibold text-lg text-[#F3EDE3]">
+                <h3 className="font-semibold text-lg text-theme-text-primary">
                   Strengths
                 </h3>
               </div>
               <div className="space-y-4">
                 {performanceData.strongTopics.map((topic, i) => (
-                  <div key={i} className="flex justify-between items-center bg-[#28211C] p-3 rounded-lg border border-green-500/20">
+                  <div key={i} className="flex justify-between items-center bg-theme-bg-surface p-3 rounded-lg border border-green-500/20">
                     <div>
-                      <div className="font-medium text-[#F3EDE3]">
+                      <div className="font-medium text-theme-text-primary">
                         {topic.name}
                       </div>
-                      <div className="text-xs text-[#968C80]">
+                      <div className="text-xs text-theme-text-muted">
                         {topic.totalAttempted} questions attempted
                       </div>
                     </div>
@@ -152,12 +152,12 @@ export default function Performance() {
                       <div className="text-lg font-bold text-green-400">
                         {topic.accuracy}%
                       </div>
-                      <div className="text-xs text-[#968C80]">accuracy</div>
+                      <div className="text-xs text-theme-text-muted">accuracy</div>
                     </div>
                   </div>
                 ))}
                 {performanceData.strongTopics.length === 0 && (
-                  <div className="text-[#968C80] text-sm py-2">No strong topics identified yet. Keep practicing!</div>
+                  <div className="text-theme-text-muted text-sm py-2">No strong topics identified yet. Keep practicing!</div>
                 )}
               </div>
             </div>

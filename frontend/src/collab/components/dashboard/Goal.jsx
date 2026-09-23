@@ -14,11 +14,11 @@ export default function Goal({ goal, onToggle, onDelete }) {
   return (
     <div className={`goal ${goal.is_completed ? "done" : ""} flex items-center justify-between`}>
       <div className="flex items-center gap-2 cursor-pointer" onClick={handleToggle} style={{ opacity: loading ? 0.7 : 1 }}>
-        {goal.is_completed ? <CheckCircle2 size={19} className="text-green-500" /> : <Circle size={19} className="text-[#968C80]" />}
+        {goal.is_completed ? <CheckCircle2 size={19} className="text-green-500" /> : <Circle size={19} className="text-theme-text-muted" />}
         <span>{goal.text}</span>
       </div>
       {onDelete && (
-        <button onClick={() => onDelete(goal.id)} className="text-[#968C80] hover:text-red-500 p-1 rounded border-none bg-transparent cursor-pointer">
+        <button onClick={() => onDelete(goal.id)} className="text-theme-text-muted hover:text-red-500 p-1 rounded border-none bg-transparent cursor-pointer">
           <Trash2 size={15} />
         </button>
       )}

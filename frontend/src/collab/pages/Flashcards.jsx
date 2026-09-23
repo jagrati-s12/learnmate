@@ -111,7 +111,7 @@ export default function Flashcards() {
 
   if (loading) {
     return (
-      <div className="page flex h-[50vh] items-center justify-center text-[#968C80]">
+      <div className="page flex h-[50vh] items-center justify-center text-theme-text-muted">
         <Loader2 size={32} className="animate-spin" />
       </div>
     );
@@ -126,7 +126,7 @@ export default function Flashcards() {
 
       <div className="flex gap-4 mb-8 border-b pb-4">
         <button
-          className={`font-medium px-4 py-2 rounded-lg flex gap-2 items-center ${activeTab === "review" ? "bg-[#C9A66B] text-white" : "bg-[#302821] text-[#C8BFB2] hover:bg-gray-200"}`}
+          className={`font-medium px-4 py-2 rounded-lg flex gap-2 items-center ${activeTab === "review" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-gray-200"}`}
           onClick={() => setActiveTab("review")}
         >
           <Layers size={18} /> Review Due (
@@ -136,7 +136,7 @@ export default function Flashcards() {
           )
         </button>
         <button
-          className={`font-medium px-4 py-2 rounded-lg ${activeTab === "manage" ? "bg-[#C9A66B] text-white" : "bg-[#302821] text-[#C8BFB2] hover:bg-gray-200"}`}
+          className={`font-medium px-4 py-2 rounded-lg ${activeTab === "manage" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-gray-200"}`}
           onClick={() => setActiveTab("manage")}
         >
           Manage Cards ({flashcards.length})
@@ -152,8 +152,8 @@ export default function Flashcards() {
       {activeTab === "review" && (
         <div className="max-w-2xl mx-auto mt-12">
           {dueCards.length > 0 && currentReviewIndex < dueCards.length ? (
-            <div className="card text-center p-12 min-h-[400px] flex flex-col justify-center items-center shadow-lg relative bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-2xl">
-              <span className="absolute top-4 left-4 text-xs font-semibold text-[#968C80] bg-[#302821] px-3 py-1 rounded-full tracking-wider uppercase">
+            <div className="card text-center p-12 min-h-[400px] flex flex-col justify-center items-center shadow-lg relative bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-2xl">
+              <span className="absolute top-4 left-4 text-xs font-semibold text-theme-text-muted bg-theme-bg-elevated px-3 py-1 rounded-full tracking-wider uppercase">
                 Card {currentReviewIndex + 1} of {dueCards.length}
               </span>
 
@@ -162,7 +162,7 @@ export default function Flashcards() {
                   <div className="text-sm font-semibold text-indigo-500 mb-6 tracking-widest uppercase">
                     Question / Prompt
                   </div>
-                  <h2 className="text-3xl font-bold text-[#F3EDE3] leading-tight mb-8">
+                  <h2 className="text-3xl font-bold text-theme-text-primary leading-tight mb-8">
                     {dueCards[currentReviewIndex].front}
                   </h2>
                   <button
@@ -177,7 +177,7 @@ export default function Flashcards() {
                   <div className="text-sm font-semibold text-green-600 mb-4 tracking-widest uppercase">
                     Answer
                   </div>
-                  <div className="text-xl text-[#C8BFB2] font-medium mb-12 whitespace-pre-wrap bg-green-50 p-6 rounded-xl border border-green-100">
+                  <div className="text-xl text-theme-text-secondary font-medium mb-12 whitespace-pre-wrap bg-green-50 p-6 rounded-xl border border-green-100">
                     {dueCards[currentReviewIndex].back}
                   </div>
                   <div className="flex gap-4 justify-center">
@@ -188,7 +188,7 @@ export default function Flashcards() {
                       ✕ Again (Fail)
                     </button>
                     <button
-                      className="bg-[#302821] hover:bg-blue-200 text-blue-700 font-bold py-3 px-8 rounded-xl flex-1 max-w-[200px]"
+                      className="bg-theme-bg-elevated hover:bg-blue-200 text-blue-700 font-bold py-3 px-8 rounded-xl flex-1 max-w-[200px]"
                       onClick={() => handleReview(true)}
                     >
                       ✓ Good (Pass)
@@ -214,7 +214,7 @@ export default function Flashcards() {
       {activeTab === "manage" && (
         <div>
           {flashcards.length === 0 ? (
-            <div className="text-center p-12 text-[#968C80] border-2 border-dashed rounded-xl">
+            <div className="text-center p-12 text-theme-text-muted border-2 border-dashed rounded-xl">
               No flashcards created yet. Click "New Card" to begin.
             </div>
           ) : (
@@ -225,28 +225,28 @@ export default function Flashcards() {
                   className="card p-5 hover:shadow-md transition"
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <div className="font-semibold text-[#F3EDE3] line-clamp-2">
+                    <div className="font-semibold text-theme-text-primary line-clamp-2">
                       {card.front}
                     </div>
                     <div className="flex gap-1">
                       <button
                         onClick={() => openEditModal(card)}
-                        className="text-[#968C80] hover:text-[#C9A66B] p-1"
+                        className="text-theme-text-muted hover:text-theme-accent-primary p-1"
                       >
                         <Edit3 size={16} />
                       </button>
                       <button
                         onClick={() => handleDelete(card.id)}
-                        className="text-[#968C80] hover:text-red-600 p-1"
+                        className="text-theme-text-muted hover:text-red-600 p-1"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
-                  <div className="text-sm text-[#C8BFB2] bg-[#28211C] p-3 rounded-lg line-clamp-3">
+                  <div className="text-sm text-theme-text-secondary bg-theme-bg-surface p-3 rounded-lg line-clamp-3">
                     {card.back}
                   </div>
-                  <div className="mt-4 flex gap-4 text-xs font-medium text-[#968C80] uppercase tracking-widest">
+                  <div className="mt-4 flex gap-4 text-xs font-medium text-theme-text-muted uppercase tracking-widest">
                     <span>Box: {card.box}</span>
                     <span>
                       Due: {new Date(card.next_review_at).toLocaleDateString()}
@@ -262,13 +262,13 @@ export default function Flashcards() {
       {/* Modal overlay */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-[#211C18] rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="flex justify-between items-center p-5 border-b bg-[#28211C]">
-              <h3 className="font-bold text-lg text-[#F3EDE3]">
+          <div className="bg-theme-bg-secondary rounded-2xl w-full max-w-xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="flex justify-between items-center p-5 border-b bg-theme-bg-surface">
+              <h3 className="font-bold text-lg text-theme-text-primary">
                 {editingCard.id ? "Edit Flashcard" : "Create Flashcard"}
               </h3>
               <button
-                className="text-[#968C80] hover:text-[#F3EDE3] transition"
+                className="text-theme-text-muted hover:text-theme-text-primary transition"
                 onClick={() => setIsModalOpen(false)}
               >
                 <X size={24} />
@@ -277,11 +277,11 @@ export default function Flashcards() {
 
             <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-5">
               <div>
-                <label className="block text-sm font-semibold text-[#C8BFB2] mb-2">
+                <label className="block text-sm font-semibold text-theme-text-secondary mb-2">
                   Front (Question / Prompt)
                 </label>
                 <textarea
-                  className="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-[#211C18] resize-y min-h-[100px]"
+                  className="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-theme-bg-secondary resize-y min-h-[100px]"
                   placeholder="e.g. What is Darcy's Law?"
                   value={editingCard.front}
                   onChange={(e) =>
@@ -291,11 +291,11 @@ export default function Flashcards() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-[#C8BFB2] mb-2">
+                <label className="block text-sm font-semibold text-theme-text-secondary mb-2">
                   Back (Answer)
                 </label>
                 <textarea
-                  className="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-[#211C18] resize-y min-h-[150px]"
+                  className="w-full p-4 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-theme-bg-secondary resize-y min-h-[150px]"
                   placeholder="e.g. V = k * i (Velocity is proportional to hydraulic gradient)"
                   value={editingCard.back}
                   onChange={(e) =>
@@ -305,9 +305,9 @@ export default function Flashcards() {
               </div>
             </div>
 
-            <div className="p-5 border-t bg-[#28211C] flex justify-end gap-3">
+            <div className="p-5 border-t bg-theme-bg-surface flex justify-end gap-3">
               <button
-                className="px-5 py-2.5 font-medium rounded-lg text-[#C8BFB2] hover:bg-gray-200"
+                className="px-5 py-2.5 font-medium rounded-lg text-theme-text-secondary hover:bg-gray-200"
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel

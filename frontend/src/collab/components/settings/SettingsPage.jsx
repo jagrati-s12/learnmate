@@ -18,7 +18,7 @@ export default function SettingsPage({ section }) {
           
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-[#302821] rounded-full flex items-center justify-center text-[#C9A66B] font-bold text-2xl">
+              <div className="w-16 h-16 bg-theme-bg-elevated rounded-full flex items-center justify-center text-theme-accent-primary font-bold text-2xl">
                 {user?.full_name?.charAt(0) || user?.email?.charAt(0)?.toUpperCase() || 'U'}
               </div>
               <div>
@@ -71,7 +71,7 @@ export default function SettingsPage({ section }) {
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input type="checkbox" className="sr-only peer" defaultChecked />
-                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-[#211C18] after:border-[rgba(243,237,227,0.10)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#C9A66B]"></div>
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-theme-bg-secondary after:border-[rgba(243,237,227,0.10)] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#C9A66B]"></div>
               </label>
             </div>
           </div>

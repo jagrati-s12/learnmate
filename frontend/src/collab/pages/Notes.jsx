@@ -102,7 +102,7 @@ export default function Notes() {
 
       {isCreating && (
         <div className="card mb-8 border-[rgba(201,166,107,0.16)] shadow-sm relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-1 h-full bg-[#2B2419]0"></div>
+          <div className="absolute top-0 left-0 w-1 h-full bg-theme-bg-elevated0"></div>
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-semibold text-lg">
               {editingId ? "Edit Note" : "Create New Note"}
@@ -199,7 +199,7 @@ export default function Notes() {
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => startEdit(note)}
-                        className="p-1 text-slate-400 hover:text-[#C9A66B]"
+                        className="p-1 text-slate-400 hover:text-theme-accent-primary"
                       >
                         <Edit2 size={16} />
                       </button>

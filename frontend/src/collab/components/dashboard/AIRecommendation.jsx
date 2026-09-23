@@ -31,9 +31,9 @@ export default function AIRecommendation() {
         </div>
       </div>
 
-      <div className="ai-message bg-[#211C18]/80 backdrop-blur border border-white p-4 rounded-lg my-4 shadow-sm z-10 relative">
-        <strong className="text-[#F3EDE3] block mb-1">{rec ? rec.title : "Analyzing your performance..."}</strong>
-        <p className="text-[#C8BFB2] text-sm leading-relaxed">
+      <div className="ai-message bg-theme-bg-secondary/80 backdrop-blur border border-white p-4 rounded-lg my-4 shadow-sm z-10 relative">
+        <strong className="text-theme-text-primary block mb-1">{rec ? rec.title : "Analyzing your performance..."}</strong>
+        <p className="text-theme-text-secondary text-sm leading-relaxed">
           {rec ? rec.rationale : "Please wait while we crunch your recent test numbers to build a personalized study vector."}
         </p>
       </div>

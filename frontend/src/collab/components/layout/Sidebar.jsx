@@ -100,7 +100,7 @@ export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
               <item.icon size={17} />
               <span>{item.label}</span>
               {item.comingSoon && !collapsed && (
-                <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-[#302821] text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                <span className="ml-auto text-[9px] font-bold uppercase tracking-wider bg-theme-bg-elevated text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">
                   v2.0
                 </span>
               )}

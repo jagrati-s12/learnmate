@@ -184,7 +184,7 @@ export default function MockTest() {
   // VIEW STATES
 
   if (loading && !selectedTest) {
-    return <div className="p-8 text-center text-[#968C80]">Loading tests...</div>;
+    return <div className="p-8 text-center text-theme-text-muted">Loading tests...</div>;
   }
 
   // State 1: Test Selection
@@ -211,8 +211,8 @@ export default function MockTest() {
              <section className="card flex items-center justify-between p-6" key={t.id}>
                <div>
                  <h3 className="font-semibold text-lg">{t.name}</h3>
-                 <p className="text-[#968C80] text-sm mt-1">{t.description}</p>
-                 <div className="flex gap-4 mt-3 text-sm text-[#C8BFB2]">
+                 <p className="text-theme-text-muted text-sm mt-1">{t.description}</p>
+                 <div className="flex gap-4 mt-3 text-sm text-theme-text-secondary">
                     <span>{t.duration_minutes} mins</span>
                     <span>{t.total_marks} Marks</span>
                  </div>
@@ -223,7 +223,7 @@ export default function MockTest() {
              </section>
           ))}
           {testList.length === 0 && (
-             <div className="p-8 text-center text-[#968C80]">No mock tests available in the database yet.</div>
+             <div className="p-8 text-center text-theme-text-muted">No mock tests available in the database yet.</div>
           )}
         </div>
       </div>
@@ -232,7 +232,7 @@ export default function MockTest() {
 
   // State 2: Submitting / Loading Test
   if (loading && selectedTest && !submitted) {
-     return <div className="p-8 text-center text-[#968C80] flex flex-col items-center">
+     return <div className="p-8 text-center text-theme-text-muted flex flex-col items-center">
        <Loader2 size={32} className="animate-spin mb-4" />
        {attemptData ? "Submitting exam..." : "Starting exam..."}
      </div>;
@@ -250,19 +250,19 @@ export default function MockTest() {
         {resultData && (
           <section className="card mb-6 flex gap-8 p-6">
              <div>
-                <span className="block text-sm text-[#968C80]">Score</span>
+                <span className="block text-sm text-theme-text-muted">Score</span>
                 <strong className="text-2xl">{resultData.score} / {resultData.total_marks}</strong>
              </div>
              <div>
-                <span className="block text-sm text-[#968C80]">Accuracy</span>
+                <span className="block text-sm text-theme-text-muted">Accuracy</span>
                 <strong className="text-2xl">{resultData.accuracy}%</strong>
              </div>
              <div>
-                <span className="block text-sm text-[#968C80]">Correct Answers</span>
+                <span className="block text-sm text-theme-text-muted">Correct Answers</span>
                 <strong className="text-2xl text-green-600">{resultData.correct_answers}</strong>
              </div>
              <div>
-                <span className="block text-sm text-[#968C80]">Incorrect</span>
+                <span className="block text-sm text-theme-text-muted">Incorrect</span>
                 <strong className="text-2xl text-red-600">{resultData.incorrect_answers}</strong>
              </div>
           </section>

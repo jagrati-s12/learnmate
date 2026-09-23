@@ -11,34 +11,34 @@ export default function ConfirmSubmitModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-[#211C18] rounded-xl shadow-lg w-full max-w-md overflow-hidden">
+      <div className="bg-theme-bg-secondary rounded-xl shadow-lg w-full max-w-md overflow-hidden">
         <div className="flex justify-between items-center p-4 border-b">
           <h3 className="font-semibold text-lg flex items-center gap-2">
             <AlertTriangle className="text-yellow-500" size={20} />
             Submit Test
           </h3>
-          <button onClick={onClose} className="text-[#968C80] hover:text-[#C8BFB2]">
+          <button onClick={onClose} className="text-theme-text-muted hover:text-theme-text-secondary">
             <X size={20} />
           </button>
         </div>
         
         <div className="p-6">
-          <p className="text-[#C8BFB2] mb-4">
+          <p className="text-theme-text-secondary mb-4">
             Are you sure you want to submit your test? You cannot change your answers after submission.
           </p>
           
-          <div className="bg-[#28211C] p-4 rounded-lg flex justify-between mb-6">
+          <div className="bg-theme-bg-surface p-4 rounded-lg flex justify-between mb-6">
             <div className="text-center">
-              <span className="block text-2xl font-bold text-[#F3EDE3]">{answeredCount}</span>
-              <span className="text-sm text-[#968C80]">Answered</span>
+              <span className="block text-2xl font-bold text-theme-text-primary">{answeredCount}</span>
+              <span className="text-sm text-theme-text-muted">Answered</span>
             </div>
             <div className="text-center">
-              <span className="block text-2xl font-bold text-[#F3EDE3]">{totalQuestions - answeredCount}</span>
-              <span className="text-sm text-[#968C80]">Unanswered</span>
+              <span className="block text-2xl font-bold text-theme-text-primary">{totalQuestions - answeredCount}</span>
+              <span className="text-sm text-theme-text-muted">Unanswered</span>
             </div>
             <div className="text-center">
-              <span className="block text-2xl font-bold text-[#F3EDE3]">{totalQuestions}</span>
-              <span className="text-sm text-[#968C80]">Total</span>
+              <span className="block text-2xl font-bold text-theme-text-primary">{totalQuestions}</span>
+              <span className="text-sm text-theme-text-muted">Total</span>
             </div>
           </div>
           

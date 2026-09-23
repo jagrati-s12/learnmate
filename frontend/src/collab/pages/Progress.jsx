@@ -41,7 +41,7 @@ export default function Progress() {
                   <h3 className="font-medium text-lg text-slate-800">
                     {sub.subject}
                   </h3>
-                  <span className="text-sm font-bold text-[#C9A66B]">
+                  <span className="text-sm font-bold text-theme-accent-primary">
                     {sub.progress}%
                   </span>
                 </div>

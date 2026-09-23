@@ -52,22 +52,23 @@ body {
 }
 
 :root[data-theme="light"] {
-  --bg-primary: #F8F6F3;
-  --bg-secondary: #FFFFFF;
-  --bg-surface: #FDFCFB;
-  --bg-elevated: #F5F3F0;
-  
-  --text-primary: #211C18;
-  --text-secondary: #4A4541;
-  --text-muted: #7A7470;
-  
-  --accent-primary: #A8895C;
-  --accent-secondary: #8A7049;
-  
-  --border-subtle: rgba(33, 28, 24, 0.08);
-  --border-default: rgba(33, 28, 24, 0.12);
-  
-  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  /* Sculptural Lighting / Editorial Warm Theme */
+  --bg-primary: #F4ECE4;
+  --bg-secondary: #FBF8F5;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #E8D9CC;
+
+  --text-primary: #231E1B;
+  --text-secondary: #5A514B;
+  --text-muted: #8B837C;
+
+  --accent-primary: #855535;
+  --accent-secondary: #633E25;
+
+  --border-subtle: rgba(88, 80, 75, 0.1);
+  --border-default: rgba(88, 80, 75, 0.2);
+
+  --shadow-card: 0 6px 24px rgba(99, 62, 37, 0.06);
 }
 
 /* Apply CSS variables */

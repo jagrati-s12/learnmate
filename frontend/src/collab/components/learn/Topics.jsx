@@ -133,7 +133,7 @@ export default function Topics() {
   if (loading) {
     return (
       <div className="page max-w-6xl mx-auto px-4 py-12 flex justify-center">
-        <div className="animate-pulse text-[#968C80] font-medium">Loading topics...</div>
+        <div className="animate-pulse text-theme-text-muted font-medium">Loading topics...</div>
       </div>
     );
   }
@@ -142,18 +142,18 @@ export default function Topics() {
     <div className="page max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6 pb-6 border-b border-gray-100">
-        <h1 className="text-3xl font-extrabold text-[#F3EDE3] tracking-tight mb-2">Topics</h1>
-        <p className="text-[#C8BFB2] text-lg">Explore SSC JE Civil topics and start studying or practicing.</p>
+        <h1 className="text-3xl font-extrabold text-theme-text-primary tracking-tight mb-2">Topics</h1>
+        <p className="text-theme-text-secondary text-lg">Explore SSC JE Civil topics and start studying or practicing.</p>
       </div>
 
       {/* Discovery UI: Search and Filters */}
-      <div className="bg-[#211C18] rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm p-4 mb-8">
+      <div className="bg-theme-bg-secondary rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm p-4 mb-8">
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#968C80]" size={20} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" size={20} />
           <input
             type="text"
             placeholder="Search topics or units (e.g. 'Soil Mechanics', 'Cement')..."
-            className="w-full pl-10 pr-4 py-3 bg-[#28211C] border border-[rgba(243,237,227,0.08)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-[#F3EDE3]"
+            className="w-full pl-10 pr-4 py-3 bg-theme-bg-surface border border-[rgba(243,237,227,0.08)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-theme-text-primary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -161,7 +161,7 @@ export default function Topics() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           <select
-            className="w-full bg-[#211C18] border border-[rgba(243,237,227,0.08)] text-[#C8BFB2] py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
+            className="w-full bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] text-theme-text-secondary py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
             value={unitFilter}
             onChange={(e) => setUnitFilter(e.target.value)}
           >
@@ -172,7 +172,7 @@ export default function Topics() {
           </select>
 
           <select
-            className="w-full bg-[#211C18] border border-[rgba(243,237,227,0.08)] text-[#C8BFB2] py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
+            className="w-full bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] text-theme-text-secondary py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
             value={levelFilter}
             onChange={(e) => setLevelFilter(e.target.value)}
           >
@@ -183,7 +183,7 @@ export default function Topics() {
           </select>
 
           <select
-            className="w-full bg-[#211C18] border border-[rgba(243,237,227,0.08)] text-[#C8BFB2] py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
+            className="w-full bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] text-theme-text-secondary py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
             value={progressFilter}
             onChange={(e) => setProgressFilter(e.target.value)}
           >
@@ -198,16 +198,16 @@ export default function Topics() {
       {/* Results */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-[#968C80] uppercase tracking-wide">
+          <h2 className="text-sm font-bold text-theme-text-muted uppercase tracking-wide">
             {filteredTopics.length} {filteredTopics.length === 1 ? 'Topic' : 'Topics'} Found
           </h2>
         </div>
 
         {filteredTopics.length === 0 ? (
-           <div className="py-16 text-center bg-[#211C18] border border-gray-100 rounded-xl">
+           <div className="py-16 text-center bg-theme-bg-secondary border border-gray-100 rounded-xl">
              <Layers className="mx-auto text-gray-300 mb-3" size={48} />
-             <h3 className="text-lg font-semibold text-[#F3EDE3]">No topics found</h3>
-             <p className="text-[#968C80] mt-1 mb-4">Try a different search term or remove some filters.</p>
+             <h3 className="text-lg font-semibold text-theme-text-primary">No topics found</h3>
+             <p className="text-theme-text-muted mt-1 mb-4">Try a different search term or remove some filters.</p>
              <button
                 onClick={() => {
                   setSearchQuery("");
@@ -215,7 +215,7 @@ export default function Topics() {
                   setLevelFilter("All");
                   setProgressFilter("All");
                 }}
-                className="text-[#C9A66B] font-semibold bg-[#2B2419] px-4 py-2 rounded-lg hover:bg-[#302821] transition"
+                className="text-theme-accent-primary font-semibold bg-theme-bg-elevated px-4 py-2 rounded-lg hover:bg-theme-bg-elevated transition"
               >
                Clear Filters
              </button>
@@ -223,40 +223,40 @@ export default function Topics() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredTopics.map((topic, idx) => (
-              <div key={`${topic.unitId}-${topic.number}-${idx}`} className="bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all flex flex-col">
+              <div key={`${topic.unitId}-${topic.number}-${idx}`} className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all flex flex-col">
                 <div className="mb-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-[#302821] text-[#C8BFB2] px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-theme-bg-elevated text-theme-text-secondary px-2 py-0.5 rounded">
                       UNIT {topic.unitNumber}
                     </span>
                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded ${
-                      topic.sectionType === 'Core' ? 'bg-[#2B2419] text-blue-700' :
-                      topic.sectionType === 'Advanced' ? 'bg-[#2B2419] text-blue-700' :
-                      'bg-[#28211C] text-[#C8BFB2]'
+                      topic.sectionType === 'Core' ? 'bg-theme-bg-elevated text-blue-700' :
+                      topic.sectionType === 'Advanced' ? 'bg-theme-bg-elevated text-blue-700' :
+                      'bg-theme-bg-surface text-theme-text-secondary'
                     }`}>
                       {topic.sectionType}
                     </span>
                   </div>
-                  <h3 className="text-lg font-bold text-[#F3EDE3] leading-tight mb-1">{topic.title}</h3>
-                  <p className="text-sm text-[#968C80] font-medium truncate">{topic.unitTitle}</p>
+                  <h3 className="text-lg font-bold text-theme-text-primary leading-tight mb-1">{topic.title}</h3>
+                  <p className="text-sm text-theme-text-muted font-medium truncate">{topic.unitTitle}</p>
                 </div>
 
                 <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
                   <div className="flex items-center gap-1.5">
-                    {topic.progressState === "Completed" && <><CheckCircle2 size={16} className="text-green-500"/><span className="text-xs font-semibold text-[#C8BFB2]">100%</span></>}
-                    {topic.progressState === "In Progress" && <><CircleDashed size={16} className="text-orange-500"/><span className="text-xs font-semibold text-[#C8BFB2]">{topic.progressValue}%</span></>}
-                    {topic.progressState === "Not Started" && <><CircleDashed size={16} className="text-gray-300"/><span className="text-xs font-semibold text-[#968C80]">0%</span></>}
+                    {topic.progressState === "Completed" && <><CheckCircle2 size={16} className="text-green-500"/><span className="text-xs font-semibold text-theme-text-secondary">100%</span></>}
+                    {topic.progressState === "In Progress" && <><CircleDashed size={16} className="text-orange-500"/><span className="text-xs font-semibold text-theme-text-secondary">{topic.progressValue}%</span></>}
+                    {topic.progressState === "Not Started" && <><CircleDashed size={16} className="text-gray-300"/><span className="text-xs font-semibold text-theme-text-muted">0%</span></>}
                   </div>
 
                   {topic.backendId ? (
                     <button
                       onClick={() => navigate(`/learn/topic/${topic.backendId}`)}
-                      className="flex items-center gap-1 text-sm font-bold text-[#C9A66B] hover:text-blue-800 transition-colors group"
+                      className="flex items-center gap-1 text-sm font-bold text-theme-accent-primary hover:text-blue-800 transition-colors group"
                     >
                       Practice Questions <ChevronRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
                     </button>
                   ) : (
-                    <span className="text-xs font-semibold text-[#968C80] bg-[#28211C] px-2 py-1 rounded">Coming Soon</span>
+                    <span className="text-xs font-semibold text-theme-text-muted bg-theme-bg-surface px-2 py-1 rounded">Coming Soon</span>
                   )}
                 </div>
               </div>

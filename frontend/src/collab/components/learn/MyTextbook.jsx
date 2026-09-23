@@ -141,42 +141,42 @@ export default function MyTextbook() {
   return (
     <div className="page max-w-5xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-[#F3EDE3] tracking-tight mb-2">Civil Engineering Syllabus</h1>
-        <p className="text-[#C8BFB2] text-lg">Complete SSC JE Civil Engineering syllabus — organized unit by unit for structured preparation.</p>
+        <h1 className="text-3xl font-extrabold text-theme-text-primary tracking-tight mb-2">Civil Engineering Syllabus</h1>
+        <p className="text-theme-text-secondary text-lg">Complete SSC JE Civil Engineering syllabus — organized unit by unit for structured preparation.</p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#211C18] p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
-          <span className="text-3xl font-black text-[#C9A66B]">{syllabusData.length}</span>
-          <span className="text-[#968C80] font-medium mt-1">Units</span>
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+          <span className="text-3xl font-black text-theme-accent-primary">{syllabusData.length}</span>
+          <span className="text-theme-text-muted font-medium mt-1">Units</span>
         </div>
-        <div className="bg-[#211C18] p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
           <span className="text-3xl font-black text-indigo-600">{totalSyllabusTopics}+</span>
-          <span className="text-[#968C80] font-medium mt-1">Topics</span>
+          <span className="text-theme-text-muted font-medium mt-1">Topics</span>
         </div>
-        <div className="bg-[#211C18] p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
-          <span className="text-xl font-bold text-[#F3EDE3]">Core + Advanced</span>
-          <span className="text-[#968C80] font-medium mt-1 tracking-tight">Structured Coverage</span>
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+          <span className="text-xl font-bold text-theme-text-primary">Core + Advanced</span>
+          <span className="text-theme-text-muted font-medium mt-1 tracking-tight">Structured Coverage</span>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-between items-center bg-[#211C18] p-2 rounded-lg border border-[rgba(243,237,227,0.08)]">
+      <div className="flex flex-col sm:flex-row gap-4 mb-8 justify-between items-center bg-theme-bg-secondary p-2 rounded-lg border border-[rgba(243,237,227,0.08)]">
         <div className="relative flex-1 w-full flex items-center">
-          <Search className="absolute left-3 text-[#968C80]" size={18} />
+          <Search className="absolute left-3 text-theme-text-muted" size={18} />
           <input
             type="text"
             placeholder="Search topics or units..."
-            className="w-full pl-10 pr-4 py-2 bg-transparent border-none focus:outline-none text-[#C8BFB2] font-medium"
+            className="w-full pl-10 pr-4 py-2 bg-transparent border-none focus:outline-none text-theme-text-secondary font-medium"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="flex gap-2 p-1 bg-[#28211C] rounded-md shrink-0">
+        <div className="flex gap-2 p-1 bg-theme-bg-surface rounded-md shrink-0">
           {["All", "Core", "Advanced"].map(tab => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
-              className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${filter === tab ? 'bg-[#211C18] shadow-sm text-[#C9A66B]' : 'text-[#968C80] hover:text-[#C8BFB2]'}`}
+              className={`px-4 py-1.5 rounded text-sm font-semibold transition-colors ${filter === tab ? 'bg-theme-bg-secondary shadow-sm text-theme-accent-primary' : 'text-theme-text-muted hover:text-theme-text-secondary'}`}
             >
               {tab}
             </button>
@@ -186,42 +186,42 @@ export default function MyTextbook() {
 
       <div className="space-y-4">
         {filteredData.length === 0 ? (
-          <div className="p-12 text-center text-[#968C80] bg-[#211C18] border border-gray-100 rounded-xl">
+          <div className="p-12 text-center text-theme-text-muted bg-theme-bg-secondary border border-gray-100 rounded-xl">
             No units or topics match your search.
           </div>
         ) : (
           filteredData.map(unit => (
-            <div key={unit.id} className="bg-[#211C18] rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm overflow-hidden transition-all duration-200">
+            <div key={unit.id} className="bg-theme-bg-secondary rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm overflow-hidden transition-all duration-200">
               <div
-                className="p-5 cursor-pointer hover:bg-[#28211C] flex items-center justify-between"
+                className="p-5 cursor-pointer hover:bg-theme-bg-surface flex items-center justify-between"
                 onClick={() => toggleUnit(unit.id)}
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <span className="text-xs font-bold bg-[#302821] text-blue-800 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    <span className="text-xs font-bold bg-theme-bg-elevated text-blue-800 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                       UNIT {unit.unitNumber}
                     </span>
                     {unit.pageRange && (
-                       <span className="text-xs text-[#968C80] font-medium">Pages {unit.pageRange}</span>
+                       <span className="text-xs text-theme-text-muted font-medium">Pages {unit.pageRange}</span>
                     )}
                   </div>
-                  <h3 className="text-xl font-bold text-[#F3EDE3]">{unit.title}</h3>
+                  <h3 className="text-xl font-bold text-theme-text-primary">{unit.title}</h3>
                   <div className="flex items-center gap-4 mt-3">
-                    <span className="text-sm font-medium text-[#968C80]">
+                    <span className="text-sm font-medium text-theme-text-muted">
                       {unit.topicsAvailable === false ? '0 Topics' : `${unit.totalTopics} Topics`}
                     </span>
                     {unit.totalTopics > 0 && (
                       <div className="flex items-center gap-2 flex-1 max-w-[200px]">
-                        <div className="w-full bg-[#302821] rounded-full h-2">
+                        <div className="w-full bg-theme-bg-elevated rounded-full h-2">
                           <div className="bg-[#C9A66B] h-2 rounded-full transition-all duration-300" style={{ width: `${unit.progressPercent}%` }}></div>
                         </div>
-                        <span className="text-xs font-semibold text-[#F3EDE3]">{unit.progressPercent}%</span>
+                        <span className="text-xs font-semibold text-theme-text-primary">{unit.progressPercent}%</span>
                       </div>
                     )}
                   </div>
                 </div>
                 <div className="shrink-0 ml-4 flex flex-col items-end gap-2">
-                  <button className="flex items-center gap-1 text-sm font-semibold text-[#C9A66B] bg-[#2B2419] px-3 py-1.5 rounded hover:bg-[#302821] transition">
+                  <button className="flex items-center gap-1 text-sm font-semibold text-theme-accent-primary bg-theme-bg-elevated px-3 py-1.5 rounded hover:bg-theme-bg-elevated transition">
                     {expandedUnits[unit.id] ? (
                       <>Collapse <ChevronUp size={16} /></>
                     ) : (
@@ -233,16 +233,16 @@ export default function MyTextbook() {
 
               {/* Expanded Content */}
               {expandedUnits[unit.id] && (
-                <div className="bg-[#28211C] border-t border-gray-100 p-5">
+                <div className="bg-theme-bg-surface border-t border-gray-100 p-5">
                   {unit.topicsAvailable === false ? (
-                    <div className="text-center py-6 text-[#968C80] text-sm italic">
+                    <div className="text-center py-6 text-theme-text-muted text-sm italic">
                       Topics will be added soon.
                     </div>
                   ) : (
                     <div className="space-y-6">
                       {unit.sections.map((section, idx) => (
                         <div key={idx}>
-                          <h4 className="text-xs font-bold text-[#968C80] uppercase tracking-wider mb-3 ml-1 flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-theme-text-muted uppercase tracking-wider mb-3 ml-1 flex items-center gap-2">
                             {section.title}
                             <hr className="flex-1 border-[rgba(243,237,227,0.08)]" />
                           </h4>
@@ -255,24 +255,24 @@ export default function MyTextbook() {
                                   key={topic.number}
                                   onClick={() => tId ? navigate(`/learn/topic/${tId}`) : null}
                                   className={`flex items-center justify-between p-3 rounded-lg border transition ${
-                                    tId ? 'bg-[#211C18] border-[rgba(243,237,227,0.08)] hover:border-blue-300 hover:shadow-sm cursor-pointer group' : 'bg-[#211C18]/50 border-gray-100 opacity-70'
+                                    tId ? 'bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] hover:border-blue-300 hover:shadow-sm cursor-pointer group' : 'bg-theme-bg-secondary/50 border-gray-100 opacity-70'
                                   }`}
                                 >
                                   <div className="flex items-center gap-3">
-                                    <span className="w-6 h-6 flex items-center justify-center bg-[#302821] text-[#968C80] text-xs font-bold rounded">
+                                    <span className="w-6 h-6 flex items-center justify-center bg-theme-bg-elevated text-theme-text-muted text-xs font-bold rounded">
                                       {topic.number}
                                     </span>
-                                    <span className={`font-semibold ${tId ? 'text-[#F3EDE3] group-hover:text-blue-700' : 'text-[#C8BFB2]'}`}>
+                                    <span className={`font-semibold ${tId ? 'text-theme-text-primary group-hover:text-blue-700' : 'text-theme-text-secondary'}`}>
                                       {topic.title}
                                     </span>
                                   </div>
                                   <div className="flex items-center gap-3">
                                     {state === "Completed" && <span className="flex items-center gap-1 text-xs text-green-600 font-medium"><CheckCircle2 size={14}/> Completed</span>}
                                     {state === "In Progress" && <span className="flex items-center gap-1 text-xs text-orange-500 font-medium"><CircleDashed size={14}/> In Progress</span>}
-                                    {state === "Not Started" && <span className="flex items-center gap-1 text-xs text-[#968C80] font-medium"><CircleDashed size={14}/> Not Started</span>}
+                                    {state === "Not Started" && <span className="flex items-center gap-1 text-xs text-theme-text-muted font-medium"><CircleDashed size={14}/> Not Started</span>}
 
                                     {tId && (
-                                      <div className="text-[#C9A66B] opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all">
+                                      <div className="text-theme-accent-primary opacity-0 group-hover:opacity-100 transform translate-x-1 group-hover:translate-x-0 transition-all">
                                         <ChevronRight size={18} />
                                       </div>
                                     )}
