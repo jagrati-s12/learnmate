@@ -84,18 +84,18 @@ def calculate_user_weaknesses(db: Session, user_id: int):
 
 
 def generate_personalized_test_distribution(
-    db: Session, 
-    user_id: int, 
-    branch_id: int, 
+    db: Session,
+    user_id: int,
+    branch_id: int,
     total_questions: int,
-    adaptation_weight: float = 0.5
+    adaptation_weight: float = 0.5,
+    attempt_count: int = 0
 ):
-    """
-    Combines PYQ weights and User weaknesses to determine the number of questions per topic.
-    Returns dict: topic_id -> question_count
-    """
+    # First 4 mock tests follow PDF PYQ weightages only (no weakness blend)
+    if attempt_count < 4:
+        adaptation_weight = 0.0
     pyq_weights = calculate_pyq_baseline_weights(db, branch_id)
-    user_weaknesses = calculate_user_weaknesses(db, user_id)
+    user_weaknesses = calculate_user_weaknesses(db, user_id) if adaptation_weight > 0 else {}
     
     final_weights = {}
     

@@ -4,13 +4,14 @@ from sqlalchemy import func
 from datetime import datetime, timedelta
 
 from app.database import get_db
-from app.services.ai_personality import generate_student_profile
+from app.services.ai_personality import generate_student_profile, generate_study_plan, generate_mistake_explanation
 from app.models.user import User
 from app.models.attempt import MockTestAttempt, QuestionAttempt
 from app.models.question import Question
 from app.models.subject import Subject
 from app.models.topic import Topic
 from app.models.chapter import Chapter
+from app.models.user_profile import UserWeaknessProfile
 from app.auth import get_current_user
 
 router = APIRouter()
@@ -35,7 +36,7 @@ def get_dashboard_stats(
     
     # Calculate streak appropriately (count unique days with attempts)
     from sqlalchemy import func, cast, Date
-    unique_days = db.query(cast(QuestionAttempt.created_at, Date))        .filter(QuestionAttempt.user_id == current_user.id)        .distinct().count()
+    unique_days = db.query(cast(QuestionAttempt.attempted_at, Date))        .filter(QuestionAttempt.user_id == current_user.id)        .distinct().count()
         
     # Also add mock test days
     mock_days = db.query(cast(MockTestAttempt.created_at, Date))        .filter(MockTestAttempt.user_id == current_user.id)        .distinct().count()
@@ -70,12 +71,12 @@ def get_weekly_activity(
         # or mock test attempts take their time
         mock_time = db.query(func.sum(MockTestAttempt.total_time_seconds)).filter(
             MockTestAttempt.user_id == current_user.id,
-            cast(MockTestAttempt.created_at, Date) == day
+            cast(MockTestAttempt.completed_at, Date) == day
         ).scalar() or 0
         
         q_count = db.query(func.count(QuestionAttempt.id)).filter(
             QuestionAttempt.user_id == current_user.id,
-            cast(QuestionAttempt.created_at, Date) == day
+            cast(QuestionAttempt.attempted_at, Date) == day
         ).scalar() or 0
         
         # approximate 2 min per q attempt if not in test
@@ -219,3 +220,31 @@ def get_ai_profile(
     return {
         "profile": profile_text
     }
+
+@router.get("/weakness-profile")
+def get_weakness_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    profiles = db.query(UserWeaknessProfile).filter(UserWeaknessProfile.user_id == current_user.id).all()
+    result = []
+    for p in profiles:
+        result.append({
+            "topic_id": p.topic_id,
+            "weakness_score": p.weakness_score,
+            "trend": p.trend,
+            "total_attempted": p.total_attempted,
+            "total_correct": p.total_correct
+        })
+    return {"topics": result}
+
+@router.post("/generate-study-plan")
+def post_study_plan(current_user: User = Depends(get_current_user), db: Session = Depends(get_db), data: dict = None):
+    perf = get_performance(current_user, db)
+    hours = data.get("available_hours", 2) if data else 2
+    upcoming = data.get("upcoming_tests", []) if data else []
+    return {"plan": generate_study_plan(perf, hours, upcoming)}
+
+@router.post("/mistake-explanation")
+def post_mistake_explanation(current_user: User = Depends(get_current_user), db: Session = Depends(get_db), data: dict = None):
+    topic = data.get("topic", "") if data else ""
+    wrong = data.get("incorrect_answer", "") if data else ""
+    correct = data.get("correct_answer", "") if data else ""
+    return {"explanation": generate_mistake_explanation(topic, wrong, correct)}
