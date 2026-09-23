@@ -28,7 +28,9 @@ import CollabMockTest from './collab/components/test/MockTest';
 import Progress from './collab/pages/Progress';
 import Performance from './collab/pages/Performance';
 import Bookmarks from './collab/pages/Bookmarks';
-import SettingsPage from './collab/components/settings/SettingsPage';
+import Profile from './collab/components/settings/Profile';
+import Preferences from './collab/components/settings/Preferences';
+import Security from './collab/components/settings/Security';
 
 function App() {
   return (
@@ -76,9 +78,9 @@ function App() {
               <Route path="/track/performance" element={<Performance />} />
               <Route path="/resources/bookmarks" element={<Bookmarks />} />
 
-              <Route path="/settings/profile" element={<SettingsPage section="profile" />} />
-              <Route path="/settings/preferences" element={<SettingsPage section="preferences" />} />
-              <Route path="/settings/security" element={<SettingsPage section="security" />} />
+              <Route path="/settings/profile" element={<Profile />} />
+              <Route path="/settings/preferences" element={<Preferences />} />
+              <Route path="/settings/security" element={<Security />} />
             </Route>
           </Routes>
         </div>

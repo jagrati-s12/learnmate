@@ -25,8 +25,8 @@ export default function Topbar({ title, setOpen }) {
       </div>
 
       <div className="top-actions">
-        <button className="icon-button"><Search size={18} /></button>
-        <button className="icon-button notification">
+        <button className="icon-button" onClick={() => alert("Search functionality coming soon!")}><Search size={18} /></button>
+        <button className="icon-button notification" onClick={() => alert("You have no new notifications.")}>
           <Bell size={18} />
           <span />
         </button>
@@ -40,7 +40,7 @@ export default function Topbar({ title, setOpen }) {
         <button className="icon-button" onClick={handleLogout} title="Logout">
           <LogOut size={18} />
         </button>
-        <div className="top-avatar" title={user?.full_name}>{user?.full_name?.charAt(0) || 'U'}</div>
+        <div className="top-avatar cursor-pointer" onClick={() => navigate("/settings/profile")} title={user?.full_name}>{user?.full_name?.charAt(0) || 'U'}</div>
       </div>
     </header>
   );

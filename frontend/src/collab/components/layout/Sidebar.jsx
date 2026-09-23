@@ -1,6 +1,8 @@
 ﻿import { NavLink } from "react-router-dom";
 import {
   LayoutDashboard,
+  User,
+  Shield,
   BookOpen,
   Layers3,
   Brain,
@@ -14,7 +16,6 @@ import {
   Bookmark,
   UserRound,
   SlidersHorizontal,
-  Shield,
   X,
   Settings,
   ChevronLeft,
@@ -40,7 +41,9 @@ const getNav = (isAdmin) => [
   { label: "Performance", icon: Trophy, to: "/track/performance" },
   { section: "RESOURCES" },
   { label: "Saved Resources", icon: Bookmark, to: "/resources/bookmarks" },
-  { label: "Settings", icon: Settings, to: "/settings/profile" }
+  { label: "Profile", icon: User, to: "/settings/profile" },
+  { label: "Preferences", icon: Settings, to: "/settings/preferences" },
+  { label: "Security", icon: Shield, to: "/settings/security" }
 ];
 
 export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
