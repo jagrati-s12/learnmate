@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Card, CardBody } from '../../components/ui/Card';
+import { Moon, Sun } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 
 import { GoogleLogin } from '@react-oauth/google';
@@ -9,6 +11,7 @@ import { GoogleLogin } from '@react-oauth/google';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const { register, googleLogin } = useAuth();
 
   const [formData, setFormData] = useState({
@@ -72,12 +75,20 @@ export const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#28211C] flex items-center justify-center px-4 py-12">
+        <div className="min-h-screen bg-theme-bg-surface flex items-center justify-center px-4 py-12 transition-colors duration-300 relative">
+      <div className="absolute top-6 right-8">
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-full hover:bg-theme-bg-elevated transition-colors text-theme-text-secondary hover:text-theme-text-primary"
+        >
+          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+        </button>
+      </div>
       <Card className="w-full max-w-md">
         <CardBody>
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-[#F3EDE3] mb-2">Create Account</h2>
-            <p className="text-[#C8BFB2]">Start your SSC JE preparation journey</p>
+            <h2 className="text-3xl font-bold text-theme-text-primary mb-2">Create Account</h2>
+            <p className="text-theme-text-secondary">Start your SSC JE preparation journey</p>
           </div>
 
           {error && (
@@ -88,7 +99,7 @@ export const RegisterPage: React.FC = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="fullName" className="block text-sm font-medium text-[#C8BFB2] mb-2">
+              <label htmlFor="fullName" className="block text-sm font-medium text-theme-text-secondary mb-2">
                 Full Name
               </label>
               <input
@@ -98,13 +109,13 @@ export const RegisterPage: React.FC = () => {
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-[#28211C] text-[#F3EDE3] border border-[rgba(243,237,227,0.10)] rounded-lg focus:ring-2 focus:ring-[#C9A66B] focus:border-transparent transition disabled:bg-[#302821] disabled:opacity-50"
+                className="w-full px-4 py-3 bg-theme-bg-surface text-theme-text-primary border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-accent-primary focus:border-transparent transition disabled:bg-theme-bg-elevated disabled:opacity-50"
                 placeholder="Your full name"
               />
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-[#C8BFB2] mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-theme-text-secondary mb-2">
                 Email
               </label>
               <input
@@ -114,13 +125,13 @@ export const RegisterPage: React.FC = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-[#28211C] text-[#F3EDE3] border border-[rgba(243,237,227,0.10)] rounded-lg focus:ring-2 focus:ring-[#C9A66B] focus:border-transparent transition disabled:bg-[#302821] disabled:opacity-50"
+                className="w-full px-4 py-3 bg-theme-bg-surface text-theme-text-primary border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-accent-primary focus:border-transparent transition disabled:bg-theme-bg-elevated disabled:opacity-50"
                 placeholder="you@example.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-[#C8BFB2] mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-theme-text-secondary mb-2">
                 Password
               </label>
               <input
@@ -130,14 +141,14 @@ export const RegisterPage: React.FC = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-[#28211C] text-[#F3EDE3] border border-[rgba(243,237,227,0.10)] rounded-lg focus:ring-2 focus:ring-[#C9A66B] focus:border-transparent transition disabled:bg-[#302821] disabled:opacity-50"
+                className="w-full px-4 py-3 bg-theme-bg-surface text-theme-text-primary border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-accent-primary focus:border-transparent transition disabled:bg-theme-bg-elevated disabled:opacity-50"
                 placeholder="••••••••"
                 minLength={6}
               />
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#C8BFB2] mb-2">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-theme-text-secondary mb-2">
                 Confirm Password
               </label>
               <input
@@ -147,7 +158,7 @@ export const RegisterPage: React.FC = () => {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 disabled={isLoading}
-                className="w-full px-4 py-3 bg-[#28211C] text-[#F3EDE3] border border-[rgba(243,237,227,0.10)] rounded-lg focus:ring-2 focus:ring-[#C9A66B] focus:border-transparent transition disabled:bg-[#302821] disabled:opacity-50"
+                className="w-full px-4 py-3 bg-theme-bg-surface text-theme-text-primary border border-theme-border rounded-lg focus:ring-2 focus:ring-theme-accent-primary focus:border-transparent transition disabled:bg-theme-bg-elevated disabled:opacity-50"
                 placeholder="••••••••"
                 minLength={6}
               />
@@ -159,10 +170,10 @@ export const RegisterPage: React.FC = () => {
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-[rgba(243,237,227,0.10)]"></div>
+                <div className="w-full border-t border-theme-border"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-[#211C18] text-[#968C80]">Or sign up with</span>
+                <span className="px-2 bg-theme-bg-secondary text-theme-text-muted">Or sign up with</span>
               </div>
             </div>
 
@@ -181,7 +192,7 @@ export const RegisterPage: React.FC = () => {
                 variant="ghost"
                 onClick={() => navigate('/login')}
                 disabled={isLoading}
-                className="text-[#C9A66B] hover:text-blue-700"
+                className="text-theme-accent-primary hover:text-blue-700"
               >
                 Already have an account? Sign in
               </Button>

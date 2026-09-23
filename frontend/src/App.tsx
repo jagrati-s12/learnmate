@@ -35,7 +35,7 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <Router>
-          <div className="min-h-screen bg-[#28211C]">
+          <div className="min-h-screen bg-theme-bg-primary text-theme-text-primary transition-colors duration-300">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
