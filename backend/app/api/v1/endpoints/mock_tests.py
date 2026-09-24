@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+﻿from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
 import random
@@ -429,39 +429,37 @@ def generate_personalized_mock_test(
 ):
     """
     Generate an AI personalized mock test based on PYQ weightage and user's weakness profile.
+    If attempts < 4, it acts as a Baseline PYQ Generator.
     """
 
-    # Enforce minimum 4 test attempts before AI can generate
     user_attempts_count = db.query(models.MockTestAttempt).filter(
         models.MockTestAttempt.user_id == current_user.id,
         models.MockTestAttempt.completed_at.isnot(None)
     ).count()
     
-    REQUIRED_TESTS = 4
-    if user_attempts_count < REQUIRED_TESTS:
-        remaining = REQUIRED_TESTS - user_attempts_count
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Please complete {remaining} more mock test{'s' if remaining > 1 else ''} first so our AI can accurately analyze your weak and strong topics!"
-        )
-
-    # 1. Get ideal distribution
+    # 1. Get ideal distribution (Will automatically fallback to PYQ-only if attempts < 4)
     distribution = generate_personalized_test_distribution(
         db=db,
         user_id=current_user.id,
         branch_id=data.branch_id,
         total_questions=data.total_questions,
-        adaptation_weight=data.adaptation_weight
+        adaptation_weight=data.adaptation_weight,
+        attempt_count=user_attempts_count
     )
+    
+    # Check if we are doing PYQ Phase 1 or AI Phase 2
+    is_baseline = user_attempts_count < 4
+    default_name = "PYQ Baseline Mock Test" if is_baseline else "AI Personalized Mock Test"
     
     # 2. Build the test
     mock_test = build_mock_test_from_distribution(
         db=db,
         user_id=current_user.id,
-        name=data.name or "AI Personalized Mock Test",
+        name=data.name or default_name,
         description=data.description,
         total_questions=data.total_questions,
         distribution=distribution
     )
     
     return mock_test
+
