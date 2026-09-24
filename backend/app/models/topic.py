@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
+from app.models.historical_pyq import HistoricalPYQ
 from app.database import Base
 
 
@@ -18,6 +19,8 @@ class Topic(Base):
     # Relationships
     chapter = relationship("Chapter", back_populates="topics")
     questions = relationship("Question", back_populates="topic", cascade="all, delete-orphan")
+    historical_pyqs = relationship("HistoricalPYQ", back_populates="topic", cascade="all, delete-orphan")
+    weakness_profiles = relationship("UserWeaknessProfile", back_populates="topic", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Topic(id={self.id}, name={self.name}, chapter_id={self.chapter_id})>"

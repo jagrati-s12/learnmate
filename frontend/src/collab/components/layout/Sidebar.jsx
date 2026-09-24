@@ -35,7 +35,7 @@ const getNav = (isAdmin) => [
   { label: "PYQs", icon: Brain, to: "/learn/pyqs" },
   { label: "Mock Tests", icon: Clock3, to: "/test/mock" },
   { section: "AI" },
-  { label: "AI Tutor", icon: Bot, to: "/learn/ai-tutor", comingSoon: true },
+  { label: "AI Tutor", icon: Bot, to: "/learn/ai-tutor" },
   { section: "PROGRESS" },
   { label: "Progress", icon: BarChart3, to: "/track/progress" },
   { label: "Performance", icon: Trophy, to: "/track/performance" },
