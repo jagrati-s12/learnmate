@@ -16,8 +16,8 @@ export const Topbar: React.FC<TopbarProps> = ({ title }) => {
   };
 
   return (
-    <div className="bg-[#211C18] border-b border-[rgba(243,237,227,0.08)] px-6 py-4 flex items-center justify-between">
-      <h1 className="text-2xl font-semibold text-[#F3EDE3]">{title}</h1>
+    <div className="bg-theme-bg-secondary border-b border-[rgba(243,237,227,0.08)] px-6 py-4 flex items-center justify-between">
+      <h1 className="text-2xl font-semibold text-theme-text-primary">{title}</h1>
 
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-3">

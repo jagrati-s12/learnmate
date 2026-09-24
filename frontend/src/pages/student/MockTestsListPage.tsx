@@ -51,10 +51,10 @@ export const MockTestsListPage: React.FC = () => {
   return (
     <>
       <Topbar title="Mock Tests" />
-      <div className="flex-1 overflow-auto p-6 text-[#F3EDE3]">
+      <div className="flex-1 overflow-auto p-6 text-theme-text-primary">
         
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-[#F3EDE3]">Available Mock Tests</h1>
+          <h1 className="text-2xl font-bold text-theme-text-primary">Available Mock Tests</h1>
           <Button 
             variant="primary" 
             onClick={handleGenerateAI} 
@@ -75,10 +75,10 @@ export const MockTestsListPage: React.FC = () => {
              {error}
            </div>
         ) : tests.length === 0 ? (
-           <div className="text-center py-12 bg-[#211C18] rounded-xl border border-[rgba(243,237,227,0.08)]">
-             <Icons.BookOpen className="w-12 h-12 text-[#968C80] mx-auto mb-4" />
-             <h3 className="text-lg font-medium text-[#F3EDE3] mb-1">No Tests Available</h3>
-             <p className="text-[#968C80]">Check back later for new mock tests.</p>
+           <div className="text-center py-12 bg-theme-bg-secondary rounded-xl border border-[rgba(243,237,227,0.08)]">
+             <Icons.BookOpen className="w-12 h-12 text-theme-text-muted mx-auto mb-4" />
+             <h3 className="text-lg font-medium text-theme-text-primary mb-1">No Tests Available</h3>
+             <p className="text-theme-text-muted">Check back later for new mock tests.</p>
            </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -86,17 +86,17 @@ export const MockTestsListPage: React.FC = () => {
               <Card key={test.id} className="flex flex-col hover:shadow-md transition-shadow">
                 <CardBody className="flex-1 flex flex-col">
                   <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-lg font-semibold text-[#F3EDE3]">{test.name}</h3>
-                    <span className="bg-[#302821] text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                    <h3 className="text-lg font-semibold text-theme-text-primary">{test.name}</h3>
+                    <span className="bg-theme-bg-elevated text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
                       {test.test_type.replace('_', ' ').toUpperCase()}
                     </span>
                   </div>
                   
-                  <p className="text-[#C8BFB2] text-sm mb-6 flex-1">
+                  <p className="text-theme-text-secondary text-sm mb-6 flex-1">
                     {test.description || 'Practice your skills with this mock test.'}
                   </p>
                   
-                  <div className="flex items-center justify-between text-sm text-[#968C80] mb-6">
+                  <div className="flex items-center justify-between text-sm text-theme-text-muted mb-6">
                     <div className="flex items-center gap-1">
                       <Icons.Clock className="w-4 h-4" />
                       <span>{test.duration_minutes} mins</span>

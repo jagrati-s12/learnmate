@@ -59,7 +59,7 @@ export const AdminQuestionsPage: React.FC = () => {
               <div key={q.id} className="p-4 hover:bg-slate-50 flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#302821] text-blue-700">
+                    <span className="px-2 py-0.5 rounded text-xs font-medium bg-theme-bg-elevated text-blue-700">
                       ID: {q.id}
                     </span>
                     <span className={`px-2 py-0.5 rounded text-xs font-medium ${
@@ -70,7 +70,7 @@ export const AdminQuestionsPage: React.FC = () => {
                       {q.difficulty}
                     </span>
                     {q.is_pyq && (
-                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-[#302821] text-blue-700">
+                      <span className="px-2 py-0.5 rounded text-xs font-medium bg-theme-bg-elevated text-blue-700">
                         PYQ {q.year}
                       </span>
                     )}
@@ -79,7 +79,7 @@ export const AdminQuestionsPage: React.FC = () => {
                   <p className="text-sm text-slate-500 mt-1">{q.options.length} options configured</p>
                 </div>
                 <div className="flex gap-2 shrink-0 ml-4">
-                  <button className="p-2 text-slate-400 hover:text-[#C9A66B] transition-colors">
+                  <button className="p-2 text-slate-400 hover:text-theme-accent-primary transition-colors">
                     <Icons.Settings className="w-4 h-4" />
                   </button>
                   <button onClick={() => handleDelete(q.id)} className="p-2 text-slate-400 hover:text-red-600 transition-colors">

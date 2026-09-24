@@ -35,7 +35,7 @@ export default function TopicContent() {
   }, [id]);
 
   if (loading) {
-    return <div className="p-8 text-center text-[#968C80]">Loading topic...</div>;
+    return <div className="p-8 text-center text-theme-text-muted">Loading topic...</div>;
   }
 
   if (!topic) {
@@ -57,9 +57,9 @@ export default function TopicContent() {
 
       <section className="card topic-content">
         <div className="topic-content-header pb-4 border-b border-gray-100">
-          <span className="eyebrow uppercase text-[#C9A66B] font-bold text-xs tracking-wider">TOPIC #{topic.id}</span>
-          <h2 className="text-2xl font-bold mt-1 mb-2 text-[#F3EDE3]">{topic.name}</h2>
-          <p className="text-[#C8BFB2]">{topic.description || "Master this concept to score well in SSC JE."}</p>
+          <span className="eyebrow uppercase text-theme-accent-primary font-bold text-xs tracking-wider">TOPIC #{topic.id}</span>
+          <h2 className="text-2xl font-bold mt-1 mb-2 text-theme-text-primary">{topic.name}</h2>
+          <p className="text-theme-text-secondary">{topic.description || "Master this concept to score well in SSC JE."}</p>
         </div>
 
         <div className="tabs mt-4">
@@ -77,13 +77,13 @@ export default function TopicContent() {
         <article className="mt-6">
           {activeTab === "Learn" && (
             <div>
-              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2"><FileText size={18} className="text-[#C9A66B]"/> What to Learn</h3>
-              <p className="text-[#C8BFB2] leading-relaxed mb-6">
+              <h3 className="text-lg font-semibold mb-3 flex items-center gap-2"><FileText size={18} className="text-theme-accent-primary"/> What to Learn</h3>
+              <p className="text-theme-text-secondary leading-relaxed mb-6">
                 Understand the fundamental principles of <strong>{topic.name}</strong>. Focus on standard definitions, formulas, and their practical applications in Civil Engineering.
               </p>
 
               <h3 className="text-lg font-semibold mb-3 flex items-center gap-2"><CheckCircle size={18} className="text-green-500"/> SSC JE Focus</h3>
-              <ul className="list-disc pl-5 space-y-2 text-[#C8BFB2] mb-6">
+              <ul className="list-disc pl-5 space-y-2 text-theme-text-secondary mb-6">
                 <li>Memorize key standard relationships and values.</li>
                 <li>Practice numericals commonly asked in Objective Papers.</li>
                 <li>Ensure you understand the edge cases and typical tricks used in previous year questions.</li>
@@ -101,19 +101,19 @@ export default function TopicContent() {
             <div>
               <h3 className="text-lg font-semibold mb-4">Previous Year Questions ({pyqs.length})</h3>
               {pyqs.length === 0 ? (
-                <div className="p-6 bg-[#28211C] rounded-lg text-center text-[#968C80] text-sm">
+                <div className="p-6 bg-theme-bg-surface rounded-lg text-center text-theme-text-muted text-sm">
                   No PYQs available for this topic yet. Check out the general Practice mode instead.
                 </div>
               ) : (
                 <div className="space-y-4">
                   {pyqs.map((q, idx) => (
-                    <div key={q.id} className="p-4 border border-gray-100 rounded-lg bg-[#211C18] shadow-sm hover:shadow-md transition">
+                    <div key={q.id} className="p-4 border border-gray-100 rounded-lg bg-theme-bg-secondary shadow-sm hover:shadow-md transition">
                       <div className="flex gap-2 mb-2">
-                        <span className="text-xs font-semibold text-[#C9A66B] bg-[#2B2419] px-2 py-0.5 rounded">PYQ {q.year || ""}</span>
-                        {q.source && <span className="text-xs text-[#968C80] bg-[#28211C] px-2 py-0.5 rounded">{q.source}</span>}
+                        <span className="text-xs font-semibold text-theme-accent-primary bg-theme-bg-elevated px-2 py-0.5 rounded">PYQ {q.year || ""}</span>
+                        {q.source && <span className="text-xs text-theme-text-muted bg-theme-bg-surface px-2 py-0.5 rounded">{q.source}</span>}
                       </div>
-                      <p className="text-[#F3EDE3] font-medium mb-3">{q.question_text}</p>
-                      <button className="text-sm font-semibold text-[#C9A66B] hover:text-blue-800" onClick={() => navigate(`/learn/practice?topic_id=${topic.id}`)}>
+                      <p className="text-theme-text-primary font-medium mb-3">{q.question_text}</p>
+                      <button className="text-sm font-semibold text-theme-accent-primary hover:text-blue-800" onClick={() => navigate(`/learn/practice?topic_id=${topic.id}`)}>
                         Solve in Practice Mode →
                       </button>
                     </div>
@@ -124,7 +124,7 @@ export default function TopicContent() {
           )}
 
           {activeTab === "Summary" && (
-            <div className="p-6 bg-[#2B2419] border border-blue-100 rounded-lg">
+            <div className="p-6 bg-theme-bg-elevated border border-blue-100 rounded-lg">
               <h3 className="font-semibold text-blue-900 mb-2">Quick Recap</h3>
               <p className="text-blue-800 text-sm leading-relaxed">
                 You've completed the overview of {topic.name}. To solidify your understanding, we highly recommend taking a Mock Test covering Chapter #{topic.chapter_id} or running through the Practice Module 2-3 times.

@@ -17,11 +17,11 @@ export const Button: React.FC<ButtonProps> = ({
   const baseStyles = 'inline-flex items-center justify-center font-medium transition-colors rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2';
 
   const variants = {
-    primary: 'bg-[#C9A66B] text-[#171411] hover:bg-[#A8895C] focus:ring-[#C9A66B]',
-    secondary: 'bg-[#302821] text-[#F3EDE3] hover:bg-gray-200 focus:ring-[#C9A66B]',
-    outline: 'border border-[rgba(243,237,227,0.10)] text-[#C8BFB2] bg-transparent hover:bg-[#28211C] focus:ring-[#C9A66B]',
+    primary: 'bg-[#C9A66B] text-[#171411] hover:bg-[#A8895C] focus:ring-theme-accent-primary',
+    secondary: 'bg-theme-bg-elevated text-theme-text-primary hover:bg-gray-200 focus:ring-theme-accent-primary',
+    outline: 'border border-theme-border text-theme-text-secondary bg-transparent hover:bg-theme-bg-surface focus:ring-theme-accent-primary',
     danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-    ghost: 'bg-transparent text-[#C8BFB2] hover:bg-[#302821] hover:text-[#F3EDE3] focus:ring-[#C9A66B]'
+    ghost: 'bg-transparent text-theme-text-secondary hover:bg-theme-bg-elevated hover:text-theme-text-primary focus:ring-theme-accent-primary'
   };
 
   const sizes = {

@@ -105,7 +105,7 @@ export const DashboardPage: React.FC = () => {
               <Card key={i}>
                 <CardBody className="text-center py-8">
                   <div className="animate-spin rounded-full border-4 border-t-blue-600 h-12 w-12 mx-auto mb-4"></div>
-                  <p className="text-sm text-[#968C80]">Loading...</p>
+                  <p className="text-sm text-theme-text-muted">Loading...</p>
                 </CardBody>
               </Card>
             ))}
@@ -114,7 +114,7 @@ export const DashboardPage: React.FC = () => {
           <Card className="mb-6">
             <CardBody className="text-center py-8">
               <div className="animate-spin rounded-full border-4 border-t-blue-600 h-12 w-12 mx-auto mb-4"></div>
-              <p className="text-sm text-[#968C80]">Loading...</p>
+              <p className="text-sm text-theme-text-muted">Loading...</p>
             </CardBody>
           </Card>
         </div>
@@ -130,7 +130,7 @@ export const DashboardPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           <Card>
             <CardBody>
-              <div className="text-sm text-[#C8BFB2] mb-1">Questions Attempted</div>
+              <div className="text-sm text-theme-text-secondary mb-1">Questions Attempted</div>
               <div className="text-3xl font-bold mb-1">{stats.questionsAttempted.toLocaleString()}</div>
               <div className="text-sm text-green-600">+124 this week</div>
             </CardBody>
@@ -138,7 +138,7 @@ export const DashboardPage: React.FC = () => {
 
           <Card>
             <CardBody>
-              <div className="text-sm text-[#C8BFB2] mb-1">Overall Accuracy</div>
+              <div className="text-sm text-theme-text-secondary mb-1">Overall Accuracy</div>
               <div className="text-3xl font-bold mb-1">{stats.accuracy}%</div>
               <div className="text-sm text-green-600">+3.2% from last month</div>
             </CardBody>
@@ -146,7 +146,7 @@ export const DashboardPage: React.FC = () => {
 
           <Card>
             <CardBody>
-              <div className="text-sm text-[#C8BFB2] mb-1">Mock Tests Taken</div>
+              <div className="text-sm text-theme-text-secondary mb-1">Mock Tests Taken</div>
               <div className="text-3xl font-bold mb-1">{stats.testsCompleted}</div>
               <div className="text-sm text-green-600">3 this week</div>
             </CardBody>
@@ -154,7 +154,7 @@ export const DashboardPage: React.FC = () => {
 
           <Card>
             <CardBody>
-              <div className="text-sm text-[#C8BFB2] mb-1">Study Streak</div>
+              <div className="text-sm text-theme-text-secondary mb-1">Study Streak</div>
               <div className="text-3xl font-bold mb-1">{stats.streak} days</div>
               <div className="text-sm text-orange-600">Keep it up!</div>
             </CardBody>
@@ -169,8 +169,8 @@ export const DashboardPage: React.FC = () => {
           <CardBody>
             {recentActivity.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-[#C8BFB2]">No recent activity yet.</p>
-                <p className="text-sm text-[#968C80]">
+                <p className="text-theme-text-secondary">No recent activity yet.</p>
+                <p className="text-sm text-theme-text-muted">
                   Start practicing or take a mock test to see your activity here.
                 </p>
               </div>
@@ -179,8 +179,8 @@ export const DashboardPage: React.FC = () => {
                 {recentActivity.map((activity) => (
                   <div key={activity.id} className="flex items-center justify-between p-4 border border-[rgba(243,237,227,0.08)] rounded-lg">
                     <div>
-                      <div className="font-semibold text-[#F3EDE3]">{activity.name}</div>
-                      <div className="text-sm text-[#C8BFB2] mt-1">
+                      <div className="font-semibold text-theme-text-primary">{activity.name}</div>
+                      <div className="text-sm text-theme-text-secondary mt-1">
                         {activity.time} • {activity.questions} questions • {activity.duration}
                       </div>
                     </div>
@@ -190,7 +190,7 @@ export const DashboardPage: React.FC = () => {
                       }`}>
                         {activity.accuracy}%
                       </div>
-                      <div className="text-xs text-[#968C80]">Accuracy</div>
+                      <div className="text-xs text-theme-text-muted">Accuracy</div>
                     </div>
                   </div>
                 ))}

@@ -53,7 +53,7 @@ export const PracticePage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-[#C8BFB2]">Loading practice session...</p>
+            <p className="text-theme-text-secondary">Loading practice session...</p>
           </div>
         </div>
       </>
@@ -86,8 +86,8 @@ export const PracticePage: React.FC = () => {
         <Topbar title="Practice Mode" />
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
-            <h2 className="text-2xl font-semibold text-[#F3EDE3] mb-4">Session Complete!</h2>
-            <p className="text-[#C8BFB2] mb-6">You've completed all questions in this practice session.</p>
+            <h2 className="text-2xl font-semibold text-theme-text-primary mb-4">Session Complete!</h2>
+            <p className="text-theme-text-secondary mb-6">You've completed all questions in this practice session.</p>
             <Button variant="primary" onClick={() => navigate('/subjects')}>
               Back to Subjects
             </Button>
@@ -162,22 +162,22 @@ export const PracticePage: React.FC = () => {
             ← Exit Practice
           </Button>
 
-          <div className="bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-xl p-8 mb-6">
+          <div className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl p-8 mb-6">
             <div className="flex justify-between items-center pb-4 mb-6 border-b border-[rgba(243,237,227,0.08)]">
-              <span className="font-semibold text-[#C8BFB2]">
+              <span className="font-semibold text-theme-text-secondary">
                 Question {currentIndex + 1} of {session.questions.length}
               </span>
               <div className="flex gap-2">
-                <span className="bg-[#2B2419] text-[#C9A66B] px-3 py-1 rounded-md text-sm font-medium capitalize">
+                <span className="bg-theme-bg-elevated text-theme-accent-primary px-3 py-1 rounded-md text-sm font-medium capitalize">
                   {currentQuestion.difficulty}
                 </span>
-                <span className="bg-[#302821] text-[#C8BFB2] px-3 py-1 rounded-md text-sm font-medium">
+                <span className="bg-theme-bg-elevated text-theme-text-secondary px-3 py-1 rounded-md text-sm font-medium">
                   {currentQuestion.marks} {currentQuestion.marks === 1 ? 'mark' : 'marks'}
                 </span>
               </div>
             </div>
 
-            <div className="text-lg leading-relaxed text-[#F3EDE3] mb-8 whitespace-pre-line">
+            <div className="text-lg leading-relaxed text-theme-text-primary mb-8 whitespace-pre-line">
               {currentQuestion.question_text}
             </div>
 
@@ -199,8 +199,8 @@ export const PracticePage: React.FC = () => {
                         : showIncorrect
                         ? 'border-red-500 bg-red-50'
                         : isSelected
-                        ? 'border-blue-500 bg-[#2B2419]'
-                        : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-[#2B2419]'
+                        ? 'border-blue-500 bg-theme-bg-elevated'
+                        : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-theme-bg-elevated'
                     } ${showResult ? 'cursor-default' : 'cursor-pointer'}`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${
@@ -209,8 +209,8 @@ export const PracticePage: React.FC = () => {
                         : showIncorrect
                         ? 'bg-red-500 text-white'
                         : isSelected
-                        ? 'bg-[#2B2419]0 text-white'
-                        : 'bg-[#302821] text-[#C8BFB2]'
+                        ? 'bg-theme-bg-elevated0 text-white'
+                        : 'bg-theme-bg-elevated text-theme-text-secondary'
                     }`}>
                       {option.option_label}
                     </div>
@@ -244,18 +244,18 @@ export const PracticePage: React.FC = () => {
               <div className={`mt-6 p-6 border rounded-lg ${
                 result.is_correct
                   ? 'bg-green-50 border-green-200'
-                  : 'bg-[#2B2419] border-[rgba(201,166,107,0.16)]'
+                  : 'bg-theme-bg-elevated border-[rgba(201,166,107,0.16)]'
               }`}>
                 <div className={`font-semibold mb-2 ${
                   result.is_correct ? 'text-green-900' : 'text-blue-900'
                 }`}>
                   {result.is_correct ? '✓ Correct!' : '✗ Incorrect'}
                 </div>
-                <div className="text-[#C8BFB2] mb-2">
+                <div className="text-theme-text-secondary mb-2">
                   <strong>Correct Answer: {result.correct_option}</strong>
                 </div>
                 {result.explanation && (
-                  <div className="text-[#C8BFB2] whitespace-pre-line">
+                  <div className="text-theme-text-secondary whitespace-pre-line">
                     {result.explanation}
                   </div>
                 )}

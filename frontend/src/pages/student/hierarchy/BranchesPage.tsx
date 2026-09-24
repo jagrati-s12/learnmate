@@ -38,7 +38,7 @@ export const BranchesPage: React.FC = () => {
     <>
       <Topbar title={`Branches for ${exam?.name || 'Exam'}`} />
       <div className="flex-1 overflow-auto p-6">
-        <button className="mb-4 text-[#C9A66B]" onClick={() => navigate('/exams')}>&larr; Back to Exams</button>
+        <button className="mb-4 text-theme-accent-primary" onClick={() => navigate('/exams')}>&larr; Back to Exams</button>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {branches.map((branch) => (
             <Card
@@ -48,7 +48,7 @@ export const BranchesPage: React.FC = () => {
             >
               <CardBody>
                 <h3 className="text-xl font-bold">{branch.name}</h3>
-                {branch.description && <p className="text-[#C8BFB2] mt-2">{branch.description}</p>}
+                {branch.description && <p className="text-theme-text-secondary mt-2">{branch.description}</p>}
               </CardBody>
             </Card>
           ))}

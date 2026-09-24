@@ -142,7 +142,7 @@ export const MockTestPage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-[#C8BFB2]">Loading mock test...</p>
+            <p className="text-theme-text-secondary">Loading mock test...</p>
           </div>
         </div>
       </>
@@ -176,17 +176,17 @@ export const MockTestPage: React.FC = () => {
           {/* Question Area */}
           <div className="lg:col-span-2 overflow-auto">
             {questions.length > 0 ? (
-              <div className="bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-xl p-8">
+              <div className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl p-8">
                 <div className="flex justify-between items-center pb-4 mb-6 border-b border-[rgba(243,237,227,0.08)]">
-                  <span className="font-semibold text-[#C8BFB2]">
+                  <span className="font-semibold text-theme-text-secondary">
                     Question {currentQuestionIndex + 1} of {questions.length}
                   </span>
-                  <span className="bg-[#2B2419] text-[#C9A66B] px-3 py-1 rounded-md text-sm font-medium">
+                  <span className="bg-theme-bg-elevated text-theme-accent-primary px-3 py-1 rounded-md text-sm font-medium">
                     1 mark
                   </span>
                 </div>
 
-                <div className="text-lg leading-relaxed text-[#F3EDE3] mb-8 whitespace-pre-line">
+                <div className="text-lg leading-relaxed text-theme-text-primary mb-8 whitespace-pre-line">
                   {questions[currentQuestionIndex].question_text}
                 </div>
 
@@ -200,14 +200,14 @@ export const MockTestPage: React.FC = () => {
                         disabled={isSubmitting}
                         className={`w-full flex items-start gap-4 p-4 border-2 rounded-lg text-left transition-colors ${
                           isSelected
-                            ? 'border-blue-500 bg-[#2B2419]'
-                            : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-[#2B2419]'
+                            ? 'border-blue-500 bg-theme-bg-elevated'
+                            : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-theme-bg-elevated'
                         } ${isSubmitting ? 'cursor-default' : 'cursor-pointer'}`}
                       >
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold flex-shrink-0 ${
                           isSelected
-                            ? 'bg-[#2B2419]0 text-white'
-                            : 'bg-[#302821] text-[#C8BFB2]'
+                            ? 'bg-theme-bg-elevated0 text-white'
+                            : 'bg-theme-bg-elevated text-theme-text-secondary'
                         }`}>
                           {option.option_label}
                         </div>
@@ -264,13 +264,13 @@ export const MockTestPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-12">
-                <p className="text-[#C8BFB2]">Loading questions...</p>
+                <p className="text-theme-text-secondary">Loading questions...</p>
               </div>
             )}
           </div>
 
           {/* Question Palette */}
-          <div className="bg-[#211C18] border border-[rgba(243,237,227,0.08)] rounded-xl p-6 overflow-auto">
+          <div className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl p-6 overflow-auto">
             {/* Timer */}
             <div className="bg-red-50 text-red-600 p-4 rounded-lg text-center mb-6 font-semibold text-lg">
               ⏱ {formatTime(timeRemaining)}
@@ -283,7 +283,7 @@ export const MockTestPage: React.FC = () => {
                 <span>Answered ({answeredCount})</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-[#211C18] border border-[rgba(243,237,227,0.10)] rounded"></div>
+                <div className="w-6 h-6 bg-theme-bg-secondary border border-theme-border rounded"></div>
                 <span>Not Visited ({questions.length - answeredCount})</span>
               </div>
               <div className="flex items-center gap-2">
@@ -291,7 +291,7 @@ export const MockTestPage: React.FC = () => {
                 <span>Marked ({markedCount})</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-6 h-6 border-2 border-blue-500 bg-[#2B2419] rounded"></div>
+                <div className="w-6 h-6 border-2 border-blue-500 bg-theme-bg-elevated rounded"></div>
                 <span>Current (1)</span>
               </div>
             </div>
@@ -311,12 +311,12 @@ export const MockTestPage: React.FC = () => {
                     onClick={() => setCurrentQuestionIndex(index)}
                     className={`aspect-square border rounded text-sm font-medium ${
                       isCurrent
-                        ? 'border-2 border-blue-500 bg-[#2B2419] text-[#C9A66B]'
+                        ? 'border-2 border-blue-500 bg-theme-bg-elevated text-theme-accent-primary'
                         : isAnswered
                         ? 'bg-green-500 text-white border-green-500'
                         : isMarked
                         ? 'bg-orange-500 text-white border-orange-500'
-                        : 'bg-[#211C18] border-[rgba(243,237,227,0.10)] text-[#C8BFB2]'
+                        : 'bg-theme-bg-secondary border-theme-border text-theme-text-secondary'
                     }`}
                   >
                     {index + 1}

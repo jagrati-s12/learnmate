@@ -99,7 +99,7 @@ export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
               <item.icon size={17} />
               <span className="flex-1">{item.label}</span>
               {item.comingSoon && !collapsed && (
-                <span className="text-[10px] font-bold bg-[#302821] text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
+                <span className="text-[10px] font-bold bg-theme-bg-elevated text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
                   COMING SOON
                 </span>
               )}
@@ -136,7 +136,7 @@ export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
               <item.icon size={17} />
               <span className="flex-1">{item.label}</span>
               {item.comingSoon && !collapsed && (
-                <span className="text-[10px] font-bold bg-[#302821] text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
+                <span className="text-[10px] font-bold bg-theme-bg-elevated text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
                   COMING SOON
                 </span>
               )}
@@ -154,7 +154,7 @@ export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
               <item.icon size={17} />
               <span className="flex-1">{item.label}</span>
               {item.comingSoon && !collapsed && (
-                <span className="text-[10px] font-bold bg-[#302821] text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
+                <span className="text-[10px] font-bold bg-theme-bg-elevated text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
                   COMING SOON
                 </span>
               )}
@@ -172,7 +172,7 @@ export default function Sidebar({ open, setOpen, collapsed, toggleCollapse }) {
               <item.icon size={17} />
               <span className="flex-1">{item.label}</span>
               {item.comingSoon && !collapsed && (
-                <span className="text-[10px] font-bold bg-[#302821] text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
+                <span className="text-[10px] font-bold bg-theme-bg-elevated text-blue-700 px-1.5 py-0.5 rounded-full ml-auto">
                   COMING SOON
                 </span>
               )}

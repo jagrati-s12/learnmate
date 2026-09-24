@@ -70,7 +70,7 @@ export default function Performance() {
       ) : performanceData ? (
         <>
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div className="card text-center p-6 bg-gradient-to-br from-[#C9A66B] to-[#A8895C] text-[#171411] border-none">
+            <div className="card text-center p-6 bg-gradient-to-br from-theme-accent-primary to-[#A8895C] text-[#171411] border-none">
               <TrendingUp className="mx-auto mb-2 opacity-80" size={32} />
               <div className="text-4xl font-bold mb-1">
                 {performanceData.overallScore}%

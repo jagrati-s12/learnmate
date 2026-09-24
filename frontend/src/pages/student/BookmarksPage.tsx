@@ -42,7 +42,7 @@ export const BookmarksPage: React.FC = () => {
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full border-4 border-t-blue-600 h-16 w-16 mx-auto mb-4"></div>
-            <p className="text-[#C8BFB2]">Loading bookmarks...</p>
+            <p className="text-theme-text-secondary">Loading bookmarks...</p>
           </div>
         </div>
       </>
@@ -84,8 +84,8 @@ export const BookmarksPage: React.FC = () => {
             <CardBody>
               {bookmarks.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-[#C8BFB2] mb-2">No bookmarks yet.</p>
-                  <p className="text-sm text-[#968C80]">
+                  <p className="text-theme-text-secondary mb-2">No bookmarks yet.</p>
+                  <p className="text-sm text-theme-text-muted">
                     Bookmark questions during practice to save them here for later review.
                   </p>
                 </div>
@@ -94,20 +94,20 @@ export const BookmarksPage: React.FC = () => {
                   {bookmarks.map((bookmark) => (
                     <div
                       key={bookmark.bookmark_id}
-                      className="flex items-center gap-4 p-4 border border-[rgba(243,237,227,0.08)] rounded-lg hover:border-blue-500 hover:bg-[#2B2419] transition-colors"
+                      className="flex items-center gap-4 p-4 border border-[rgba(243,237,227,0.08)] rounded-lg hover:border-blue-500 hover:bg-theme-bg-elevated transition-colors"
                     >
-                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-semibold flex-shrink-0 bg-[#302821] text-[#C9A66B]">
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center font-semibold flex-shrink-0 bg-theme-bg-elevated text-theme-accent-primary">
                         🔖
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold text-[#F3EDE3]">
+                        <div className="font-semibold text-theme-text-primary">
                           {bookmark.subject_name} • {bookmark.topic_name}
                         </div>
-                        <div className="text-sm text-[#C8BFB2] mt-1 line-clamp-2">
+                        <div className="text-sm text-theme-text-secondary mt-1 line-clamp-2">
                           {bookmark.question_text}
                         </div>
                         {bookmark.bookmarked_at && (
-                          <div className="text-xs text-[#968C80] mt-1">
+                          <div className="text-xs text-theme-text-muted mt-1">
                             Bookmarked on {new Date(bookmark.bookmarked_at).toLocaleDateString()}
                           </div>
                         )}

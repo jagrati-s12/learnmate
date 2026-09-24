@@ -50,7 +50,7 @@ export const ProfilePage: React.FC = () => {
         <Topbar title="My Profile" />
         <div className="flex-1 overflow-auto p-6">
           <div className="text-center py-12">
-            <p className="text-[#C8BFB2]">Loading user data...</p>
+            <p className="text-theme-text-secondary">Loading user data...</p>
           </div>
         </div>
       </>
@@ -90,13 +90,13 @@ export const ProfilePage: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <h2 className="text-2xl font-bold">{user.full_name}</h2>
-                <div className="flex items-center gap-3 text-[#968C80]">
+                <div className="flex items-center gap-3 text-theme-text-muted">
                   <Icons.User className="w-4 h-4" />
                   <span>{user.email}</span>
                 </div>
                 {user.is_admin && (
-                  <div className="flex items-center gap-2 text-sm text-[#C9A66B]">
-                    <span className="bg-[#302821] px-2 py-0.5 rounded-full text-xs font-medium">Admin</span>
+                  <div className="flex items-center gap-2 text-sm text-theme-accent-primary">
+                    <span className="bg-theme-bg-elevated px-2 py-0.5 rounded-full text-xs font-medium">Admin</span>
                   </div>
                 )}
               </div>
@@ -106,8 +106,8 @@ export const ProfilePage: React.FC = () => {
 
           {/* AI Personality */}
           <Card className="mb-6 border-[rgba(201,166,107,0.16)]">
-            <CardHeader className="bg-[#2B2419] flex flex-row items-center gap-2 border-b-0 pb-0">
-              <Brain className="w-5 h-5 text-[#C9A66B]" />
+            <CardHeader className="bg-theme-bg-elevated flex flex-row items-center gap-2 border-b-0 pb-0">
+              <Brain className="w-5 h-5 text-theme-accent-primary" />
               <h2 className="text-lg font-semibold text-blue-900 border-none m-0">AI Test Personality Profile</h2>
             </CardHeader>
             <CardBody>
@@ -119,11 +119,11 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 </div>
               ) : aiProfile ? (
-                <div className="whitespace-pre-line text-[#C8BFB2] leading-relaxed">
+                <div className="whitespace-pre-line text-theme-text-secondary leading-relaxed">
                   {aiProfile}
                 </div>
               ) : (
-                <div className="text-[#968C80] italic">
+                <div className="text-theme-text-muted italic">
                   Take more mock tests to enable your AI Personality Profile!
                 </div>
               )}
@@ -134,28 +134,28 @@ export const ProfilePage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-[#C8BFB2] mb-1">Tests Taken</div>
-                <div className="text-2xl font-bold text-[#C9A66B]">{testsTaken}</div>
+                <div className="text-sm text-theme-text-secondary mb-1">Tests Taken</div>
+                <div className="text-2xl font-bold text-theme-accent-primary">{testsTaken}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-[#C8BFB2] mb-1">Total Score</div>
+                <div className="text-sm text-theme-text-secondary mb-1">Total Score</div>
                 <div className="text-2xl font-bold text-green-600">{totalScore}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-[#C8BFB2] mb-1">Questions</div>
+                <div className="text-sm text-theme-text-secondary mb-1">Questions</div>
                 <div className="text-2xl font-bold text-indigo-600">{totalQuestions}</div>
               </CardBody>
             </Card>
 
             <Card>
               <CardBody className="text-center">
-                <div className="text-sm text-[#C8BFB2] mb-1">Accuracy</div>
+                <div className="text-sm text-theme-text-secondary mb-1">Accuracy</div>
                 <div className="text-2xl font-bold text-orange-600">
                   {accuracy > 0 ? `${accuracy}%` : '—'}
                 </div>
@@ -171,42 +171,42 @@ export const ProfilePage: React.FC = () => {
             <CardBody>
               <div className="space-y-3">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
+                  <div className="w-10 h-10 bg-theme-bg-elevated rounded-full flex items-center justify-center text-theme-text-secondary">
                     <Icons.User className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-[#F3EDE3]">Full Name</p>
-                    <p className="text-[#C8BFB2]">{user.full_name}</p>
+                    <p className="font-medium text-theme-text-primary">Full Name</p>
+                    <p className="text-theme-text-secondary">{user.full_name}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
+                  <div className="w-10 h-10 bg-theme-bg-elevated rounded-full flex items-center justify-center text-theme-text-secondary">
                     <Icons.User className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-[#F3EDE3]">Email</p>
-                    <p className="text-[#C8BFB2]">{user.email}</p>
+                    <p className="font-medium text-theme-text-primary">Email</p>
+                    <p className="text-theme-text-secondary">{user.email}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
+                  <div className="w-10 h-10 bg-theme-bg-elevated rounded-full flex items-center justify-center text-theme-text-secondary">
                     <Icons.Clock className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-[#F3EDE3]">Member Since</p>
-                    <p className="text-[#C8BFB2]">{memberSince}</p>
+                    <p className="font-medium text-theme-text-primary">Member Since</p>
+                    <p className="text-theme-text-secondary">{memberSince}</p>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-[#302821] rounded-full flex items-center justify-center text-[#C8BFB2]">
+                  <div className="w-10 h-10 bg-theme-bg-elevated rounded-full flex items-center justify-center text-theme-text-secondary">
                     <Icons.CheckCircle className="w-4 h-4" />
                   </div>
                   <div className="space-y-1">
-                    <p className="font-medium text-[#F3EDE3]">Account Status</p>
-                    <p className="text-[#C8BFB2]">
+                    <p className="font-medium text-theme-text-primary">Account Status</p>
+                    <p className="text-theme-text-secondary">
                       {user.is_active ? 'Active' : 'Inactive'}
                     </p>
                   </div>
