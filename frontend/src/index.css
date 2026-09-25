@@ -632,7 +632,7 @@ button {
     display: flex;
     align-items: end;
     justify-content: space-around;
-    border-bottom: 1px solid #ececf2;
+    border-bottom: 1px solid var(--border-color);
     padding: 0 10px 0
 }
 
@@ -649,7 +649,7 @@ button {
     width: 25px;
     min-height: 5px;
     border-radius: 6px 6px 0 0;
-    background: linear-gradient(to top, #d9cffd, #7652e9)
+    background: linear-gradient(to top, var(--primary-light), var(--primary-color))
 }
 
 .bar-wrap span {
@@ -1178,6 +1178,77 @@ button {
 .setting-row:last-child {
     color: #db5c63;
     border-bottom: 0
+}
+
+/* =========================================================
+   DASHBOARD-ONLY VISUAL REFINEMENT
+   Safe scoped styling for dashboard.page
+   ========================================================= */
+
+.dashboard-page {
+    background: #F7F9FC;
+}
+
+.dashboard-page .card {
+    background: #FFFFFF;
+    border: 1px solid rgba(100, 120, 160, 0.10);
+    box-shadow: 0 8px 24px rgba(30, 50, 90, 0.08), 0 2px 6px rgba(30, 50, 90, 0.04);
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.dashboard-page .card:hover {
+    box-shadow: 0 12px 32px rgba(30, 50, 90, 0.12), 0 3px 8px rgba(30, 50, 90, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Primary Card: Continue SSC JE Civil */
+.dashboard-page .large-card {
+    box-shadow: 0 10px 30px rgba(45, 105, 230, 0.10), 0 3px 8px rgba(30, 50, 90, 0.05);
+    border: 1px solid rgba(37, 99, 235, 0.15);
+}
+
+.dashboard-page .large-card:hover {
+    box-shadow: 0 14px 40px rgba(45, 105, 230, 0.14), 0 4px 10px rgba(30, 50, 90, 0.07);
+    transform: translateY(-3px);
+}
+
+/* Secondary Card: AI Study Recommendation */
+.dashboard-page .ai-card {
+    background: linear-gradient(135deg, rgba(245, 241, 255, 0.6) 0%, rgba(255, 255, 255, 1) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.08), 0 3px 8px rgba(30, 50, 90, 0.05);
+}
+
+.dashboard-page .ai-card:hover {
+    box-shadow: 0 12px 36px rgba(168, 85, 247, 0.12), 0 3px 8px rgba(30, 50, 90, 0.06);
+    transform: translateY(-2px);
+}
+
+/* Stat Cards */
+.dashboard-page .stats-grid .stat-card {
+    box-shadow: 0 4px 12px rgba(30, 50, 90, 0.06), 0 2px 4px rgba(30, 50, 90, 0.03);
+    border: 1px solid rgba(100, 120, 160, 0.08);
+    transition: box-shadow 180ms ease, transform 180ms ease;
+}
+
+.dashboard-page .stats-grid .stat-card:hover {
+    box-shadow: 0 8px 20px rgba(30, 50, 90, 0.10), 0 2px 6px rgba(30, 50, 90, 0.04);
+    transform: translateY(-1px);
+}
+
+/* Activity Chart */
+.dashboard-page .activity-chart {
+    border-bottom: 1px solid rgba(100, 120, 160, 0.08);
+}
+
+/* Goal List */
+.dashboard-page .goal-list {
+    gap: 12px;
+}
+
+/* Maintain existing card header and content spacing */
+.dashboard-page .card-header {
+    margin-bottom: 17px;
 }
 
 @media(max-width:1000px) {
