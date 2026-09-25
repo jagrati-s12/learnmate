@@ -41,6 +41,7 @@ export interface MockTestSubmissionResult {
 export interface QuestionReview {
   id: number;
   topic_id?: number;
+  topic_name?: string;
   question_text: string;
   difficulty: string;
   marks: number;

@@ -78,7 +78,7 @@ export default function MockTest() {
       // Map API questions into local format compatible with TestAnalytics
       const formatted = data.questions.map((q) => ({
         id: q.id,
-        topic: `Topic #${q.topic_id}`,
+        topic: q.topic_name || `Topic #${q.topic_id}`,
         subtopic: q.difficulty,
         question: q.question_text,
         options: q.options.map(opt => opt.option_text),

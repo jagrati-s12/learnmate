@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, Integer
 import random
 import math
 
@@ -69,7 +69,7 @@ def calculate_user_weaknesses(db: Session, user_id: int):
     q_attempts = db.query(
         Question.topic_id,
         func.count(QuestionAttempt.id).label("total"),
-        func.sum(func.cast(QuestionAttempt.is_correct, func.integer())).label("correct")
+        func.sum(func.cast(QuestionAttempt.is_correct, Integer)).label("correct")
     ).join(Question, QuestionAttempt.question_id == Question.id)\
      .filter(QuestionAttempt.mock_test_attempt_id.in_(attempt_ids))\
      .group_by(Question.topic_id).all()
@@ -77,7 +77,8 @@ def calculate_user_weaknesses(db: Session, user_id: int):
     weakness_scores = {}
     for row in q_attempts:
         if row.total > 0:
-            accuracy = row.correct / row.total
+            correct = row.correct if row.correct is not None else 0
+            accuracy = correct / row.total
             weakness_scores[row.topic_id] = 1.0 - accuracy # Higher score = weaker
             
     return weakness_scores
@@ -141,39 +142,49 @@ def generate_personalized_test_distribution(
 
 
 def build_mock_test_from_distribution(
-    db: Session, 
+    db: Session,
     user_id: int,
-    name: str, 
+    name: str,
     description: str,
-    total_questions: int, 
-    distribution: dict
+    total_questions: int,
+    distribution: dict,
+    is_baseline: bool = False
 ) -> MockTest:
-    
+
     mock_test = MockTest(
         name=name,
         description=description,
         test_type=MockTestType.CUSTOM,
-        duration_minutes=total_questions * 1.2, # Rough standard estimate
+        duration_minutes=120, # Enforced 120 mins
         total_marks=total_questions,
-        negative_marking=0.25
+        negative_marking=0.25,
+        is_baseline=is_baseline,
+        created_by_id=user_id
     )
     db.add(mock_test)
     db.flush() # get ID
     
-    order = 1
+    # Get the attempt IDs of the user's last 3 tests to exclude their questions
+    last_3_attempts = db.query(MockTestAttempt.id).filter(
+        MockTestAttempt.user_id == user_id
+    ).order_by(MockTestAttempt.completed_at.desc().nulls_last()).limit(3).subquery()
+
+    all_selected_questions = []
+
     for topic_id, count in distribution.items():
         if count <= 0: continue
-        
-        # Avoid questions user has already recently attempted
+
+        # Avoid questions user has already recently attempted in last 3 tests
         recent_q_attempts_sq = db.query(QuestionAttempt.question_id).filter(
-            QuestionAttempt.user_id == user_id
+            QuestionAttempt.user_id == user_id,
+            QuestionAttempt.mock_test_attempt_id.in_(last_3_attempts)
         ).subquery()
-        
+
         qs = db.query(Question).filter(
             Question.topic_id == topic_id,
             Question.id.notin_(recent_q_attempts_sq)
         ).order_by(func.random()).limit(count).all()
-        
+
         # Fallback: if not enough fresh questions, just pick any random ones
         if len(qs) < count:
             remaining = count - len(qs)
@@ -183,16 +194,22 @@ def build_mock_test_from_distribution(
                 Question.id.notin_(exclude_ids)
             ).order_by(func.random()).limit(remaining).all()
             qs.extend(more_qs)
-            
-        for q in qs:
-            mtq = MockTestQuestion(
-                mock_test_id=mock_test.id,
-                question_id=q.id,
-                question_order=order
-            )
-            db.add(mtq)
-            order += 1
-            
+
+        all_selected_questions.extend(qs)
+
+    # Combine all questions and shuffle them to simulate the real exam
+    random.shuffle(all_selected_questions)
+
+    order = 1
+    for q in all_selected_questions:
+        mtq = MockTestQuestion(
+            mock_test_id=mock_test.id,
+            question_id=q.id,
+            question_order=order
+        )
+        db.add(mtq)
+        order += 1
+
     db.commit()
     db.refresh(mock_test)
     return mock_test

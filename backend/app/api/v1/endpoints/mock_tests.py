@@ -1,5 +1,5 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.orm import Session, selectinload
 from typing import List, Optional
 import random
 from datetime import datetime, timezone
@@ -70,12 +70,15 @@ def generate_mock_test(
 def get_available_mock_tests(
     skip: int = 0,
     limit: int = 50,
+    current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
     """
-    Get all available mock tests.
+    Get all available mock tests (global ones + user's generated ones).
     """
-    tests = db.query(models.MockTest).offset(skip).limit(limit).all()
+    tests = db.query(models.MockTest).filter(
+        (models.MockTest.created_by_id == None) | (models.MockTest.created_by_id == current_user.id)
+    ).order_by(models.MockTest.id.asc()).offset(skip).limit(limit).all()
     return tests
 
 
@@ -92,43 +95,51 @@ def start_mock_test(
     if not mock_test:
         raise HTTPException(status_code=404, detail="Mock test not found")
 
-    # Get all questions for this test
-    test_questions = db.query(models.MockTestQuestion).filter(
+    # Get total questions without loading them all just to count
+    total_questions = db.query(models.MockTestQuestion).filter(
         models.MockTestQuestion.mock_test_id == test_id
-    ).order_by(models.MockTestQuestion.question_order).all()
+    ).count()
 
-    if not test_questions:
+    if total_questions == 0:
         raise HTTPException(status_code=404, detail="No questions in this test")
 
-    # Create attempt record
+    # Create attempt record FIRST
     attempt = models.MockTestAttempt(
         user_id=current_user.id,
         mock_test_id=test_id,
         started_at=datetime.now(timezone.utc),
-        total_questions=len(test_questions),
+        total_questions=total_questions,
         score=0,
         correct_answers=0,
         incorrect_answers=0,
-        unattempted=len(test_questions)
+        unattempted=total_questions
     )
     db.add(attempt)
     db.commit()
     db.refresh(attempt)
 
+    # NOW fetch questions recursively (AFTER commit, to avoid expire_on_commit invalidating them)
+    test_questions = db.query(models.MockTestQuestion)\
+        .options(
+            selectinload(models.MockTestQuestion.question).selectinload(models.Question.options),
+            selectinload(models.MockTestQuestion.question).selectinload(models.Question.topic)
+        )\
+        .filter(models.MockTestQuestion.mock_test_id == test_id)\
+        .order_by(models.MockTestQuestion.question_order).all()
+
     # Prepare questions (without correct answers)
     questions = []
     for tq in test_questions:
-        question = db.query(models.Question).filter(models.Question.id == tq.question_id).first()
+        question = tq.question
         if question:
-            options = db.query(models.QuestionOption).filter(
-                models.QuestionOption.question_id == question.id
-            ).all()
+            options = question.options
             questions.append(schemas.QuestionWithOptions(
                 id=question.id,
                 topic_id=question.topic_id,
                 question_text=question.question_text,
                 difficulty=question.difficulty,
                 marks=question.marks,
+                topic_name=question.topic.name if question.topic else None,
                 options=[schemas.QuestionOptionResponse(
                     id=opt.id,
                     option_text=opt.option_text,
@@ -188,12 +199,16 @@ def submit_mock_test(
     negative_marking = mock_test.negative_marking if mock_test else 0.25
 
     # Get all questions in this test
-    test_questions = db.query(models.MockTestQuestion).filter(
-        models.MockTestQuestion.mock_test_id == attempt.mock_test_id
-    ).all()
+    test_questions = db.query(models.MockTestQuestion)\
+        .options(
+            selectinload(models.MockTestQuestion.question).selectinload(models.Question.options),
+            selectinload(models.MockTestQuestion.question).selectinload(models.Question.topic)
+        )\
+        .filter(models.MockTestQuestion.mock_test_id == attempt.mock_test_id)\
+        .all()
 
     for tq in test_questions:
-        question = db.query(models.Question).filter(models.Question.id == tq.question_id).first()
+        question = tq.question
         if not question:
             continue
 
@@ -202,10 +217,7 @@ def submit_mock_test(
         time_taken = answer.time_taken_seconds if answer else None
 
         # Get correct option
-        correct_option_obj = db.query(models.QuestionOption).filter(
-            models.QuestionOption.question_id == question.id,
-            models.QuestionOption.is_correct == 1
-        ).first()
+        correct_option_obj = next((opt for opt in question.options if opt.is_correct == 1), None)
 
         if not correct_option_obj:
             continue
@@ -317,19 +329,21 @@ def get_mock_test_result(
     mock_test = db.query(models.MockTest).filter(models.MockTest.id == attempt.mock_test_id).first()
 
     # Get all question attempts with correct answers
-    question_attempts = db.query(models.QuestionAttempt).filter(
-        models.QuestionAttempt.mock_test_attempt_id == attempt_id
-    ).all()
+    question_attempts = db.query(models.QuestionAttempt)\
+        .options(
+            selectinload(models.QuestionAttempt.question).selectinload(models.Question.options),
+            selectinload(models.QuestionAttempt.question).selectinload(models.Question.topic)
+        )\
+        .filter(models.QuestionAttempt.mock_test_attempt_id == attempt_id)\
+        .all()
 
     questions_data = []
     for qa in question_attempts:
-        question = db.query(models.Question).filter(models.Question.id == qa.question_id).first()
+        question = qa.question
         if not question:
             continue
 
-        options = db.query(models.QuestionOption).filter(
-            models.QuestionOption.question_id == question.id
-        ).all()
+        options = question.options
 
         correct_option_obj = next((opt for opt in options if opt.is_correct), None)
         correct_label = correct_option_obj.option_label if correct_option_obj else None
@@ -340,6 +354,7 @@ def get_mock_test_result(
             "question_text": question.question_text,
             "difficulty": question.difficulty,
             "marks": question.marks,
+            "topic_name": question.topic.name if question.topic else None,
             "options": [{"id": opt.id, "option_text": opt.option_text, "option_label": opt.option_label} for opt in options],
             "explanation": question.explanation,
             "correct_option": correct_label,
@@ -429,15 +444,35 @@ def generate_personalized_mock_test(
 ):
     """
     Generate an AI personalized mock test based on PYQ weightage and user's weakness profile.
-    If attempts < 4, it acts as a Baseline PYQ Generator.
+    Requires at least 4 completed mock tests to unlock.
     """
+    # Check if there are any unfinished AI tests
+    unfinished_tests = db.query(models.MockTest).filter(
+        models.MockTest.created_by_id == current_user.id,
+        models.MockTest.is_baseline == False
+    ).all()
+
+    for t in unfinished_tests:
+        completed = any(a.completed_at is not None for a in t.attempts)
+        if not completed:
+            raise HTTPException(
+                status_code=400,
+                detail="You already have an unfinished AI Personalized Test. Please complete it before generating a new one."
+            )
 
     user_attempts_count = db.query(models.MockTestAttempt).filter(
         models.MockTestAttempt.user_id == current_user.id,
         models.MockTestAttempt.completed_at.isnot(None)
     ).count()
-    
-    # 1. Get ideal distribution (Will automatically fallback to PYQ-only if attempts < 4)
+
+    if user_attempts_count < 4:
+        remaining = 4 - user_attempts_count
+        raise HTTPException(
+            status_code=403,
+            detail=f"You have to give {remaining} more mock test{'s' if remaining > 1 else ''} to unlock AI Personalized Tests."
+        )
+
+    # 1. Get ideal distribution
     distribution = generate_personalized_test_distribution(
         db=db,
         user_id=current_user.id,
@@ -446,20 +481,78 @@ def generate_personalized_mock_test(
         adaptation_weight=data.adaptation_weight,
         attempt_count=user_attempts_count
     )
-    
-    # Check if we are doing PYQ Phase 1 or AI Phase 2
-    is_baseline = user_attempts_count < 4
-    default_name = "PYQ Baseline Mock Test" if is_baseline else "AI Personalized Mock Test"
-    
+
     # 2. Build the test
     mock_test = build_mock_test_from_distribution(
         db=db,
         user_id=current_user.id,
-        name=data.name or default_name,
+        name=data.name or "AI Personalized Mock Test",
         description=data.description,
         total_questions=data.total_questions,
-        distribution=distribution
+        distribution=distribution,
+        is_baseline=False
     )
-    
+
     return mock_test
+
+@router.post("/generate-baseline", response_model=schemas.MockTestResponse)
+def generate_baseline_mock_test(
+    data: schemas.PersonalizedTestRequest,
+    current_user: models.User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Generate a baseline PYQ mock test (Mock Test 1 to 4).
+    """
+    # Check if there are any unfinished baseline tests
+    unfinished_tests = db.query(models.MockTest).filter(
+        models.MockTest.created_by_id == current_user.id,
+        models.MockTest.is_baseline == True
+    ).all()
+
+    for t in unfinished_tests:
+        completed = any(a.completed_at is not None for a in t.attempts)
+        if not completed:
+            raise HTTPException(
+                status_code=400,
+                detail="You have an unfinished baseline test. Please complete it before generating the next one."
+            )
+
+    user_attempts_count = db.query(models.MockTestAttempt).filter(
+        models.MockTestAttempt.user_id == current_user.id,
+        models.MockTestAttempt.completed_at.isnot(None)
+    ).count()
+
+    # Can still allow generating baseline if they passed 4, or you can restrict it.
+    test_number = user_attempts_count + 1
+
+    # 1. Get PYQ baseline distribution
+    distribution = generate_personalized_test_distribution(
+        db=db,
+        user_id=current_user.id,
+        branch_id=data.branch_id,
+        total_questions=data.total_questions,
+        adaptation_weight=0.0,  # Enforce 0 adaptation for baseline
+        attempt_count=0         # Force attempt_count < 4 logic in inner service
+    )
+
+    # 2. Build the test
+    test_name = f"Mock Test {test_number}"
+    if data.name and data.name != "AI Personalized PYQ Mock Test":
+        test_name = data.name
+
+    mock_test = build_mock_test_from_distribution(
+        db=db,
+        user_id=current_user.id,
+        name=test_name,
+        description=data.description or f"Standardized PYQ Baseline Test #{test_number}",
+        total_questions=data.total_questions,
+        distribution=distribution,
+        is_baseline=True
+    )
+
+    return mock_test
+
+
+
 

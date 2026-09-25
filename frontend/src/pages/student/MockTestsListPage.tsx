@@ -24,8 +24,12 @@ export const MockTestsListPage: React.FC = () => {
       const newTest = await mockTestsAPI.generateAITest({ branch_id: 2, total_questions: 100 });
       setTests([newTest, ...tests]);
       navigate(`/tests/${newTest.id}`);
-    } catch (err) {
-      setError('Failed to generate AI Test');
+    } catch (err: any) {
+      if (err.response?.data?.detail) {
+        setError(err.response.data.detail);
+      } else {
+        setError('Failed to generate AI Test');
+      }
       console.error(err);
     } finally {
       setGenerating(false);
