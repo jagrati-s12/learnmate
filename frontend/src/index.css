@@ -7,9 +7,31 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+
+  /* Modern SaaS Palette */
+  --bg-color: #F8F9FC;
+  --sidebar-bg: #FFFFFF;
+  --surface-color: #FFFFFF;
+  --border-color: #E7E8EF;
+  --text-main: #1F2A44;
+  --text-muted: #7B8499;
+
+  /* Primary Brand */
+  --primary-color: #6C46E8;
+  --primary-light: #EEE9FF;
+
+  /* Secondary Accent */
+  --secondary-color: #22C7B8;
+  --secondary-light: #E7FAF7;
+
+  /* Feedback */
+  --success: #4CAF78;
+  --warning: #F5A623;
+  --error: #E85D75;
+
+  /* Design Style */
+  --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -34,8 +56,8 @@ body {
 body {
     margin: 0;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: #f7f8fc;
-    color: #1e2230
+    background: var(--bg-color);
+    color: var(--text-main);
 }
 
 button,
@@ -59,8 +81,8 @@ button {
     top: 0;
     bottom: 0;
     width: 240px;
-    background: #fff;
-    border-right: 1px solid #e9eaf0;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border-color);
     padding: 22px 14px;
     display: flex;
     flex-direction: column;
@@ -78,7 +100,7 @@ button {
     width: 31px;
     height: 31px;
     border-radius: 9px;
-    background: linear-gradient(135deg, #7047ef, #a78bfa);
+    background: var(--primary-color);
     color: #fff;
     display: grid;
     place-items: center;
@@ -93,14 +115,14 @@ button {
 .brand span {
     display: block;
     font-size: 10px;
-    color: #8b8e9c;
+    color: var(--text-muted);
     margin-top: 2px
 }
 
 .nav-section {
     font-size: 9px;
     font-weight: 800;
-    color: #a2a4ae;
+    color: var(--text-muted);
     letter-spacing: .12em;
     padding: 18px 11px 7px
 }
@@ -112,20 +134,20 @@ button {
     align-items: center;
     gap: 11px;
     padding: 0 11px;
-    color: #626675;
+    color: var(--text-muted);
     text-decoration: none;
     font-size: 12px;
     margin: 2px 0
 }
 
 .nav-item:hover {
-    background: #f5f3ff;
-    color: #6542dd
+    background: var(--primary-light);
+    color: var(--primary-color)
 }
 
 .nav-item.active {
-    background: #eee9ff;
-    color: #6240df;
+    background: var(--primary-light);
+    color: var(--primary-color);
     font-weight: 700
 }
 
@@ -265,22 +287,22 @@ button {
 }
 
 .exam-card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
-    border-radius: 14px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
     padding: 13px 17px;
     display: flex;
     gap: 10px;
     align-items: center;
-    box-shadow: 0 4px 16px rgba(42, 36, 72, .03)
+    box-shadow: var(--shadow-subtle)
 }
 
 .exam-icon {
     width: 37px;
     height: 37px;
     border-radius: 10px;
-    background: #f0ebff;
-    color: #7049e7;
+    background: var(--primary-light);
+    color: var(--primary-color);
     display: grid;
     place-items: center
 }
@@ -308,9 +330,9 @@ button {
 }
 
 .stat-card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
-    border-radius: 13px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
     padding: 17px;
     display: flex;
     gap: 12px;
@@ -321,8 +343,8 @@ button {
     width: 38px;
     height: 38px;
     border-radius: 10px;
-    background: #f0ecff;
-    color: #714be7;
+    background: var(--primary-light);
+    color: var(--primary-color);
     display: grid;
     place-items: center
 }
@@ -360,11 +382,11 @@ button {
 }
 
 .card {
-    background: #fff;
-    border: 1px solid #e9e8f0;
-    border-radius: 14px;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 3px 14px rgba(40, 36, 72, .025)
+    box-shadow: var(--shadow-subtle)
 }
 
 .card-header {
@@ -566,15 +588,17 @@ button {
 }
 
 .primary-button {
-    background: #7047e7;
-    color: #fff
+    background: var(--primary-color);
+    color: #fff;
+    border-radius: 10px;
 }
 
 .secondary-button,
 .filter-button {
-    background: #fff;
-    border: 1px solid #e5e5eb;
-    color: #666976
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 10px;
 }
 
 .goal-list {
