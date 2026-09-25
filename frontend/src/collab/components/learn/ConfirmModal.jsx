@@ -4,19 +4,19 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full overflow-hidden animate-in zoom-in-95">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-theme-bg-primary/80 backdrop-blur-sm animate-in fade-in">
+      <div className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl shadow-xl max-w-md w-full overflow-hidden animate-in zoom-in-95">
         <div className="p-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-2">{title}</h3>
-          <p className="text-gray-600 mb-6">{message}</p>
+          <h3 className="text-xl font-bold text-theme-text-primary mb-2">{title}</h3>
+          <p className="text-theme-text-secondary mb-6">{message}</p>
           <div className="flex justify-end gap-3">
-            <button 
+            <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-700 font-medium bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="px-4 py-2 text-theme-text-primary font-medium bg-theme-bg-elevated hover:bg-theme-bg-elevated/80 rounded-lg transition-colors border border-[rgba(243,237,227,0.08)]"
             >
               {cancelText}
             </button>
-            <button 
+            <button
               onClick={() => {
                 onConfirm();
                 onClose();

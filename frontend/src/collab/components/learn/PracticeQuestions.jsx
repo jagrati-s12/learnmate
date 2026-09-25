@@ -13,6 +13,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import PageIntro from "../common/PageIntro";
 import ConfirmModal from "./ConfirmModal";
 import { questionsAPI } from "../../../api/questions";
+import { bookmarksAPI } from "../../../api/bookmarks";
+import { Flag, Bookmark as BookmarkIcon } from "lucide-react";
 import apiClient from "../../../api/client";
 
 export default function PracticeQuestions() {
@@ -44,7 +46,7 @@ export default function PracticeQuestions() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
 
-  // { [questionId]: { selected, is_correct, correct_option, explanation, loading } }
+  // { [questionId]: { selected, is_correct, correct_option, explanation, loading, markedForReview, isBookmarked } }
   const [answers, setAnswers] = useState({});
   const [isFinished, setIsFinished] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -165,6 +167,40 @@ export default function PracticeQuestions() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPyq, selectedQuestionId]);
 
+  const toggleReview = () => {
+    if (!activeQuestion) return;
+    setAnswers(prev => {
+      const qId = activeQuestion.id;
+      const current = prev[qId] || {};
+      return { ...prev, [qId]: { ...current, markedForReview: !current.markedForReview } };
+    });
+  };
+
+  const toggleBookmark = async () => {
+    if (!activeQuestion) return;
+    const qId = activeQuestion.id;
+    const isBookmarked = answers[qId]?.isBookmarked || false;
+
+    // Optimistic
+    setAnswers(prev => ({
+      ...prev, [qId]: { ...(prev[qId] || {}), isBookmarked: !isBookmarked }
+    }));
+
+    try {
+      if (isBookmarked) {
+        await bookmarksAPI.deleteBookmark(qId);
+      } else {
+        await bookmarksAPI.createBookmark(qId);
+      }
+    } catch (err) {
+      console.error("Bookmark toggle failed:", err);
+      // Revert on failure
+      setAnswers(prev => ({
+        ...prev, [qId]: { ...(prev[qId] || {}), isBookmarked: isBookmarked }
+      }));
+    }
+  };
+
   // ── Option select & submit ─────────────────────────────────────────────────
   const handleSelectOption = async (question, optionLabel) => {
     const qId = question.id;
@@ -226,7 +262,7 @@ export default function PracticeQuestions() {
   if (loadingIndex) {
     return (
       <div className="page">
-        <div className="card flex items-center justify-center gap-3 p-12 text-gray-500">
+        <div className="card flex items-center justify-center gap-3 p-12 text-theme-text-muted">
           <div className="w-5 h-5 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
           Loading practice session…
         </div>
@@ -237,7 +273,7 @@ export default function PracticeQuestions() {
   if (indexError) {
     return (
       <div className="page">
-        <div className="bg-red-50 text-red-600 p-4 rounded-md mb-4">{indexError}</div>
+        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-4 rounded-md mb-4">{indexError}</div>
         <button className="secondary-button" onClick={() => navigate(-1)}>
           Go Back
         </button>
@@ -252,7 +288,7 @@ export default function PracticeQuestions() {
           title={pageTitle}
           subtitle={isPyq ? "No PYQs found for this filter." : "No questions found for this topic."}
         />
-        <div className="card p-8 text-center text-gray-500">
+        <div className="card p-8 text-center text-theme-text-muted">
           We are currently adding questions. Please check back later.
           <br />
           <br />
@@ -284,26 +320,26 @@ export default function PracticeQuestions() {
 
         <section className="card mb-6 p-6">
           <div className="flex flex-wrap gap-8">
-            <StatChip icon={<Hash size={18} className="text-blue-500" />} label="Total" value={totalQuestions} valueClass="text-gray-800" />
-            <StatChip icon={<BookOpen size={18} className="text-purple-500" />} label="Attempted" value={answered.length} valueClass="text-purple-700" />
-            <StatChip icon={<Target size={18} className="text-green-500" />} label="Correct" value={correctCount} valueClass="text-green-700" />
-            <StatChip icon={<XCircle size={18} className="text-red-400" />} label="Wrong" value={wrongCount} valueClass="text-red-600" />
-            <StatChip icon={<TrendingUp size={18} className="text-orange-500" />} label="Accuracy" value={`${accuracy}%`} valueClass={accuracy >= 60 ? "text-green-700" : "text-orange-600"} />
-            <StatChip label="Skipped" value={unattempted} valueClass="text-gray-500" />
+            <StatChip icon={<Hash size={18} className="text-blue-500" />} label="Total" value={totalQuestions} valueClass="text-theme-text-primary" />
+            <StatChip icon={<BookOpen size={18} className="text-purple-500" />} label="Attempted" value={answered.length} valueClass="text-purple-700 dark:text-purple-400" />
+            <StatChip icon={<Target size={18} className="text-green-500" />} label="Correct" value={correctCount} valueClass="text-green-700 dark:text-green-400" />
+            <StatChip icon={<XCircle size={18} className="text-red-400" />} label="Wrong" value={wrongCount} valueClass="text-red-600 dark:text-red-400" />
+            <StatChip icon={<TrendingUp size={18} className="text-orange-500" />} label="Accuracy" value={`${accuracy}%`} valueClass={accuracy >= 60 ? "text-green-700 dark:text-green-400" : "text-orange-600"} />
+            <StatChip label="Skipped" value={unattempted} valueClass="text-theme-text-muted" />
           </div>
         </section>
 
         {answered.length > 0 && (
           <div className="card p-4 mb-6">
-            <div className="flex justify-between text-xs text-gray-500 mb-1">
+            <div className="flex justify-between text-xs text-theme-text-muted mb-1">
               <span>Score</span>
               <span>
                 {correctCount} / {totalQuestions}
               </span>
             </div>
-            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex">
+            <div className="w-full h-3 bg-theme-bg-secondary rounded-full overflow-hidden flex">
               <div
-                className="h-full bg-green-500 transition-all duration-700"
+                className="h-full bg-green-50 dark:bg-green-900/20 transition-all duration-700"
                 style={{ width: `${(correctCount / totalQuestions) * 100}%` }}
               />
               <div
@@ -311,15 +347,15 @@ export default function PracticeQuestions() {
                 style={{ width: `${(wrongCount / totalQuestions) * 100}%` }}
               />
             </div>
-            <div className="flex gap-4 mt-2 text-xs text-gray-500">
+            <div className="flex gap-4 mt-2 text-xs text-theme-text-muted">
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Correct
+                <span className="w-2 h-2 rounded-full bg-green-50 dark:bg-green-900/20 inline-block" /> Correct
               </span>
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-red-400 inline-block" /> Wrong
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-gray-200 inline-block" /> Skipped
+                <span className="w-2 h-2 rounded-full bg-theme-bg-elevated inline-block" /> Skipped
               </span>
             </div>
           </div>
@@ -381,19 +417,19 @@ export default function PracticeQuestions() {
       </div>
 
       <div className="card flex flex-wrap gap-6 px-5 py-3 mb-5 text-xs">
-        <span className="text-gray-500">
-          Total: <strong className="text-gray-800">{totalQuestions}</strong>
+        <span className="text-theme-text-muted">
+          Total: <strong className="text-theme-text-primary">{totalQuestions}</strong>
         </span>
-        <span className="text-gray-500">
-          Attempted: <strong className="text-purple-700">{answered.length}</strong>
+        <span className="text-theme-text-muted">
+          Attempted: <strong className="text-purple-700 dark:text-purple-400">{answered.length}</strong>
         </span>
-        <span className="text-gray-500">
+        <span className="text-theme-text-muted">
           Correct: <strong className="text-green-600">{correctCount}</strong>
         </span>
-        <span className="text-gray-500">
+        <span className="text-theme-text-muted">
           Wrong: <strong className="text-red-500">{wrongCount}</strong>
         </span>
-        <span className="text-gray-500">
+        <span className="text-theme-text-muted">
           Accuracy:{" "}
           <strong className={accuracy >= 60 ? "text-green-600" : "text-orange-500"}>
             {answered.length > 0 ? `${accuracy}%` : "—"}
@@ -411,14 +447,14 @@ export default function PracticeQuestions() {
       >
         {/* Left: navigator (PYQ index or full questions list) */}
         <aside className="card question-palette">
-          <div className="px-4 pt-4 pb-2 border-b border-gray-100 flex flex-col gap-2">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Questions</p>
+          <div className="px-4 pt-4 pb-2 border-b border-[rgba(243,237,227,0.08)] flex flex-col gap-2">
+            <p className="text-xs font-semibold text-theme-text-muted uppercase tracking-wide">Questions</p>
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-80" size={14} />
               <input
                 type="text"
                 placeholder="Search subject, topic, or #..."
-                className="w-full pl-8 pr-3 py-1.5 bg-gray-50 border border-gray-200 rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full pl-8 pr-3 py-1.5 bg-theme-bg-elevated border border-[rgba(243,237,227,0.08)] rounded text-xs focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -461,7 +497,7 @@ export default function PracticeQuestions() {
                 });
                 
                 if (filteredList.length === 0) {
-                  return <div className="col-span-5 text-gray-400 text-xs text-center py-4">No matches</div>;
+                  return <div className="col-span-5 text-theme-text-muted opacity-80 text-xs text-center py-4">No matches</div>;
                 }
                 
                 return filteredList.map((q) => {
@@ -469,10 +505,14 @@ export default function PracticeQuestions() {
                   const status = getQuestionStatus(q);
                   const isActive = idx === activeIndex;
 
+                  const ans = answers[q.id];
+                  const isMarkedForReview = ans?.markedForReview;
+
                   let cls = "palette-number";
                   if (isActive) cls += " current";
                   else if (status === "correct") cls += " correct";
                   else if (status === "wrong") cls += " wrong";
+                  if (isMarkedForReview) cls += " marked ring-2 ring-orange-500 ring-offset-1 dark:ring-offset-[#1E1E1E]";
 
                   const displayNumber = isPyq && q?.number ? q.number : idx + 1;
 
@@ -493,30 +533,38 @@ export default function PracticeQuestions() {
             </div>
           </div>
 
-          <div className="px-4 pb-4 flex flex-col gap-1 border-t border-gray-50 pt-3">
-            <LegendRow color="bg-gray-200" label="Not attempted" />
+          <div className="px-4 pb-4 flex flex-col gap-1 border-t border-[rgba(243,237,227,0.04)] pt-3">
+            <LegendRow color="bg-theme-bg-elevated border border-[rgba(243,237,227,0.08)] text-theme-text-muted" custom={true} label="Not attempted" />
             <LegendRow color="bg-green-300" label="Correct" />
             <LegendRow color="bg-red-300" label="Wrong" />
-            <LegendRow color="bg-purple-500" label="Currently viewing" />
+            <LegendRow color="bg-purple-50 dark:bg-purple-900/20" label="Currently viewing" />
+            <LegendRow color="w-3 h-3 rounded-full ring-2 ring-orange-500" custom={true} label="For Review" />
           </div>
         </aside>
 
         {/* Right: MCQ engine */}
         <section className="card question-card">
-          <div className="question-card-header flex justify-between items-center bg-gray-50 px-5 py-4 border-b border-gray-100 rounded-t-xl">
+          <div className="question-card-header flex justify-between items-center bg-theme-bg-elevated px-5 py-4 border-b border-[rgba(243,237,227,0.08)] rounded-t-xl">
             <div>
-              <span className="font-bold text-gray-700 text-sm">
-                Question {activeIndex + 1} <span className="font-normal text-gray-400">of {totalQuestions}</span>
+              <span className="font-bold text-theme-text-primary font-medium text-sm">
+                Question {activeIndex + 1} <span className="font-normal text-theme-text-muted opacity-80">of {totalQuestions}</span>
               </span>
             </div>
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={toggleBookmark}
+                className="text-theme-text-muted hover:text-blue-600 transition-colors mr-2 flex-shrink-0"
+                title="Bookmark this question"
+              >
+                <BookmarkIcon size={20} className={activeAnswer?.isBookmarked ? "fill-blue-600 text-blue-600" : ""} />
+              </button>
               {activeQuestion?.subject_name && (
-                <span className="text-xs font-semibold text-gray-600 bg-gray-100 px-2 py-1 rounded">{activeQuestion.subject_name}</span>
+                <span className="text-xs font-semibold text-theme-text-secondary bg-theme-bg-secondary px-2 py-1 rounded">{activeQuestion.subject_name}</span>
               )}
               {activeQuestion?.topic_name && (
                 <>
-                  <span className="text-gray-300 text-xs">/</span>
-                  <span className="text-xs font-semibold text-blue-700 bg-blue-50 border border-blue-100 px-2 py-1 rounded">{activeQuestion.topic_name}</span>
+                  <span className="text-theme-text-muted opacity-50 text-xs">/</span>
+                  <span className="text-xs font-semibold text-blue-700 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 px-2 py-1 rounded">{activeQuestion.topic_name}</span>
                 </>
               )}
               {activeQuestion?.difficulty && (
@@ -530,10 +578,10 @@ export default function PracticeQuestions() {
           </div>
 
           <div className="px-6 py-5">
-            {!activeQuestion && (detailLoading || isPyq) && <div className="text-gray-500">Loading question...</div>}
+            {!activeQuestion && (detailLoading || isPyq) && <div className="text-theme-text-muted">Loading question...</div>}
 
             {detailError && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl text-red-700 dark:text-red-400">
                 <div className="font-semibold mb-2">{detailError}</div>
                 <button
                   className="primary-button"
@@ -546,7 +594,7 @@ export default function PracticeQuestions() {
 
             {activeQuestion && (
               <>
-                <h2 className="text-base font-medium text-gray-900 mb-5 leading-relaxed">
+                <h2 className="text-base font-medium text-theme-text-primary mb-5 leading-relaxed">
                   {activeQuestion.question_text}
                 </h2>
 
@@ -559,19 +607,19 @@ export default function PracticeQuestions() {
                       "answer-option w-full border p-4 rounded-xl flex items-start gap-3 transition-all text-left ";
 
                     if (activeAnswer?.loading && isSelected) {
-                      optCls += "bg-blue-50 border-blue-400 opacity-70 cursor-wait ";
+                      optCls += "bg-blue-50 dark:bg-blue-900/20 border-blue-400 opacity-70 cursor-wait ";
                     } else if (isLocked) {
                       optCls += "cursor-default ";
                       if (isCorrectOpt) {
-                        optCls += "bg-green-50 border-green-400 ";
+                        optCls += "bg-green-50 dark:bg-green-900/20 border-green-400 ";
                       } else if (isSelected && !activeAnswer.is_correct) {
-                        optCls += "bg-red-50 border-red-400 ";
+                        optCls += "bg-red-50 dark:bg-red-900/20 border-red-400 ";
                       } else {
-                        optCls += "bg-white border-gray-200 opacity-50 ";
+                        optCls += "border border-[rgba(243,237,227,0.08)] bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] opacity-50 ";
                       }
                     } else {
                       optCls +=
-                        "bg-white border-gray-200 hover:border-purple-400 hover:bg-purple-50 cursor-pointer ";
+                        "border border-[rgba(243,237,227,0.08)] bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] hover:border-purple-400 hover:bg-purple-50 dark:bg-purple-900/20 cursor-pointer ";
                     }
 
                     return (
@@ -585,10 +633,10 @@ export default function PracticeQuestions() {
                           className={`option-letter flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold border transition-colors
                             ${
                               isLocked && isCorrectOpt
-                                ? "bg-green-500 border-green-600 text-white"
+                                ? "bg-green-50 dark:bg-green-900/20 border-green-600 text-white"
                                 : isLocked && isSelected && !activeAnswer.is_correct
-                                  ? "bg-red-500 border-red-600 text-white"
-                                  : "bg-gray-100 border-gray-300 text-gray-700"
+                                  ? "bg-red-50 dark:bg-red-900/20 border-red-600 text-white"
+                                  : "bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] text-theme-text-primary font-medium"
                             }`}
                         >
                           {option.option_label}
@@ -607,19 +655,19 @@ export default function PracticeQuestions() {
                 </div>
 
                 {isLocked && activeAnswer.explanation && (
-                  <div className="mt-5 p-4 bg-blue-50 border border-blue-100 rounded-xl">
-                    <div className="flex items-center gap-2 mb-2 font-semibold text-blue-900 text-sm">
+                  <div className="mt-5 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-xl">
+                    <div className="flex items-center gap-2 mb-2 font-semibold text-blue-900 dark:text-blue-300 text-sm">
                       <AlertCircle size={16} />
                       Explanation
                     </div>
-                    <p className="text-blue-800 text-sm leading-relaxed whitespace-pre-wrap">{activeAnswer.explanation}</p>
+                    <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed whitespace-pre-wrap">{activeAnswer.explanation}</p>
                   </div>
                 )}
 
                 {isLocked && !activeAnswer.explanation && (
                   <div
                     className={`mt-4 flex items-center gap-2 text-sm font-semibold ${
-                      activeAnswer.is_correct ? "text-green-600" : "text-red-600"
+                      activeAnswer.is_correct ? "text-green-600" : "text-red-600 dark:text-red-400"
                     }`}
                   >
                     {activeAnswer.is_correct ? (
@@ -637,7 +685,7 @@ export default function PracticeQuestions() {
             )}
           </div>
 
-          <div className="question-actions flex justify-between items-center px-6 py-4 border-t border-gray-100">
+          <div className="question-actions flex justify-between items-center px-6 py-4 border-t border-[rgba(243,237,227,0.08)]">
             <button
               className="secondary-button flex items-center gap-1"
               disabled={activeIndex === 0}
@@ -645,8 +693,15 @@ export default function PracticeQuestions() {
             >
               ← Prev
             </button>
+            <button
+              className={`secondary-button flex items-center gap-2 ${activeAnswer?.markedForReview ? '!text-orange-500 !bg-orange-50 !border-orange-300 dark:!bg-orange-900/30' : ''}`}
+              onClick={toggleReview}
+            >
+              <Flag size={16} className={activeAnswer?.markedForReview ? 'fill-orange-500 text-orange-500' : ''} />
+              {activeAnswer?.markedForReview ? 'Marked for review' : 'Mark for review'}
+            </button>
 
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-theme-text-muted opacity-80 flex-shrink-0">
               {answered.length} / {totalQuestions} answered
             </span>
 
@@ -672,7 +727,7 @@ export default function PracticeQuestions() {
 function StatChip({ icon, label, value, valueClass }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-gray-500 flex items-center gap-1">
+      <span className="text-xs text-theme-text-muted flex items-center gap-1">
         {icon}
         {label}
       </span>
@@ -681,10 +736,10 @@ function StatChip({ icon, label, value, valueClass }) {
   );
 }
 
-function LegendRow({ color, label }) {
+function LegendRow({ color, label, custom }) {
   return (
-    <span className="flex items-center gap-2 text-xs text-gray-500">
-      <span className={`w-3 h-3 rounded ${color} inline-block`} />
+    <span className="flex items-center gap-2 text-xs text-theme-text-muted">
+      <span className={`${custom ? color : 'w-3 h-3 rounded ' + color} inline-block`} />
       {label}
     </span>
   );

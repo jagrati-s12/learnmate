@@ -126,7 +126,7 @@ export default function Flashcards() {
 
       <div className="flex gap-4 mb-8 border-b pb-4">
         <button
-          className={`font-medium px-4 py-2 rounded-lg flex gap-2 items-center ${activeTab === "review" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-gray-200"}`}
+          className={`font-medium px-4 py-2 rounded-lg flex gap-2 items-center ${activeTab === "review" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-theme-bg-elevated"}`}
           onClick={() => setActiveTab("review")}
         >
           <Layers size={18} /> Review Due (
@@ -136,7 +136,7 @@ export default function Flashcards() {
           )
         </button>
         <button
-          className={`font-medium px-4 py-2 rounded-lg ${activeTab === "manage" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-gray-200"}`}
+          className={`font-medium px-4 py-2 rounded-lg ${activeTab === "manage" ? "bg-[#C9A66B] text-white" : "bg-theme-bg-elevated text-theme-text-secondary hover:bg-theme-bg-elevated"}`}
           onClick={() => setActiveTab("manage")}
         >
           Manage Cards ({flashcards.length})
@@ -307,7 +307,7 @@ export default function Flashcards() {
 
             <div className="p-5 border-t bg-theme-bg-surface flex justify-end gap-3">
               <button
-                className="px-5 py-2.5 font-medium rounded-lg text-theme-text-secondary hover:bg-gray-200"
+                className="px-5 py-2.5 font-medium rounded-lg text-theme-text-secondary hover:bg-theme-bg-elevated"
                 onClick={() => setIsModalOpen(false)}
               >
                 Cancel

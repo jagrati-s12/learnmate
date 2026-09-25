@@ -20,6 +20,7 @@ try:
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR;"))
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;"))
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT FALSE;"))
+        conn.execute(text("ALTER TABLE mock_tests ADD COLUMN IF NOT EXISTS is_baseline BOOLEAN DEFAULT FALSE;"))
 except Exception as e:
     print(f"Error altering table users: {e}")
 

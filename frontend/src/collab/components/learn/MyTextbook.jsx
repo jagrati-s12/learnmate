@@ -146,15 +146,15 @@ export default function MyTextbook() {
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-8">
-        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm flex flex-col justify-center">
           <span className="text-3xl font-black text-theme-accent-primary">{syllabusData.length}</span>
           <span className="text-theme-text-muted font-medium mt-1">Units</span>
         </div>
-        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm flex flex-col justify-center">
           <span className="text-3xl font-black text-indigo-600">{totalSyllabusTopics}+</span>
           <span className="text-theme-text-muted font-medium mt-1">Topics</span>
         </div>
-        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-center">
+        <div className="bg-theme-bg-secondary p-5 rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm flex flex-col justify-center">
           <span className="text-xl font-bold text-theme-text-primary">Core + Advanced</span>
           <span className="text-theme-text-muted font-medium mt-1 tracking-tight">Structured Coverage</span>
         </div>
@@ -186,7 +186,7 @@ export default function MyTextbook() {
 
       <div className="space-y-4">
         {filteredData.length === 0 ? (
-          <div className="p-12 text-center text-theme-text-muted bg-theme-bg-secondary border border-gray-100 rounded-xl">
+          <div className="p-12 text-center text-theme-text-muted bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl">
             No units or topics match your search.
           </div>
         ) : (
@@ -233,7 +233,7 @@ export default function MyTextbook() {
 
               {/* Expanded Content */}
               {expandedUnits[unit.id] && (
-                <div className="bg-theme-bg-surface border-t border-gray-100 p-5">
+                <div className="bg-theme-bg-surface border-t border-[rgba(243,237,227,0.08)] p-5">
                   {unit.topicsAvailable === false ? (
                     <div className="text-center py-6 text-theme-text-muted text-sm italic">
                       Topics will be added soon.
@@ -255,7 +255,7 @@ export default function MyTextbook() {
                                   key={topic.number}
                                   onClick={() => tId ? navigate(`/learn/topic/${tId}`) : null}
                                   className={`flex items-center justify-between p-3 rounded-lg border transition ${
-                                    tId ? 'bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] hover:border-blue-300 hover:shadow-sm cursor-pointer group' : 'bg-theme-bg-secondary/50 border-gray-100 opacity-70'
+                                    tId ? 'bg-theme-bg-secondary border-[rgba(243,237,227,0.08)] hover:border-blue-300 hover:shadow-sm cursor-pointer group' : 'bg-theme-bg-secondary/50 border-[rgba(243,237,227,0.08)] opacity-70'
                                   }`}
                                 >
                                   <div className="flex items-center gap-3">

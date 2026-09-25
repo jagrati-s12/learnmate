@@ -1958,3 +1958,11 @@ button {
   background: var(--bg-secondary);
   border-radius: 8px;
 }
+
+/* Marked for review overrides */
+.palette-number.marked {
+  box-shadow: 0 0 0 2px #f97316 !important; /* orange-500 */
+}
+.palette-number.current.marked {
+  box-shadow: inset 0 0 0 1px var(--accent-primary), 0 0 0 2px #f97316 !important;
+}

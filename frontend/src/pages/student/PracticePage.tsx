@@ -3,8 +3,8 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Topbar } from '../../components/layout/Topbar';
 import { Button } from '../../components/ui/Button';
 import { Icons } from '../../assets/icons';
+import { Flag } from 'lucide-react';
 import { practiceAPI, PracticeSession } from '../../api/practice';
-import { AnswerResult } from '../../api/questions';
 
 export const PracticePage: React.FC = () => {
   const { topicId: paramTopicId } = useParams();
@@ -13,13 +13,10 @@ export const PracticePage: React.FC = () => {
   const [session, setSession] = useState<PracticeSession | null>(null);
   const [topicName, setTopicName] = useState<string>('Topic');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [result, setResult] = useState<AnswerResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isBookmarked, setIsBookmarked] = useState(false);
   const [startTime, setStartTime] = useState<number>(Date.now());
+  const [attempts, setAttempts] = useState<Record<number, any>>({});
 
   useEffect(() => {
     const startPractice = async () => {
@@ -79,6 +76,37 @@ export const PracticePage: React.FC = () => {
   }
 
   const currentQuestion = session.questions[currentIndex];
+  
+  const currentAttempt = currentQuestion ? attempts[currentQuestion.id] || {
+    selectedOption: null,
+    showResult: false,
+    result: null,
+    isBookmarked: false,
+    isMarkedForReview: false
+  } : null;
+  
+  const selectedOption = currentAttempt?.selectedOption;
+  const showResult = currentAttempt?.showResult || false;
+  const result = currentAttempt?.result;
+  const isBookmarked = currentAttempt?.isBookmarked || false;
+  const isMarkedForReview = currentAttempt?.isMarkedForReview || false;
+
+  const updateAttempt = (updates: any) => {
+    if (!currentQuestion) return;
+    setAttempts(prev => ({
+      ...prev,
+      [currentQuestion.id]: {
+        ...(prev[currentQuestion.id] || {
+          selectedOption: null,
+          showResult: false,
+          result: null,
+          isBookmarked: false,
+          isMarkedForReview: false
+        }),
+        ...updates
+      }
+    }));
+  };
 
   if (!currentQuestion) {
     return (
@@ -109,8 +137,8 @@ export const PracticePage: React.FC = () => {
         selected_option: selectedOption,
         time_taken_seconds: timeTaken,
       });
-      setResult(res);
-      setShowResult(true);
+      updateAttempt({ result: res });
+      updateAttempt({ showResult: true });
     } catch (err: any) {
       setError(err.message || 'Failed to submit answer');
     }
@@ -119,10 +147,6 @@ export const PracticePage: React.FC = () => {
   const handleNext = () => {
     if (currentIndex < session.questions.length - 1) {
       setCurrentIndex(currentIndex + 1);
-      setSelectedOption(null);
-      setShowResult(false);
-      setResult(null);
-      setIsBookmarked(false);
       setStartTime(Date.now());
     } else {
       // Session complete
@@ -131,14 +155,25 @@ export const PracticePage: React.FC = () => {
     }
   };
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+      setStartTime(Date.now());
+    }
+  };
+
+  const handleToggleReview = () => {
+    updateAttempt({ isMarkedForReview: !isMarkedForReview });
+  };
+
   const handleBookmark = async () => {
     try {
       if (isBookmarked) {
         await practiceAPI.removeBookmark(currentQuestion.id);
-        setIsBookmarked(false);
+        updateAttempt({ isBookmarked: false });
       } else {
         await practiceAPI.bookmarkQuestion(currentQuestion.id);
-        setIsBookmarked(true);
+        updateAttempt({ isBookmarked: true });
       }
     } catch (err: any) {
       alert('Failed to update bookmark: ' + (err.message || 'Unknown error'));
@@ -191,13 +226,13 @@ export const PracticePage: React.FC = () => {
                 return (
                   <button
                     key={option.id}
-                    onClick={() => !showResult && setSelectedOption(option.option_label)}
+                    onClick={() => !showResult && updateAttempt({ selectedOption: option.option_label })}
                     disabled={showResult}
-                    className={`w-full flex items-start gap-4 p-4 border-2 rounded-lg text-left transition-colors ${
+                    className={`w-full flex items-start gap-4 p-4 border-2 rounded-lg text-left transition-colors text-theme-text-primary ${
                       showCorrect
-                        ? 'border-green-500 bg-green-50'
+                        ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
                         : showIncorrect
-                        ? 'border-red-500 bg-red-50'
+                        ? 'border-red-500 bg-red-50 dark:bg-red-900/20'
                         : isSelected
                         ? 'border-blue-500 bg-theme-bg-elevated'
                         : 'border-[rgba(243,237,227,0.08)] hover:border-blue-500 hover:bg-theme-bg-elevated'
@@ -209,7 +244,7 @@ export const PracticePage: React.FC = () => {
                         : showIncorrect
                         ? 'bg-red-500 text-white'
                         : isSelected
-                        ? 'bg-theme-bg-elevated0 text-white'
+                        ? 'bg-blue-600 text-white'
                         : 'bg-theme-bg-elevated text-theme-text-secondary'
                     }`}>
                       {option.option_label}
@@ -225,29 +260,38 @@ export const PracticePage: React.FC = () => {
             <div className="flex gap-3 mt-8 pt-6 border-t border-[rgba(243,237,227,0.08)]">
               {!showResult ? (
                 <>
+                  <Button variant="secondary" onClick={handleToggleReview} className={isMarkedForReview ? "!text-orange-500 !bg-orange-50 !border-orange-300 dark:!bg-orange-900/30" : ""}>
+                    <Flag className={isMarkedForReview ? "w-4 h-4 fill-orange-500 text-orange-500" : "w-4 h-4"} />
+                    {isMarkedForReview ? 'Marked for Review' : 'Mark for Review'}
+                  </Button>
                   <Button variant="primary" onClick={handleSubmit}>
                     Submit Answer
                   </Button>
-                  <Button variant="secondary" onClick={handleBookmark}>
+                  <Button variant="secondary" onClick={handleBookmark} className={isBookmarked ? "text-blue-600 font-medium" : ""}>
                     <Icons.Bookmark className="w-4 h-4" />
                     {isBookmarked ? 'Bookmarked' : 'Bookmark'}
                   </Button>
                 </>
               ) : (
-                <Button variant="primary" onClick={handleNext}>
+                <>
+                  <Button variant="secondary" onClick={handlePrevious} disabled={currentIndex === 0}>
+                    ← Previous
+                  </Button>
+                  <Button variant="primary" onClick={handleNext}>
                   {currentIndex < session.questions.length - 1 ? 'Next Question →' : 'Complete Session'}
-                </Button>
+                  </Button>
+                </>
               )}
             </div>
 
             {showResult && result && (
               <div className={`mt-6 p-6 border rounded-lg ${
                 result.is_correct
-                  ? 'bg-green-50 border-green-200'
+                  ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
                   : 'bg-theme-bg-elevated border-[rgba(201,166,107,0.16)]'
               }`}>
                 <div className={`font-semibold mb-2 ${
-                  result.is_correct ? 'text-green-900' : 'text-blue-900'
+                  result.is_correct ? 'text-green-900 dark:text-green-400' : 'text-blue-900 dark:text-blue-400'
                 }`}>
                   {result.is_correct ? '✓ Correct!' : '✗ Incorrect'}
                 </div>

@@ -56,7 +56,7 @@ export default function TopicContent() {
       </div>
 
       <section className="card topic-content">
-        <div className="topic-content-header pb-4 border-b border-gray-100">
+        <div className="topic-content-header pb-4 border-b border-[rgba(243,237,227,0.08)]">
           <span className="eyebrow uppercase text-theme-accent-primary font-bold text-xs tracking-wider">TOPIC #{topic.id}</span>
           <h2 className="text-2xl font-bold mt-1 mb-2 text-theme-text-primary">{topic.name}</h2>
           <p className="text-theme-text-secondary">{topic.description || "Master this concept to score well in SSC JE."}</p>
@@ -89,7 +89,7 @@ export default function TopicContent() {
                 <li>Ensure you understand the edge cases and typical tricks used in previous year questions.</li>
               </ul>
 
-              <div className="mt-8 pt-6 border-t border-gray-100">
+              <div className="mt-8 pt-6 border-t border-[rgba(243,237,227,0.08)]">
                 <button className="primary-button flex items-center gap-2" onClick={() => navigate(`/learn/practice?topic_id=${topic.id}`)}>
                   <PlayCircle size={16} /> Start Topic Practice
                 </button>
@@ -107,7 +107,7 @@ export default function TopicContent() {
               ) : (
                 <div className="space-y-4">
                   {pyqs.map((q, idx) => (
-                    <div key={q.id} className="p-4 border border-gray-100 rounded-lg bg-theme-bg-secondary shadow-sm hover:shadow-md transition">
+                    <div key={q.id} className="p-4 border border-[rgba(243,237,227,0.08)] rounded-lg bg-theme-bg-secondary shadow-sm hover:shadow-md transition">
                       <div className="flex gap-2 mb-2">
                         <span className="text-xs font-semibold text-theme-accent-primary bg-theme-bg-elevated px-2 py-0.5 rounded">PYQ {q.year || ""}</span>
                         {q.source && <span className="text-xs text-theme-text-muted bg-theme-bg-surface px-2 py-0.5 rounded">{q.source}</span>}
@@ -133,7 +133,7 @@ export default function TopicContent() {
           )}
         </article>
 
-        <div className="content-actions mt-8 pt-4 border-t border-gray-100 flex justify-between">
+        <div className="content-actions mt-8 pt-4 border-t border-[rgba(243,237,227,0.08)] flex justify-between">
           <button className="secondary-button" onClick={() => navigate(-1)}>← Back</button>
           <button className="primary-button" onClick={() => navigate(`/learn/practice?topic_id=${topic.id}`)}>Start Practice →</button>
         </div>

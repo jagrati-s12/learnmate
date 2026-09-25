@@ -12,7 +12,7 @@ export default function ConfirmSubmitModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-theme-bg-secondary rounded-xl shadow-lg w-full max-w-md overflow-hidden">
-        <div className="flex justify-between items-center p-4 border-b">
+        <div className="flex justify-between items-center p-4 border-b border-[rgba(243,237,227,0.08)]">
           <h3 className="font-semibold text-lg flex items-center gap-2">
             <AlertTriangle className="text-yellow-500" size={20} />
             Submit Test

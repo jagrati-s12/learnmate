@@ -109,7 +109,7 @@ export default function Notes() {
             </h3>
             <button
               onClick={resetForm}
-              className="text-slate-400 hover:text-slate-600"
+              className="text-theme-text-muted opacity-80 hover:text-theme-text-secondary"
             >
               <X size={20} />
             </button>
@@ -136,7 +136,7 @@ export default function Notes() {
           <div className="flex justify-end gap-3">
             <button
               onClick={resetForm}
-              className="px-4 py-2 border rounded-lg hover:bg-slate-50"
+              className="px-4 py-2 border rounded-lg hover:bg-theme-bg-elevated"
             >
               Cancel
             </button>
@@ -156,7 +156,7 @@ export default function Notes() {
         <>
           <div className="relative mb-6">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted opacity-80"
               size={18}
             />
             <input
@@ -174,9 +174,9 @@ export default function Notes() {
             </div>
           ) : filteredNotes.length === 0 ? (
             <div className="card text-center py-12">
-              <FileText className="mx-auto text-slate-300 mb-3" size={48} />
+              <FileText className="mx-auto text-theme-text-muted opacity-50 mb-3" size={48} />
               <h3 className="text-lg font-medium">No notes found</h3>
-              <p className="text-slate-500 mt-1">
+              <p className="text-theme-text-muted mt-1">
                 {searchTerm
                   ? "Try a different search term"
                   : "Click 'New Note' to start writing."}
@@ -199,28 +199,28 @@ export default function Notes() {
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         onClick={() => startEdit(note)}
-                        className="p-1 text-slate-400 hover:text-theme-accent-primary"
+                        className="p-1 text-theme-text-muted opacity-80 hover:text-theme-accent-primary"
                       >
                         <Edit2 size={16} />
                       </button>
                       <button
                         onClick={() => handleDelete(note.id)}
-                        className="p-1 text-slate-400 hover:text-red-500"
+                        className="p-1 text-theme-text-muted opacity-80 hover:text-red-500"
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
-                  <div className="text-xs text-slate-400 mb-3">
+                  <div className="text-xs text-theme-text-muted opacity-80 mb-3">
                     {new Date(
                       note.updated_at || note.created_at,
                     ).toLocaleDateString()}
                   </div>
-                  <div className="text-slate-600 text-sm flex-1 overflow-hidden relative">
+                  <div className="text-theme-text-secondary text-sm flex-1 overflow-hidden relative">
                     {note.content ? (
                       <div className="whitespace-pre-wrap">{note.content}</div>
                     ) : (
-                      <span className="italic text-slate-400">Empty note</span>
+                      <span className="italic text-theme-text-muted opacity-80">Empty note</span>
                     )}
                     <div className="absolute bottom-0 w-full h-12 bg-gradient-to-t from-white to-transparent pointer-events-none"></div>
                   </div>

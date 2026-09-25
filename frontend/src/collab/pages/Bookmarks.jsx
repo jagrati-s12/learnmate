@@ -47,13 +47,13 @@ export default function Bookmarks() {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <div className="relative flex-1">
           <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted"
             size={18}
           />
           <input
             type="text"
             placeholder="Search bookmarked questions..."
-            className="w-full pl-10 pr-4 py-2 border rounded-full focus:ring-2 focus:ring-blue-500 outline-none"
+            className="w-full pl-10 pr-4 py-2 border border-[rgba(243,237,227,0.08)] bg-theme-bg-secondary text-theme-text-primary rounded-full focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -65,10 +65,10 @@ export default function Bookmarks() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : filteredBookmarks.length === 0 ? (
-        <div className="card text-center py-12">
-          <Bookmark className="mx-auto text-slate-300 mb-3" size={48} />
-          <h3 className="text-lg font-medium">No bookmarks found</h3>
-          <p className="text-slate-500 mt-1">
+        <div className="card bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl text-center py-12">
+          <Bookmark className="mx-auto text-theme-text-muted opacity-50 mb-3" size={48} />
+          <h3 className="text-lg font-medium text-theme-text-primary">No bookmarks found</h3>
+          <p className="text-theme-text-muted mt-1">
             {searchTerm
               ? "Try a different search term"
               : "Questions you bookmark during practice will appear here."}
@@ -79,26 +79,26 @@ export default function Bookmarks() {
           {filteredBookmarks.map((bookmark) => (
             <div
               key={bookmark.id}
-              className="card hover:border-blue-500 transition-colors flex gap-4"
+              className="card bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl hover:border-blue-500 transition-colors flex gap-4 p-5"
             >
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2 text-xs font-medium text-slate-500">
-                  <span className="bg-slate-100 px-2 py-1 rounded">
+                <div className="flex items-center gap-2 mb-2 text-xs font-medium text-theme-text-secondary">
+                  <span className="bg-theme-bg-elevated px-2 py-1 rounded border border-[rgba(243,237,227,0.04)]">
                     {bookmark.question?.topic?.name || "Topic"}
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 text-theme-text-muted">
                     <Clock size={12} />
                     {new Date(bookmark.created_at).toLocaleDateString()}
                   </span>
                 </div>
-                <h3 className="font-medium text-slate-900 mb-2">
+                <h3 className="font-medium text-theme-text-primary mb-2 leading-relaxed">
                   {bookmark.question?.question_text || "Question text not available."}
                 </h3>
               </div>
               <div className="flex flex-col justify-start gap-2">
                 <button
                   onClick={() => removeBookmark(bookmark.question_id)}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-theme-text-muted hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                   title="Remove bookmark"
                 >
                   <Trash2 size={18} />

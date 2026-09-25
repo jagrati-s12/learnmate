@@ -141,7 +141,7 @@ export default function Topics() {
   return (
     <div className="page max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-6 pb-6 border-b border-gray-100">
+      <div className="mb-6 pb-6 border-b border-[rgba(243,237,227,0.08)]">
         <h1 className="text-3xl font-extrabold text-theme-text-primary tracking-tight mb-2">Topics</h1>
         <p className="text-theme-text-secondary text-lg">Explore SSC JE Civil topics and start studying or practicing.</p>
       </div>
@@ -204,8 +204,8 @@ export default function Topics() {
         </div>
 
         {filteredTopics.length === 0 ? (
-           <div className="py-16 text-center bg-theme-bg-secondary border border-gray-100 rounded-xl">
-             <Layers className="mx-auto text-gray-300 mb-3" size={48} />
+           <div className="py-16 text-center bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl">
+             <Layers className="mx-auto text-theme-text-muted opacity-50 mb-3" size={48} />
              <h3 className="text-lg font-semibold text-theme-text-primary">No topics found</h3>
              <p className="text-theme-text-muted mt-1 mb-4">Try a different search term or remove some filters.</p>
              <button
@@ -241,11 +241,11 @@ export default function Topics() {
                   <p className="text-sm text-theme-text-muted font-medium truncate">{topic.unitTitle}</p>
                 </div>
 
-                <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50">
+                <div className="mt-auto pt-4 flex items-center justify-between border-t border-[rgba(243,237,227,0.04)]">
                   <div className="flex items-center gap-1.5">
                     {topic.progressState === "Completed" && <><CheckCircle2 size={16} className="text-green-500"/><span className="text-xs font-semibold text-theme-text-secondary">100%</span></>}
                     {topic.progressState === "In Progress" && <><CircleDashed size={16} className="text-orange-500"/><span className="text-xs font-semibold text-theme-text-secondary">{topic.progressValue}%</span></>}
-                    {topic.progressState === "Not Started" && <><CircleDashed size={16} className="text-gray-300"/><span className="text-xs font-semibold text-theme-text-muted">0%</span></>}
+                    {topic.progressState === "Not Started" && <><CircleDashed size={16} className="text-theme-text-muted opacity-50"/><span className="text-xs font-semibold text-theme-text-muted">0%</span></>}
                   </div>
 
                   {topic.backendId ? (

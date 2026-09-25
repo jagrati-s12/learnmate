@@ -4,6 +4,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Flag,
+  Bookmark as BookmarkIcon,
   Pause,
   Play,
   Send,
@@ -16,7 +17,8 @@ import QuestionTimer from "./QuestionTimer.jsx";
 import TestAnalytics from "./TestAnalytics.jsx";
 import ConfirmSubmitModal from "./ConfirmSubmitModal.jsx";
 import { buildTopicAnalytics } from "./analyticsLogic.js";
-import { mockTestsAPI } from "../../../api/mockTests.ts";
+import { mockTestsAPI } from "../../../api/mockTests";
+import { bookmarksAPI } from "../../../api/bookmarks";
 
 export default function MockTest() {
   const [testList, setTestList] = useState([]);
@@ -86,6 +88,8 @@ export default function MockTest() {
         selectedAnswer: null,
         timeSpent: 0,
         startedAt: Date.now(),
+        markedForReview: false,
+        isBookmarked: false,
       }));
       setQuestionStats(formatted);
       setCurrentIndex(0);
@@ -122,6 +126,50 @@ export default function MockTest() {
           : item
       )
     );
+  };
+
+  const toggleReview = () => {
+    if (!running || submitted) return;
+    setQuestionStats((current) =>
+      current.map((item, index) =>
+        index === currentIndex
+          ? { ...item, markedForReview: !item.markedForReview }
+          : item
+      )
+    );
+  };
+
+  const toggleBookmark = async () => {
+    if (!currentQuestion) return;
+    try {
+      const qId = currentQuestion.id;
+      const currentlyBookmarked = currentQuestion.isBookmarked;
+
+      // Optimistic update
+      setQuestionStats((current) =>
+        current.map((item, index) =>
+          index === currentIndex
+            ? { ...item, isBookmarked: !item.isBookmarked }
+            : item
+        )
+      );
+
+      if (currentlyBookmarked) {
+        await bookmarksAPI.deleteBookmark(qId);
+      } else {
+        await bookmarksAPI.createBookmark(qId);
+      }
+    } catch (err) {
+      console.error("Failed to toggle bookmark", err);
+      // Revert on error
+      setQuestionStats((current) =>
+        current.map((item, index) =>
+          index === currentIndex
+            ? { ...item, isBookmarked: currentQuestion.isBookmarked }
+            : item
+        )
+      );
+    }
   };
 
   const goToQuestion = (index) => {
@@ -340,7 +388,7 @@ export default function MockTest() {
 
       <div className="test-layout">
         <section className="card question-card">
-          <div className="question-card-header">
+          <div className="question-card-header flex justify-between items-center">
             <div>
               <span className="question-label">
                 Question {currentIndex + 1}
@@ -350,11 +398,20 @@ export default function MockTest() {
               </span>
             </div>
 
-            <QuestionTimer
-              elapsedSeconds={currentStat.timeSpent}
-              running={running}
-              onTick={recordCurrentSecond}
-            />
+            <div className="flex items-center gap-4">
+              <button
+                onClick={toggleBookmark}
+                className="text-theme-text-muted hover:text-blue-600 transition-colors"
+                title="Bookmark this question"
+              >
+                <BookmarkIcon size={20} className={currentStat.isBookmarked ? "fill-blue-600 text-blue-600" : ""} />
+              </button>
+              <QuestionTimer
+                elapsedSeconds={currentStat.timeSpent}
+                running={running}
+                onTick={recordCurrentSecond}
+              />
+            </div>
           </div>
 
           <h2>{currentQuestion.question}</h2>
@@ -389,8 +446,12 @@ export default function MockTest() {
               <ChevronLeft size={17} /> Previous
             </button>
 
-            <button className="secondary-button">
-              <Flag size={16} /> Mark for review
+            <button
+              className={`secondary-button ${currentStat.markedForReview ? '!text-orange-500 !bg-orange-50 !border-orange-300 dark:!bg-orange-900/30' : ''}`}
+              onClick={toggleReview}
+            >
+              <Flag size={16} className={currentStat.markedForReview ? 'fill-orange-500 text-orange-500' : ''} />
+              {currentStat.markedForReview ? 'Marked for review' : 'Mark for review'}
             </button>
 
             {currentIndex === questionStats.length - 1 ? (
@@ -421,7 +482,7 @@ export default function MockTest() {
                   key={question.id}
                   className={`palette-number ${
                     index === currentIndex ? "current" : ""
-                  } ${answered ? "answered" : ""}`}
+                  } ${answered ? "answered" : ""} ${question.markedForReview ? "marked ring-2 ring-orange-500 ring-offset-1 dark:ring-offset-[#1E1E1E]" : ""}`}
                   onClick={() => goToQuestion(index)}
                 >
                   {index + 1}
@@ -430,10 +491,11 @@ export default function MockTest() {
             })}
           </div>
 
-          <div className="palette-legend mt-4 pb-4 border-b">
-            <span><i className="current-dot" /> Current</span>
-            <span><i className="answered-dot" /> Answered</span>
-            <span><i className="unanswered-dot" /> Unanswered</span>
+          <div className="palette-legend mt-4 pb-4 border-b flex flex-wrap gap-2 text-sm text-theme-text-muted">
+            <span className="flex items-center gap-1"><i className="current-dot flex-shrink-0" /> Current</span>
+            <span className="flex items-center gap-1"><i className="answered-dot flex-shrink-0" /> Answered</span>
+            <span className="flex items-center gap-1"><i className="unanswered-dot flex-shrink-0" /> Unanswered</span>
+            <span className="flex items-center gap-1"><i className="w-3 h-3 rounded-full ring-2 ring-orange-500 flex-shrink-0" /> For Review</span>
           </div>
 
           <div className="mt-4 pt-2">

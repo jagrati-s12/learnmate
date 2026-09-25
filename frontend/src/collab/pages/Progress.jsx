@@ -38,7 +38,7 @@ export default function Progress() {
             {syllabus.map((sub, i) => (
               <div key={i} className="border-b last:border-0 pb-6 last:pb-0">
                 <div className="flex justify-between items-end mb-2">
-                  <h3 className="font-medium text-lg text-slate-800">
+                  <h3 className="font-medium text-lg text-theme-text-primary">
                     {sub.subject}
                   </h3>
                   <span className="text-sm font-bold text-theme-accent-primary">
@@ -46,14 +46,14 @@ export default function Progress() {
                   </span>
                 </div>
 
-                <div className="w-full bg-slate-100 rounded-full h-2.5 mb-3">
+                <div className="w-full bg-theme-bg-elevated rounded-full h-2.5 mb-3">
                   <div
                     className="bg-[#C9A66B] h-2.5 rounded-full transition-all duration-1000"
                     style={{ width: `${sub.progress}%` }}
                   ></div>
                 </div>
 
-                <div className="flex items-center gap-4 text-sm text-slate-500">
+                <div className="flex items-center gap-4 text-sm text-theme-text-muted">
                   <span className="flex items-center gap-1">
                     <CheckCircle2 size={14} className="text-green-500" />
                     {sub.completedTopics} Completed
@@ -66,7 +66,7 @@ export default function Progress() {
               </div>
             ))}
             {syllabus.length === 0 && (
-              <div className="text-slate-500 text-center py-8">
+              <div className="text-theme-text-muted text-center py-8">
                 No syllabus data available to track progress.
               </div>
             )}

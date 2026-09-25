@@ -164,7 +164,7 @@ export default function Performance() {
           </div>
         </>
       ) : (
-        <div className="text-center py-12 text-slate-500">Failed to load data</div>
+        <div className="text-center py-12 text-theme-text-muted">Failed to load data</div>
       )}
     </div>
   );

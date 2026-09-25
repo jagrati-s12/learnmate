@@ -36,7 +36,7 @@ export default function SimpleTrack({ title, subtitle, type }) {
       </section>
 
       <section className="card mb-6">
-        <div className="card-header pb-4 border-b border-gray-100">
+        <div className="card-header pb-4 border-b border-[rgba(243,237,227,0.08)]">
             <div>
               <h3>
                 {type === "calendar"

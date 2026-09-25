@@ -87,7 +87,7 @@ export default function Goals() {
 
                 <button
                   onClick={() => handleToggleGoal(goal.id, goal.is_completed)}
-                  className={`ml-4 p-2 rounded-full flex items-center justify-center transition-colors ${goal.is_completed ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
+                  className={`ml-4 p-2 rounded-full flex items-center justify-center transition-colors ${goal.is_completed ? 'bg-green-100 text-green-600 hover:bg-green-200' : 'bg-theme-bg-elevated text-theme-text-muted opacity-80 hover:bg-theme-bg-elevated'}`}
                   title="Toggle status"
                 >
                   <Check size={20} />

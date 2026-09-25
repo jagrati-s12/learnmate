@@ -56,7 +56,7 @@ export default function PYQLanding() {
   if (loading) {
     return (
       <div className="page max-w-6xl mx-auto px-4 py-12 flex justify-center">
-        <div className="animate-pulse text-gray-500 font-medium">Loading previous year question sets...</div>
+        <div className="animate-pulse text-theme-text-muted font-medium">Loading previous year question sets...</div>
       </div>
     );
   }
@@ -66,19 +66,19 @@ export default function PYQLanding() {
   return (
     <div className="page max-w-6xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="mb-6 pb-6 border-b border-gray-100">
-        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight mb-2">Previous Year Questions</h1>
-        <p className="text-gray-600 text-lg">Practice authentic SSC JE Civil questions from previous examinations.</p>
+      <div className="mb-6 pb-6 border-b border-[rgba(243,237,227,0.08)]">
+        <h1 className="text-3xl font-extrabold text-theme-text-primary tracking-tight mb-2">Previous Year Questions</h1>
+        <p className="text-theme-text-secondary text-lg">Practice authentic SSC JE Civil questions from previous examinations.</p>
       </div>
 
       {/* Discovery UI: Search and Filters */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-8">
+      <div className="bg-theme-bg-secondary rounded-xl border border-[rgba(243,237,227,0.08)] shadow-sm p-4 mb-8">
         <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-muted" size={20} />
           <input
             type="text"
             placeholder="Search PYQs by year or shift..."
-            className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-gray-800"
+            className="w-full pl-10 pr-4 py-3 bg-theme-bg-elevated border border-[rgba(243,237,227,0.08)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-medium text-theme-text-primary"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -86,7 +86,7 @@ export default function PYQLanding() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <select
-            className="w-full bg-white border border-gray-200 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
+            className="w-full bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] text-theme-text-secondary py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
             value={yearFilter}
             onChange={(e) => setYearFilter(e.target.value)}
           >
@@ -97,7 +97,7 @@ export default function PYQLanding() {
           </select>
 
           <select
-            className="w-full bg-white border border-gray-200 text-gray-700 py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
+            className="w-full bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] text-theme-text-secondary py-2 px-3 rounded-lg focus:outline-none focus:border-blue-500 text-sm font-medium"
             value={shiftFilter}
             onChange={(e) => setShiftFilter(e.target.value)}
           >
@@ -112,18 +112,18 @@ export default function PYQLanding() {
       {/* Results */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-sm font-bold text-gray-500 uppercase tracking-wide">
+          <h2 className="text-sm font-bold text-theme-text-muted uppercase tracking-wide">
             {filteredPapers.length} {filteredPapers.length === 1 ? 'Paper' : 'Papers'} Found
           </h2>
         </div>
 
         {filteredPapers.length === 0 ? (
-           <div className="py-16 text-center bg-white border border-gray-100 rounded-xl">
-             <Layers className="mx-auto text-gray-300 mb-3" size={48} />
-             <h3 className="text-lg font-semibold text-gray-800">
+           <div className="py-16 text-center bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl">
+             <Layers className="mx-auto text-theme-text-muted mb-3" size={48} />
+             <h3 className="text-lg font-semibold text-theme-text-primary">
                 {hasActiveFilters ? "No PYQs found" : "No previous-year papers available yet."}
              </h3>
-             <p className="text-gray-500 mt-1 mb-4">
+             <p className="text-theme-text-muted mt-1 mb-4">
                 {hasActiveFilters
                   ? "Try changing or clearing your filters."
                   : "We're currently preparing the PYQ collection."}
@@ -135,7 +135,7 @@ export default function PYQLanding() {
                     setYearFilter("All");
                     setShiftFilter("All");
                   }}
-                  className="text-blue-600 font-semibold bg-blue-50 px-4 py-2 rounded-lg hover:bg-blue-100 transition"
+                  className="text-blue-600 font-semibold bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg hover:bg-blue-100 transition"
                 >
                  Clear Filters
                </button>
@@ -144,37 +144,37 @@ export default function PYQLanding() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredPapers.map((paper, idx) => (
-              <div key={`${paper.year}-${paper.shift}-${idx}`} className="bg-white border border-gray-200 rounded-xl p-5 hover:border-blue-300 hover:shadow-md transition-all flex flex-col">
+              <div key={`${paper.year}-${paper.shift}-${idx}`} className="bg-theme-bg-secondary border border-[rgba(243,237,227,0.08)] rounded-xl p-5 hover:border-blue-500 hover:shadow-md transition-all flex flex-col">
                 <div className="mb-3">
                   <div className="flex items-start justify-between mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-0.5 rounded">
                       SSC JE Civil
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-bold uppercase tracking-wider bg-theme-bg-elevated text-theme-text-secondary px-2 py-0.5 rounded">
                       PYQ
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 leading-tight mb-2">{paper.year}</h3>
-                  <div className="flex gap-4 text-sm text-gray-600 font-medium">
+                  <h3 className="text-2xl font-bold text-theme-text-primary leading-tight mb-2">{paper.year}</h3>
+                  <div className="flex gap-4 text-sm text-theme-text-secondary font-medium">
                      <div className="flex items-center gap-1">
-                        <GraduationCap size={16} className="text-gray-400" />
+                        <GraduationCap size={16} className="text-theme-text-muted" />
                         <span>Paper 1</span>
                      </div>
                      <div className="flex items-center gap-1">
-                        <Clock size={16} className="text-gray-400" />
+                        <Clock size={16} className="text-theme-text-muted" />
                         <span>{paper.shift}</span>
                      </div>
                   </div>
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-gray-50 mb-4">
-                    <span className="text-sm font-semibold text-gray-700">{paper.count} Questions</span>
+                <div className="mt-4 pt-4 border-t border-[rgba(243,237,227,0.08)] mb-4">
+                    <span className="text-sm font-semibold text-theme-text-secondary">{paper.count} Questions</span>
                 </div>
 
                 <div className="mt-auto flex items-center justify-between">
                   <button
                     onClick={() => navigate(`/learn/practice?is_pyq=true&year=${paper.year}&shift=${encodeURIComponent(paper.shift)}`)}
-                    className="flex w-full items-center justify-center gap-1 bg-gray-900 text-white px-4 py-2 text-sm font-bold rounded-lg hover:bg-gray-800 transition-colors group"
+                    className="flex w-full items-center justify-center gap-1 bg-blue-600 text-white px-4 py-2 text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors group"
                   >
                     Practice Paper <ChevronRight size={16} className="transform group-hover:translate-x-1 transition-transform" />
                   </button>
