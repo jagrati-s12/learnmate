@@ -163,36 +163,38 @@ def build_mock_test_from_distribution(
     )
     db.add(mock_test)
     db.flush() # get ID
-    
+
     # Get the attempt IDs of the user's last 3 tests to exclude their questions
-    last_3_attempts = db.query(MockTestAttempt.id).filter(
+    last_3_attempts_ids = [a[0] for a in db.query(MockTestAttempt.id).filter(
         MockTestAttempt.user_id == user_id
-    ).order_by(MockTestAttempt.completed_at.desc().nulls_last()).limit(3).subquery()
+    ).order_by(MockTestAttempt.completed_at.desc().nulls_last()).limit(3).all()]
+
+    recent_q_attempts_ids = []
+    if last_3_attempts_ids:
+        recent_q_attempts_ids = [q[0] for q in db.query(QuestionAttempt.question_id).filter(
+            QuestionAttempt.user_id == user_id,
+            QuestionAttempt.mock_test_attempt_id.in_(last_3_attempts_ids)
+        ).all()]
 
     all_selected_questions = []
 
     for topic_id, count in distribution.items():
         if count <= 0: continue
 
-        # Avoid questions user has already recently attempted in last 3 tests
-        recent_q_attempts_sq = db.query(QuestionAttempt.question_id).filter(
-            QuestionAttempt.user_id == user_id,
-            QuestionAttempt.mock_test_attempt_id.in_(last_3_attempts)
-        ).subquery()
+        query = db.query(Question).filter(Question.topic_id == topic_id)
+        if recent_q_attempts_ids:
+            query = query.filter(Question.id.notin_(recent_q_attempts_ids))
 
-        qs = db.query(Question).filter(
-            Question.topic_id == topic_id,
-            Question.id.notin_(recent_q_attempts_sq)
-        ).order_by(func.random()).limit(count).all()
+        qs = query.order_by(func.random()).limit(count).all()
 
         # Fallback: if not enough fresh questions, just pick any random ones
         if len(qs) < count:
             remaining = count - len(qs)
             exclude_ids = [q.id for q in qs]
-            more_qs = db.query(Question).filter(
-                Question.topic_id == topic_id,
-                Question.id.notin_(exclude_ids)
-            ).order_by(func.random()).limit(remaining).all()
+            more_query = db.query(Question).filter(Question.topic_id == topic_id)
+            if exclude_ids:
+                more_query = more_query.filter(Question.id.notin_(exclude_ids))
+            more_qs = more_query.order_by(func.random()).limit(remaining).all()
             qs.extend(more_qs)
 
         all_selected_questions.extend(qs)
