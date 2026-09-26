@@ -56,54 +56,55 @@ def calculate_user_weaknesses(db: Session, user_id: int):
     Calculate user weakness across topics by analyzing recent test attempts.
 
     Improvements over previous version:
-    1. Uses time-based filtering (attempted_at) instead of strict mock_test_attempt_id,
-       thereby also including practice attempts between tests.
-    2. Fixes PostgreSQL compatibility by using portable case() for boolean aggregation.
-    3. Returns dict: topic_id -> weakness_score (0.0 to 1.0, where 1.0 = very weak).
+    1. Uses exponential decay weighting to properly weight recent practice vs historical tests
+    2. Includes ALL practice attempts, avoiding strict time windows that drop long-term weaknesses
+    3. Fixes PostgreSQL compatibility by using portable case() for boolean aggregation.
+    4. Returns dict: topic_id -> weakness_score (0.0 to 1.0, where 1.0 = very weak).
     """
-    # 1. Pull the latest up to 5 completed mock test attempts
-    recent_attempts = (
-        db.query(MockTestAttempt)
-        .filter(
-            MockTestAttempt.user_id == user_id,
-            MockTestAttempt.completed_at.isnot(None),
-        )
-        .order_by(MockTestAttempt.completed_at.desc())
-        .limit(5)
-        .all()
-    )
-
-    if not recent_attempts:
-        return {}
-
-    # Determine the earliest timestamp among selected attempts - defines the time window
-    earliest_ts = min(attempt.completed_at for attempt in recent_attempts)
-
-    # 2. Aggregate attempts (mock-test AND practice) that happened after earliest_ts
-    # This cross-pollinates practice mode attempts with mock test analysis
-    q_attempts = (
+    # Fetch the last 1500 question attempts (approx 15 mock tests + practice)
+    recent_q_attempts = (
         db.query(
             Question.topic_id,
-            func.count(QuestionAttempt.id).label("total"),
-            func.sum(
-                # Portable boolean -> int conversion (fixes PostgreSQL compatibility)
-                case((QuestionAttempt.is_correct == True, 1), else_=0)
-            ).label("correct"),
+            QuestionAttempt.is_correct,
+            QuestionAttempt.attempted_at
         )
         .join(Question, QuestionAttempt.question_id == Question.id)
-        .filter(QuestionAttempt.attempted_at >= earliest_ts)
-        .filter(QuestionAttempt.user_id == user_id)
-        .group_by(Question.topic_id)
+        .filter(
+            QuestionAttempt.user_id == user_id,
+            QuestionAttempt.is_correct.isnot(None) # Ignore unattempted questions!
+        )
+        .order_by(QuestionAttempt.attempted_at.desc())
+        .limit(1500)
         .all()
     )
 
-    # 3. Compute weakness scores (higher = weaker)
+    if not recent_q_attempts:
+        return {} # No history
+
+    # Apply exponential decay based on recency (position)
+    # Most recent questions get weight 1.0, oldest in the window get ~0.3
+    topic_stats = {}
+
+    for i, row in enumerate(recent_q_attempts):
+        t_id = row.topic_id
+        is_correct = 1 if row.is_correct else 0
+
+        # Exponential decay: weight = e^(-k * index)
+        # We want the 1500th item to have about 30% the weight of the 1st item
+        # so e^(-k * 1500) = 0.3 -> -k * 1500 = ln(0.3) -> k = -ln(0.3)/1500 ~= 0.0008
+        weight = math.exp(-0.0008 * i)
+
+        if t_id not in topic_stats:
+            topic_stats[t_id] = {"weighted_correct": 0.0, "total_weight": 0.0}
+
+        topic_stats[t_id]["weighted_correct"] += (is_correct * weight)
+        topic_stats[t_id]["total_weight"] += weight
+
     weakness_scores = {}
-    for row in q_attempts:
-        if row.total and row.total > 0:
-            correct = row.correct or 0
-            accuracy = correct / row.total
-            weakness_scores[row.topic_id] = 1.0 - accuracy
+    for t_id, stats in topic_stats.items():
+        if stats["total_weight"] > 0:
+            accuracy = stats["weighted_correct"] / stats["total_weight"]
+            weakness_scores[t_id] = 1.0 - accuracy # Higher score = weaker
 
     return weakness_scores
 
@@ -216,26 +217,55 @@ def build_mock_test_from_distribution(
 
     all_selected_questions = []
 
-    for topic_id, count in distribution.items():
-        if count <= 0: continue
+    # Get a list of topic_ids and what counts we need
+    # Optimize N+1 issue: instead of doing individual DB queries per topic,
+    # we fetch all requested topics at once.
+    needed_topic_ids = [t for t, count in distribution.items() if count > 0]
 
-        query = db.query(Question).filter(Question.topic_id == topic_id)
+    if needed_topic_ids:
+        query = db.query(Question).filter(Question.topic_id.in_(needed_topic_ids))
         if recent_q_attempts_ids:
             query = query.filter(Question.id.notin_(recent_q_attempts_ids))
 
-        qs = query.order_by(func.random()).limit(count).all()
+        all_potential_qs = query.all()
+        qs_by_topic = {}
+        for q in all_potential_qs:
+            qs_by_topic.setdefault(q.topic_id, []).append(q)
 
-        # Fallback: if not enough fresh questions, just pick any random ones
-        if len(qs) < count:
-            remaining = count - len(qs)
-            exclude_ids = [q.id for q in qs]
-            more_query = db.query(Question).filter(Question.topic_id == topic_id)
-            if exclude_ids:
-                more_query = more_query.filter(Question.id.notin_(exclude_ids))
-            more_qs = more_query.order_by(func.random()).limit(remaining).all()
-            qs.extend(more_qs)
+        # Shuffle local pool
+        for t_id, qs_list in qs_by_topic.items():
+            random.shuffle(qs_list)
 
-        all_selected_questions.extend(qs)
+        for topic_id, count in distribution.items():
+            if count <= 0: continue
+
+            available_qs = qs_by_topic.get(topic_id, [])
+            selected = available_qs[:count]
+
+            # Fallback: if we didn't find enough fresh questions, pull from recent attempts too
+            if len(selected) < count:
+                remaining = count - len(selected)
+                exclude_ids = [q.id for q in selected]
+                more_query = db.query(Question).filter(Question.topic_id == topic_id)
+                if exclude_ids:
+                    more_query = more_query.filter(Question.id.notin_(exclude_ids))
+                more_qs = more_query.order_by(func.random()).limit(remaining).all()
+                selected.extend(more_qs)
+
+            all_selected_questions.extend(selected)
+
+    # Question Deficit Fix:
+    # Fill remaining gaps across whole branch if subject-level limits were exhausted
+    if len(all_selected_questions) < total_questions:
+        shortfall = total_questions - len(all_selected_questions)
+        exclude_overall_ids = [q.id for q in all_selected_questions]
+
+        gap_fill_query = db.query(Question)
+        if exclude_overall_ids:
+             gap_fill_query = gap_fill_query.filter(Question.id.notin_(exclude_overall_ids))
+
+        gap_fill_qs = gap_fill_query.order_by(func.random()).limit(shortfall).all()
+        all_selected_questions.extend(gap_fill_qs)
 
     # Combine all questions and shuffle them to simulate the real exam
     random.shuffle(all_selected_questions)
