@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status, BackgroundTasks
 from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import func, case
 from typing import List, Optional
 import random
 from datetime import datetime, timezone
@@ -8,6 +9,7 @@ from app import schemas, models
 from app.database import get_db
 from app.services.ai_test_generator import generate_personalized_test_distribution, build_mock_test_from_distribution
 from app.auth import get_current_active_user, get_current_admin_user
+from app.models.user_profile import UserWeaknessProfile
 
 router = APIRouter()
 
@@ -164,10 +166,96 @@ def start_mock_test(
     }
 
 
+def update_user_weakness_cache(user_id: int, attempt_id: int, db: Session):
+    """
+    IMPROVEMENT A: Asynchronous hydration of UserWeaknessProfile table.
+    Updates weakness profiles based on the just-completed test attempt.
+    This runs in the background after test submission to avoid blocking the user.
+    """
+    try:
+        # Get all question attempts from this specific test
+        question_attempts = (
+            db.query(models.QuestionAttempt)
+            .join(models.Question)
+            .filter(models.QuestionAttempt.mock_test_attempt_id == attempt_id)
+            .filter(models.QuestionAttempt.user_id == user_id)
+            .all()
+        )
+
+        # Group by topic and calculate accuracy for this test
+        topic_stats = {}
+        for qa in question_attempts:
+            topic_id = qa.question.topic_id
+            if topic_id not in topic_stats:
+                topic_stats[topic_id] = {'total': 0, 'correct': 0}
+
+            topic_stats[topic_id]['total'] += 1
+            if qa.is_correct:
+                topic_stats[topic_id]['correct'] += 1
+
+        # Update or create UserWeaknessProfile entries
+        for topic_id, stats in topic_stats.items():
+            if stats['total'] == 0:
+                continue
+
+            test_accuracy = stats['correct'] / stats['total']
+            test_weakness = 1.0 - test_accuracy
+
+            # Check if profile already exists
+            existing_profile = (
+                db.query(UserWeaknessProfile)
+                .filter(
+                    UserWeaknessProfile.user_id == user_id,
+                    UserWeaknessProfile.topic_id == topic_id
+                )
+                .first()
+            )
+
+            if existing_profile:
+                # Update using exponential moving average
+                old_weakness = existing_profile.weakness_score
+                new_weakness = (old_weakness * 0.7) + (test_weakness * 0.3)
+
+                # Determine trend
+                if new_weakness < old_weakness - 0.05:
+                    trend = "improving"
+                elif new_weakness > old_weakness + 0.05:
+                    trend = "declining"
+                else:
+                    trend = "stable"
+
+                existing_profile.total_attempted += stats['total']
+                existing_profile.total_correct += stats['correct']
+                existing_profile.weakness_score = new_weakness
+                existing_profile.trend = trend
+                existing_profile.last_attempted_at = datetime.now(timezone.utc)
+                existing_profile.last_calculated_at = datetime.now(timezone.utc)
+            else:
+                # Create new profile
+                new_profile = UserWeaknessProfile(
+                    user_id=user_id,
+                    topic_id=topic_id,
+                    total_attempted=stats['total'],
+                    total_correct=stats['correct'],
+                    weakness_score=test_weakness,
+                    trend="new",
+                    last_attempted_at=datetime.now(timezone.utc),
+                    last_calculated_at=datetime.now(timezone.utc)
+                )
+                db.add(new_profile)
+
+        db.commit()
+    except Exception as e:
+        # Log error but don't fail the background task
+        print(f"Background weakness profile update failed for user {user_id}: {e}")
+        db.rollback()
+
+
 @router.post("/attempt/{attempt_id}/submit")
 def submit_mock_test(
     attempt_id: int,
     answers: List[schemas.AnswerSubmission],
+    background_tasks: BackgroundTasks,
     current_user: models.User = Depends(get_current_active_user),
     db: Session = Depends(get_db)
 ):
@@ -257,6 +345,10 @@ def submit_mock_test(
 
     db.commit()
     db.refresh(attempt)
+
+    # IMPROVEMENT A: Trigger background task to update UserWeaknessProfile
+    # This hydrates the "ghost table" asynchronously without blocking the user
+    background_tasks.add_task(update_user_weakness_cache, current_user.id, attempt.id, db)
 
     # Calculate accuracy
     attempted = correct_count + incorrect_count
@@ -445,6 +537,8 @@ def generate_personalized_mock_test(
     """
     Generate an AI personalized mock test based on PYQ weightage and user's weakness profile.
     Requires at least 4 completed mock tests to unlock.
+
+    IMPROVEMENT E: Auto-expire abandoned tests instead of permanently locking users out.
     """
     # Check if there are any unfinished AI tests
     unfinished_tests = db.query(models.MockTest).filter(
@@ -453,12 +547,29 @@ def generate_personalized_mock_test(
     ).all()
 
     for t in unfinished_tests:
-        completed = any(a.completed_at is not None for a in t.attempts)
-        if not completed:
-            raise HTTPException(
-                status_code=400,
-                detail="You already have an unfinished AI Personalized Test. Please complete it before generating a new one."
-            )
+        # Check if there's an incomplete attempt
+        incomplete_attempt = next(
+            (a for a in t.attempts if a.completed_at is None),
+            None
+        )
+
+        if incomplete_attempt:
+            # IMPROVEMENT E: Check if the attempt has expired (test duration + 15 min grace period)
+            from datetime import timedelta
+            max_duration = timedelta(minutes=t.duration_minutes + 15)
+            time_elapsed = datetime.now(timezone.utc) - incomplete_attempt.started_at
+
+            if time_elapsed > max_duration:
+                # Auto-expire the attempt
+                incomplete_attempt.completed_at = datetime.now(timezone.utc)
+                incomplete_attempt.score = 0
+                incomplete_attempt.unattempted = incomplete_attempt.total_questions
+                db.commit()
+            else:
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"You have an unfinished test '{t.name}'. Please complete it before generating a new one."
+                )
 
     user_attempts_count = db.query(models.MockTestAttempt).filter(
         models.MockTestAttempt.user_id == current_user.id,
