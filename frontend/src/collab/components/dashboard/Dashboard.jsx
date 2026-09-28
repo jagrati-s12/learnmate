@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import DashboardStats from "./DashboardStats";
 import ContinueLearning from "./ContinueLearning";
 import AIRecommendation from "./AIRecommendation";
@@ -8,30 +8,13 @@ import Goal from "./Goal";
 import WeeklyActivity from "./WeeklyActivity";
 import ExamCountdown from "./ExamCountdown";
 import Achievements from "./Achievements";
-import SubjectPerformance from "./SubjectPerformance";
 import Motivation from "./Motivation";
 import { useAuth } from "../../../contexts/AuthContext";
 import { hierarchyAPI } from "../../../api/hierarchy";
 import { goalsAPI } from "../../../api/goals";
 import { analyticsAPI } from "../../../api/analytics";
+import bgimg from "../../../assets/bgimg.jpg";
 
-// Decorative line art only - no data, no meaning attached to it.
-function CivilMotif() {
-  return (
-    <svg className="hero-art" viewBox="0 0 260 150" fill="none" aria-hidden="true">
-      <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
-        <path d="M20 118h220" opacity=".5" />
-        <path d="M42 118V74l58-30 58 30v44" opacity=".55" />
-        <path d="M70 118V88h20v30M110 118V88h20v30" opacity=".4" />
-        <path d="M182 118V86h42v32" opacity=".45" />
-        <circle cx="100" cy="44" r="5" opacity=".6" />
-        <path d="M100 32v-8M100 64v-8M88 44h-8M120 44h-8" opacity=".35" />
-        <path d="M148 118l14-22 14 22" opacity=".45" />
-        <path d="M236 34v34M228 42h16" opacity=".3" />
-      </g>
-    </svg>
-  );
-}
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -116,91 +99,94 @@ export default function Dashboard() {
   return (
     <div className="page dashboard-page">
       {/* LEVEL 1 - Welcome + countdown */}
-      <section className="hero hero-card">
-        <CivilMotif />
-
-        <div className="hero-text">
-          <span className="eyebrow">SSC JE CIVIL • PERSONALIZED PREPARATION</span>
-          <h2>Good morning, {firstName} 👋</h2>
-          <p>Let's crack SSC JE Civil today. Focus on your weakest topics first.</p>
-
-          <div className="hero-cta">
-            <NavLink to="/learn/textbook" className="primary-button hero-button">
-              Continue Preparation <ArrowRight size={15} />
-            </NavLink>
-            <span className="hero-hint">
-              {remainingGoals > 0
-                ? `${remainingGoals} task${remainingGoals > 1 ? "s" : ""} left today`
-                : "Plan today's tasks below"}
-            </span>
+      <div className="hero-row">
+        <section className="hero-card welcome-hero">
+          <div className="hero-text">
+            <span className="eyebrow">SSC JE CIVIL • PERSONALIZED PREPARATION</span>
+            <h2>Good morning, {firstName} 👋</h2>
+            <p>Let's crack SSC JE Civil today. Focus on your weakest topics first.</p>
+            <div className="hero-cta">
+              <NavLink to="/learn/textbook" className="primary-button hero-button">
+                Continue Preparation <ArrowRight size={15} />
+              </NavLink>
+              <span className="hero-hint">
+                {remainingGoals > 0
+                  ? `${remainingGoals} task${remainingGoals > 1 ? "s" : ""} left today`
+                  : "Plan today's tasks below"}
+              </span>
+            </div>
           </div>
-        </div>
-
-        <div className="hero-right">
-          <ExamCountdown />
-        </div>
-      </section>
+          <div className="hero-right-zone">
+            <img src={bgimg} alt="Engineering" className="hero-illustration-img" />
+          </div>
+        </section>
+        <ExamCountdown />
+      </div>
 
       {/* LEVEL 2 - Four key statistics */}
       <DashboardStats />
 
-      {/* LEVEL 3 - Continue learning + today's focus */}
-      <div className="dashboard-grid">
-        <ContinueLearning subjects={subjects} />
-        <AIRecommendation />
-      </div>
-
-      {/* LEVEL 4 - Study plan + activity */}
-      <div className="dashboard-grid">
-        <section className="card">
-          <div className="card-header">
-            <div>
-              <h3>Today's Study Plan</h3>
-              <p>{remainingGoals} tasks remaining</p>
-            </div>
-            <NavLink to="/track/goals" className="text-link">
-              Manage
-            </NavLink>
-          </div>
-
-          <form onSubmit={handleAddGoal} className="goal-add-form">
-            <input
-              type="text"
-              className="goal-input"
-              placeholder="Add a new goal..."
-              value={newGoalText}
-              onChange={e => setNewGoalText(e.target.value)}
-            />
-            <button className="primary-button text-sm whitespace-nowrap">Add</button>
-          </form>
-
-          <div className="goal-list">
-            {goals.map(g => (
-              <Goal
-                key={g.id}
-                goal={g}
-                onToggle={handleToggleGoal}
-                onDelete={handleDeleteGoal}
-              />
-            ))}
-            {goals.length === 0 && (
-              <div className="mini-empty compact">
-                <p>Nothing planned yet</p>
-                <span>Add a task above to start your day.</span>
+      {/* Columns for Level 3 & 4 Layout */}
+      <div className="dashboard-columns">
+        <div className="dashboard-left">
+          <section>
+            <ContinueLearning subjects={subjects} />
+          </section>
+          <section className="card card-checklist">
+            <div className="card-header">
+              <div>
+                <h3>Today's Study Plan</h3>
+                <p>{remainingGoals} tasks remaining</p>
               </div>
+              <NavLink to="/track/goals" className="text-link">
+                Manage
+              </NavLink>
+            </div>
+
+            {goals.length === 0 ? (
+              <div className="mini-empty compact">
+                <div className="flex justify-center mb-2">
+                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                    <CheckCircle2 size={16} />
+                  </div>
+                </div>
+                <p>No tasks planned yet</p>
+                <span>Add your first study task to start your day.</span>
+              </div>
+            ) : (
+                <div className="goal-list">
+                  {goals.map(g => (
+                    <Goal
+                      key={g.id}
+                      goal={g}
+                      onToggle={handleToggleGoal}
+                      onDelete={handleDeleteGoal}
+                    />
+                  ))}
+                </div>
             )}
-          </div>
-        </section>
 
-        <WeeklyActivity />
+            <form onSubmit={handleAddGoal} className="goal-add-form mt-4 pt-4 border-t border-gray-100">
+              <input
+                type="text"
+                className="goal-input"
+                placeholder="+ Add task"
+                value={newGoalText}
+                onChange={e => setNewGoalText(e.target.value)}
+              />
+            </form>
+          </section>
+        </div>
+
+        <div className="dashboard-right">
+          <AIRecommendation />
+          <WeeklyActivity />
+          <Achievements />
+        </div>
       </div>
 
-      {/* LEVEL 5 - Achievements, subject performance, motivation */}
-      <div className="dashboard-grid">
-        <Achievements />
-        <SubjectPerformance />
-        <Motivation />
-      </div>
+      {/* LEVEL 5 - Motivational banner */}
+      <Motivation />
     </div>
   );
 }
