@@ -1,15 +1,37 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 import DashboardStats from "./DashboardStats";
 import ContinueLearning from "./ContinueLearning";
 import AIRecommendation from "./AIRecommendation";
 import Goal from "./Goal";
 import WeeklyActivity from "./WeeklyActivity";
 import ExamCountdown from "./ExamCountdown";
+import Achievements from "./Achievements";
+import SubjectPerformance from "./SubjectPerformance";
+import Motivation from "./Motivation";
 import { useAuth } from "../../../contexts/AuthContext";
 import { hierarchyAPI } from "../../../api/hierarchy";
 import { goalsAPI } from "../../../api/goals";
 import { analyticsAPI } from "../../../api/analytics";
+
+// Decorative line art only - no data, no meaning attached to it.
+function CivilMotif() {
+  return (
+    <svg className="hero-art" viewBox="0 0 260 150" fill="none" aria-hidden="true">
+      <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
+        <path d="M20 118h220" opacity=".5" />
+        <path d="M42 118V74l58-30 58 30v44" opacity=".55" />
+        <path d="M70 118V88h20v30M110 118V88h20v30" opacity=".4" />
+        <path d="M182 118V86h42v32" opacity=".45" />
+        <circle cx="100" cy="44" r="5" opacity=".6" />
+        <path d="M100 32v-8M100 64v-8M88 44h-8M120 44h-8" opacity=".35" />
+        <path d="M148 118l14-22 14 22" opacity=".45" />
+        <path d="M236 34v34M228 42h16" opacity=".3" />
+      </g>
+    </svg>
+  );
+}
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -27,18 +49,20 @@ export default function Dashboard() {
           analyticsAPI.getProgress() // from /analytics/progress
         ]);
 
-        const colors = ["purple", "blue", "orange", "cyan", "red", "green"];
+        const colors = ["purple", "blue", "teal", "orange", "red", "cyan"];
 
         const authSubjects = hierachyData.slice(0, 4).map((sub, index) => {
           // Find matching progress data
           const prog = progressData.find(p => p.subject === sub.name);
           const currentProgress = prog ? prog.progress : 0;
           const currentTopics = prog ? prog.totalTopics : 0;
+          const completedTopics = prog ? prog.completedTopics : 0;
 
           return {
             name: sub.name,
             progress: currentProgress,
             topics: currentTopics,
+            completedTopics: completedTopics,
             color: colors[index % colors.length],
             icon: sub.icon || sub.name.substring(0, 2).toUpperCase()
           };
@@ -90,32 +114,48 @@ export default function Dashboard() {
   const remainingGoals = goals.filter(g => !g.is_completed).length;
 
   return (
-    <div className="page">
-      <section className="hero">
-        <div>
+    <div className="page dashboard-page">
+      {/* LEVEL 1 - Welcome + countdown */}
+      <section className="hero hero-card">
+        <CivilMotif />
+
+        <div className="hero-text">
           <span className="eyebrow">SSC JE CIVIL • PERSONALIZED PREPARATION</span>
           <h2>Good morning, {firstName} 👋</h2>
-          <p>
-            Your SSC JE Civil study plan is ready. Focus on your weakest
-            topics first.
-          </p>
+          <p>Let's crack SSC JE Civil today. Focus on your weakest topics first.</p>
+
+          <div className="hero-cta">
+            <NavLink to="/learn/textbook" className="primary-button hero-button">
+              Continue Preparation <ArrowRight size={15} />
+            </NavLink>
+            <span className="hero-hint">
+              {remainingGoals > 0
+                ? `${remainingGoals} task${remainingGoals > 1 ? "s" : ""} left today`
+                : "Plan today's tasks below"}
+            </span>
+          </div>
         </div>
 
-        <ExamCountdown />
+        <div className="hero-right">
+          <ExamCountdown />
+        </div>
       </section>
 
+      {/* LEVEL 2 - Four key statistics */}
       <DashboardStats />
 
+      {/* LEVEL 3 - Continue learning + today's focus */}
       <div className="dashboard-grid">
         <ContinueLearning subjects={subjects} />
         <AIRecommendation />
       </div>
 
+      {/* LEVEL 4 - Study plan + activity */}
       <div className="dashboard-grid">
         <section className="card">
           <div className="card-header">
             <div>
-              <h3>Today's SSC JE Goals</h3>
+              <h3>Today's Study Plan</h3>
               <p>{remainingGoals} tasks remaining</p>
             </div>
             <NavLink to="/track/goals" className="text-link">
@@ -123,11 +163,11 @@ export default function Dashboard() {
             </NavLink>
           </div>
 
-          <form onSubmit={handleAddGoal} className="flex gap-2 mb-4">
-            <input 
-              type="text" 
-              className="flex-1 p-2 border rounded" 
-              placeholder="Add a new goal..." 
+          <form onSubmit={handleAddGoal} className="goal-add-form">
+            <input
+              type="text"
+              className="goal-input"
+              placeholder="Add a new goal..."
               value={newGoalText}
               onChange={e => setNewGoalText(e.target.value)}
             />
@@ -136,15 +176,18 @@ export default function Dashboard() {
 
           <div className="goal-list">
             {goals.map(g => (
-              <Goal 
-                key={g.id} 
-                goal={g} 
-                onToggle={handleToggleGoal} 
-                onDelete={handleDeleteGoal} 
+              <Goal
+                key={g.id}
+                goal={g}
+                onToggle={handleToggleGoal}
+                onDelete={handleDeleteGoal}
               />
             ))}
             {goals.length === 0 && (
-              <p className="text-gray-500 text-sm italic py-2">No goals set yet.</p>
+              <div className="mini-empty compact">
+                <p>Nothing planned yet</p>
+                <span>Add a task above to start your day.</span>
+              </div>
             )}
           </div>
         </section>
@@ -152,35 +195,12 @@ export default function Dashboard() {
         <WeeklyActivity />
       </div>
 
-      <section className="card exam-focus-card">
-        <div className="card-header">
-          <div>
-            <h3>SSC JE Civil Focus</h3>
-            <p>Use your recent performance to decide what to study next.</p>
-          </div>
-          <NavLink to="/track/performance" className="text-link">
-            View performance
-          </NavLink>
-        </div>
-
-        <div className="focus-grid">
-          <div>
-            <span>Priority</span>
-            <strong>Soil Mechanics</strong>
-            <small>Needs more practice based on recent accuracy.</small>
-          </div>
-          <div>
-            <span>Next target</span>
-            <strong>25 PYQs</strong>
-            <small>Mix conceptual and numerical questions.</small>
-          </div>
-          <div>
-            <span>Revision mode</span>
-            <strong>Formula Review</strong>
-            <small>Revise formulas before starting the next mock.</small>
-          </div>
-        </div>
-      </section>
+      {/* LEVEL 5 - Achievements, subject performance, motivation */}
+      <div className="dashboard-grid">
+        <Achievements />
+        <SubjectPerformance />
+        <Motivation />
+      </div>
     </div>
   );
 }

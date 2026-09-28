@@ -48,14 +48,20 @@ export default function ExamCountdown() {
   return (
     <div className="exam-card">
       <div className="exam-icon">
-        <Clock3 size={20} />
+        <Clock3 size={22} />
       </div>
 
-      <div>
-        <span>SSC JE exam countdown</span>
-        <strong>
-          {daysLeft === null ? "Loading..." : `${daysLeft} days`}
-        </strong>
+      <div className="exam-body">
+        <span className="exam-label">SSC JE 2026</span>
+        {daysLeft === null ? (
+          <strong className="exam-value">Loading…</strong>
+        ) : (
+          <strong className="exam-value">
+            {daysLeft}
+            <em>days left</em>
+          </strong>
+        )}
+        <span className="exam-sub">Exam countdown</span>
       </div>
     </div>
   );
