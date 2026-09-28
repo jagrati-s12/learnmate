@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import DashboardStats from "./DashboardStats";
 import ContinueLearning from "./ContinueLearning";
 import AIRecommendation from "./AIRecommendation";
@@ -8,6 +8,7 @@ import Goal from "./Goal";
 import WeeklyActivity from "./WeeklyActivity";
 import ExamCountdown from "./ExamCountdown";
 import Achievements from "./Achievements";
+import SubjectPerformance from "./SubjectPerformance";
 import Motivation from "./Motivation";
 import { useAuth } from "../../../contexts/AuthContext";
 import { hierarchyAPI } from "../../../api/hierarchy";
@@ -122,6 +123,7 @@ export default function Dashboard() {
           <section>
             <ContinueLearning subjects={subjects} />
           </section>
+          <SubjectPerformance />
           <section className="card card-checklist">
             <div className="card-header">
               <div>

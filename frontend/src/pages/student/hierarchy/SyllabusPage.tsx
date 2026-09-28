@@ -3,7 +3,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CheckSquare, Square } from 'lucide-react';
 import { Topbar } from '../../../components/layout/Topbar';
 import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
 import { hierarchyAPI } from '../../../api/hierarchy';
 import type { SubjectWithChapters, ChapterWithTopics, TopicSimple } from '../../../types';
 
