@@ -5,6 +5,7 @@ export { questionsAPI } from './questions';
 export { practiceAPI } from './practice';
 export { mockTestsAPI } from './mockTests';
 export { adminAPI } from './admin';
+export { analyticsAPI } from './analytics';
 export { default as apiClient } from './client';
 
 export type { User, LoginCredentials, RegisterData, AuthResponse } from './auth';
@@ -19,5 +20,7 @@ export type {
   MockTestResult,
   QuestionReview,
 } from './mockTests';
+export type { PerformanceOverview, TopicBreakdownItem, HeartbeatRequest } from './analytics';
 export { MockTestType } from './mockTests';
 export { DifficultyLevel } from './questions';
+

@@ -258,6 +258,10 @@ def submit_mock_test(
     db.commit()
     db.refresh(attempt)
 
+    # Trigger diagnostic updates
+    from app.services.diagnostics.processor import evaluate_performance_updates
+    evaluate_performance_updates(db, current_user.id, attempt.id)
+
     # Calculate accuracy
     attempted = correct_count + incorrect_count
     accuracy = (correct_count / attempted * 100) if attempted > 0 else 0.0

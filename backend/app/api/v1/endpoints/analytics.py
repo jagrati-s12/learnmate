@@ -16,6 +16,29 @@ from app.auth import get_current_user
 
 router = APIRouter()
 
+@router.post("/study-session/heartbeat")
+def post_study_session_heartbeat(
+    data: dict,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from app.models.study_session import UserTopicStudySession
+
+    topic_id = data.get("topic_id")
+    duration = data.get("duration_seconds")
+    activity_type = data.get("activity_type", "reading")
+
+    study_session = UserTopicStudySession(
+        user_id=current_user.id,
+        topic_id=topic_id,
+        duration_seconds=duration,
+        activity_type=activity_type
+    )
+    db.add(study_session)
+    db.commit()
+
+    return {"status": "success"}
+
 @router.get("/dashboard-stats")
 def get_dashboard_stats(
     current_user: User = Depends(get_current_user),
@@ -248,4 +271,129 @@ def post_mistake_explanation(current_user: User = Depends(get_current_user), db:
     wrong = data.get("incorrect_answer", "") if data else ""
     correct = data.get("correct_answer", "") if data else ""
     return {"explanation": generate_mistake_explanation(topic, wrong, correct)}
+
+@router.get("/performance-overview")
+def get_performance_overview(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from app.models.performance_profile import UserPerformanceProfile
+    from app.models.topic_mastery import UserTopicMastery
+    from app.models.study_session import UserTopicStudySession
+
+    profile = db.query(UserPerformanceProfile).filter(
+        UserPerformanceProfile.user_id == current_user.id
+    ).first()
+
+    if not profile:
+        profile = UserPerformanceProfile(user_id=current_user.id)
+
+    # Compute Cognitive Load Summary percentages across topic mastery records
+    masteries = db.query(UserTopicMastery).filter(UserTopicMastery.user_id == current_user.id).all()
+    total_fast_correct = sum(m.fast_correct_count for m in masteries)
+    total_slow_correct = sum(m.slow_correct_count for m in masteries)
+    total_fast_incorrect = sum(m.fast_incorrect_count for m in masteries)
+    total_slow_incorrect = sum(m.slow_incorrect_count for m in masteries)
+    total_quad_attempts = total_fast_correct + total_slow_correct + total_fast_incorrect + total_slow_incorrect
+
+    cognitive_summary = {
+        "mastered_fast_pct": round((total_fast_correct / total_quad_attempts * 100), 1) if total_quad_attempts > 0 else 0.0,
+        "methodical_slow_pct": round((total_slow_correct / total_quad_attempts * 100), 1) if total_quad_attempts > 0 else 0.0,
+        "rushed_errors_pct": round((total_fast_incorrect / total_quad_attempts * 100), 1) if total_quad_attempts > 0 else 0.0,
+        "conceptual_struggles_pct": round((total_slow_incorrect / total_quad_attempts * 100), 1) if total_quad_attempts > 0 else 0.0,
+    }
+
+    # Priority Revision Topics (topics needing attention)
+    priority_topics = []
+    weak_masteries = db.query(UserTopicMastery).filter(
+        UserTopicMastery.user_id == current_user.id,
+        UserTopicMastery.bkt_mastery_prob < 0.50
+    ).order_by(UserTopicMastery.bkt_mastery_prob.asc()).limit(5).all()
+
+    for m in weak_masteries:
+        topic = db.query(Topic).filter(Topic.id == m.topic_id).first()
+        topic_name = topic.name if topic else f"Topic #{m.topic_id}"
+        subject_name = topic.chapter.subject.name if (topic and topic.chapter and topic.chapter.subject) else "General"
+
+        # Calculate study time for this topic
+        total_seconds = db.query(func.sum(UserTopicStudySession.duration_seconds)).filter(
+            UserTopicStudySession.user_id == current_user.id,
+            UserTopicStudySession.topic_id == m.topic_id
+        ).scalar() or 0
+        study_hours = round(total_seconds / 3600, 1)
+
+        # Root cause attribution matrix logic
+        if study_hours < 1.0:
+            root_cause = "Knowledge Gap"
+            note = f"Low study time ({study_hours} hrs) and low mastery ({round(m.bkt_mastery_prob*100)}%). Insufficient preparation."
+            action = "Study Theory & Practice 10 Basic Questions"
+        elif m.fast_incorrect_count > m.slow_incorrect_count:
+            root_cause = "Speed/Careless Trap"
+            note = "High rushed slip rate. Speed reading led to careless error."
+            action = "Slow down and re-read question conditions carefully."
+        else:
+            root_cause = "Misunderstanding"
+            note = f"High study time ({study_hours} hrs) but low concept mastery ({round(m.bkt_mastery_prob*100)}%). Conceptual re-training required."
+            action = "Watch Concept Explainer & Attempt Solved Examples"
+
+        priority_topics.append({
+            "topic_id": m.topic_id,
+            "topic_name": topic_name,
+            "subject_name": subject_name,
+            "tmi_score": m.tmi_score,
+            "bkt_mastery_prob": m.bkt_mastery_prob,
+            "study_hours": study_hours,
+            "root_cause": root_cause,
+            "diagnostic_note": note,
+            "action_plan": action
+        })
+
+    return {
+        "user_id": current_user.id,
+        "overall_summary": {
+            "total_tests_completed": profile.tests_completed,
+            "average_score": profile.running_mean_score,
+            "running_std_dev": profile.running_std_dev,
+            "predicted_next_score": profile.predicted_mock_score,
+            "velocity_trend": profile.trend_direction,
+            "score_velocity": profile.score_velocity,
+            "burnout_risk": profile.burnout_flag,
+            "student_archetype": profile.archetype
+        },
+        "cognitive_load_summary": cognitive_summary,
+        "priority_revision_topics": priority_topics
+    }
+
+@router.get("/topic-breakdown")
+def get_topic_breakdown(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from app.models.topic_mastery import UserTopicMastery
+
+    masteries = db.query(UserTopicMastery).filter(
+        UserTopicMastery.user_id == current_user.id
+    ).all()
+
+    result = []
+    for m in masteries:
+        topic = db.query(Topic).filter(Topic.id == m.topic_id).first()
+        result.append({
+            "topic_id": m.topic_id,
+            "topic_name": topic.name if topic else f"Topic #{m.topic_id}",
+            "bkt_mastery_prob": m.bkt_mastery_prob,
+            "tmi_score": m.tmi_score,
+            "total_attempts": m.total_attempts,
+            "correct_count": m.correct_count,
+            "incorrect_count": m.incorrect_count,
+            "quadrants": {
+                "fast_correct": m.fast_correct_count,
+                "slow_correct": m.slow_correct_count,
+                "fast_incorrect": m.fast_incorrect_count,
+                "slow_incorrect": m.slow_incorrect_count
+            },
+            "last_practiced_at": m.last_practiced_at
+        })
+    return {"topics": result}
+
 

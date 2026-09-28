@@ -3,6 +3,7 @@ import { ChevronRight, PlayCircle, FileText, CheckCircle } from "lucide-react";
 import { useParams, NavLink, useNavigate } from "react-router-dom";
 import apiClient from "../../../api/client";
 import { questionsAPI } from "../../../api/questions";
+import { useStudyTracker } from "../../hooks/useStudyTracker";
 
 export default function TopicContent() {
   const { id } = useParams();
@@ -11,6 +12,14 @@ export default function TopicContent() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("Learn");
+
+  // Track active study session time on this topic
+  useStudyTracker({
+    topicId: id ? Number(id) : null,
+    activityType: "reading",
+    heartbeatIntervalMs: 30000
+  });
+
 
   useEffect(() => {
     const fetchData = async () => {
