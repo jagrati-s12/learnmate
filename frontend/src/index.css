@@ -1561,6 +1561,45 @@ button {
     margin-top: 2px
 }
 
+/* Centered circular progress for Syllabus Progress card */
+.stat-progress-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 6px 0 6px;
+}
+
+.circular-chart {
+    display: block;
+    width: 60px;
+    height: 60px;
+    max-width: 65px;
+    max-height: 65px;
+}
+
+.circle-bg {
+    fill: none;
+    stroke: #ECEBF3;
+    stroke-width: 3.2;
+}
+
+.circle {
+    fill: none;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke: var(--primary-color, #6D45E8);
+    transition: stroke-dasharray 0.5s ease;
+}
+
+.percentage {
+    fill: var(--text-main, #1a1d2e);
+    font-family: inherit;
+    font-size: 8px;
+    font-weight: 800;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+
 /* Mini visual - progress ring */
 .stat-mini {
     margin-top: 13px
