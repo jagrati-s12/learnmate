@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import { ThemeProvider } from './contexts/ThemeContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { AdminRoute } from './components/auth/AdminRoute';
 import { LandingPage } from './pages/public/LandingPage';
@@ -28,16 +27,13 @@ import CollabMockTest from './collab/components/test/MockTest';
 import Progress from './collab/pages/Progress';
 import Performance from './collab/pages/Performance';
 import Bookmarks from './collab/pages/Bookmarks';
-import Profile from './collab/components/settings/Profile';
-import Preferences from './collab/components/settings/Preferences';
-import Security from './collab/components/settings/Security';
+import SettingsPage from './collab/components/settings/SettingsPage';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router>
-          <div className="min-h-screen bg-theme-bg-primary text-theme-text-primary transition-colors duration-300">
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-[var(--bg-color)] transition-colors duration-300 text-[var(--text-main)]">
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
@@ -78,15 +74,14 @@ function App() {
               <Route path="/track/performance" element={<Performance />} />
               <Route path="/resources/bookmarks" element={<Bookmarks />} />
 
-              <Route path="/settings/profile" element={<Profile />} />
-              <Route path="/settings/preferences" element={<Preferences />} />
-              <Route path="/settings/security" element={<Security />} />
+              <Route path="/settings/profile" element={<SettingsPage section="profile" />} />
+              <Route path="/settings/preferences" element={<SettingsPage section="preferences" />} />
+              <Route path="/settings/security" element={<SettingsPage section="security" />} />
             </Route>
           </Routes>
         </div>
       </Router>
     </AuthProvider>
-    </ThemeProvider>
   );
 }
 

@@ -1,11 +1,10 @@
-import { Menu, Search, Bell, LogOut, Moon, Sun } from "lucide-react";
+import { Menu, Search, Bell, LogOut } from "lucide-react";
 import { useAuth } from "../../../contexts/AuthContext";
-import { useTheme } from "../../../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import ThemeSelector from "../common/ThemeSelector";
 
 export default function Topbar({ title, setOpen }) {
   const { user, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -25,22 +24,16 @@ export default function Topbar({ title, setOpen }) {
       </div>
 
       <div className="top-actions">
-        <button className="icon-button" onClick={() => alert("Search functionality coming soon!")}><Search size={18} /></button>
-        <button className="icon-button notification" onClick={() => alert("You have no new notifications.")}>
+        <ThemeSelector />
+        <button className="icon-button"><Search size={18} /></button>
+        <button className="icon-button notification">
           <Bell size={18} />
           <span />
-        </button>
-        <button
-          className="icon-button"
-          onClick={toggleTheme}
-          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
         </button>
         <button className="icon-button" onClick={handleLogout} title="Logout">
           <LogOut size={18} />
         </button>
-        <div className="top-avatar cursor-pointer" onClick={() => navigate("/settings/profile")} title={user?.full_name}>{user?.full_name?.charAt(0) || 'U'}</div>
+        <div className="top-avatar" title={user?.full_name}>{user?.full_name?.charAt(0) || 'U'}</div>
       </div>
     </header>
   );

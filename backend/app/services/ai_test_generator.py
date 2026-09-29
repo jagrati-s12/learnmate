@@ -30,7 +30,6 @@ def calculate_pyq_baseline_weights(db: Session, branch_id: int):
             weights[row.id] = row.count / total_pyqs
     else:
         # Fallback dictionary simulating standard SSC-JE Civil weightages mapped to subjects
-        # Normally you'd map these accurately. Here we just distribute evenly or simulated.
         topics = db.query(Topic).join(Chapter).join(Subject).filter(Subject.branch_id == branch_id).all()
         # Fallback distribution logic
         for t in topics:
@@ -55,11 +54,10 @@ def calculate_user_weaknesses(db: Session, user_id: int):
     """
     Calculate user weakness across topics by analyzing recent test attempts.
 
-    Improvements over previous version:
+    Improvements:
     1. Uses exponential decay weighting to properly weight recent practice vs historical tests
     2. Includes ALL practice attempts, avoiding strict time windows that drop long-term weaknesses
-    3. Fixes PostgreSQL compatibility by using portable case() for boolean aggregation.
-    4. Returns dict: topic_id -> weakness_score (0.0 to 1.0, where 1.0 = very weak).
+    3. Returns dict: topic_id -> weakness_score (0.0 to 1.0, where 1.0 = very weak).
     """
     # Fetch the last 1500 question attempts (approx 15 mock tests + practice)
     recent_q_attempts = (
@@ -90,8 +88,7 @@ def calculate_user_weaknesses(db: Session, user_id: int):
         is_correct = 1 if row.is_correct else 0
 
         # Exponential decay: weight = e^(-k * index)
-        # We want the 1500th item to have about 30% the weight of the 1st item
-        # so e^(-k * 1500) = 0.3 -> -k * 1500 = ln(0.3) -> k = -ln(0.3)/1500 ~= 0.0008
+        # e^(-k * 1500) = 0.3 -> -k * 1500 = ln(0.3) -> k = -ln(0.3)/1500 ~= 0.0008
         weight = math.exp(-0.0008 * i)
 
         if t_id not in topic_stats:
@@ -120,10 +117,6 @@ def generate_personalized_test_distribution(
     """
     Generate a personalized test distribution that blends historical PYQ weightages
     with user-specific weaknesses.
-
-    IMPROVEMENT D: Changed from multiplicative (1.5x cap) to blended model:
-    final_score = (pyq_weight * (1 - adaptation_weight)) + (weakness * adaptation_weight)
-    This ensures weak topics surface much stronger in personalized tests.
     """
     # First 4 mock tests follow PDF PYQ weightages only (no weakness blend)
     if attempt_count < 4:
@@ -143,8 +136,7 @@ def generate_personalized_test_distribution(
         # If no weakness score, assume average (0.5)
         u_weak = user_weaknesses.get(t_id, 0.5)
 
-        # IMPROVEMENT D: Blend instead of multiply
-        # This ensures both historical importance AND user weakness contribute equally
+        # Blend instead of multiply
         final_score = (p_wt * (1.0 - adaptation_weight)) + (u_weak * adaptation_weight)
         final_weights[t_id] = final_score
 
@@ -186,8 +178,7 @@ def build_mock_test_from_distribution(
 ) -> MockTest:
     """
     Build a mock test from a pre-calculated distribution of questions by topic.
-
-    IMPROVEMENT C: Refactored to use database-level aggregation to avoid N+1 queries.
+    Uses bulk queries to avoid N+1 issues.
     """
 
     mock_test = MockTest(
@@ -198,7 +189,8 @@ def build_mock_test_from_distribution(
         total_marks=total_questions,
         negative_marking=0.25,
         is_baseline=is_baseline,
-        created_by_id=user_id
+        created_by_id=user_id,
+        user_id=user_id
     )
     db.add(mock_test)
     db.flush() # get ID
@@ -217,9 +209,7 @@ def build_mock_test_from_distribution(
 
     all_selected_questions = []
 
-    # Get a list of topic_ids and what counts we need
-    # Optimize N+1 issue: instead of doing individual DB queries per topic,
-    # we fetch all requested topics at once.
+    # Optimize query: fetch questions for all topics at once
     needed_topic_ids = [t for t, count in distribution.items() if count > 0]
 
     if needed_topic_ids:

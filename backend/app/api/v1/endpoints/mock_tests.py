@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import func, case
 from typing import List, Optional
 import random
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from app import schemas, models
 from app.database import get_db
@@ -29,7 +29,7 @@ def generate_mock_test(
 
     # Build query for questions based on hierarchy
     q_query = db.query(models.Question)
-    
+
     if data.subject_id:
         q_query = q_query.join(models.Topic).join(models.Chapter).filter(models.Chapter.subject_id == data.subject_id)
     elif data.branch_id:
@@ -38,7 +38,7 @@ def generate_mock_test(
         q_query = q_query.join(models.Topic).join(models.Chapter).join(models.Subject).join(models.Branch).filter(models.Branch.exam_id == data.exam_id)
 
     available_questions = q_query.all()
-    
+
     if len(available_questions) < data.total_questions:
         raise HTTPException(status_code=400, detail=f"Not enough questions available. Found {len(available_questions)}, requested {data.total_questions}")
 
@@ -50,7 +50,9 @@ def generate_mock_test(
         test_type=data.test_type,
         duration_minutes=data.duration_minutes,
         total_marks=data.total_marks,
-        negative_marking=data.negative_marking
+        negative_marking=data.negative_marking,
+        created_by_id=current_user.id,
+        user_id=current_user.id
     )
     db.add(mock_test)
     db.commit()
@@ -63,7 +65,7 @@ def generate_mock_test(
             question_order=order
         )
         db.add(mtq)
-    
+
     db.commit()
     return mock_test
 
@@ -79,7 +81,10 @@ def get_available_mock_tests(
     Get all available mock tests (global ones + user's generated ones).
     """
     tests = db.query(models.MockTest).filter(
-        (models.MockTest.created_by_id == None) | (models.MockTest.created_by_id == current_user.id)
+        (models.MockTest.created_by_id == None) |
+        (models.MockTest.created_by_id == current_user.id) |
+        (models.MockTest.user_id == None) |
+        (models.MockTest.user_id == current_user.id)
     ).order_by(models.MockTest.id.asc()).offset(skip).limit(limit).all()
     return tests
 
@@ -168,7 +173,7 @@ def start_mock_test(
 
 def update_user_weakness_cache(user_id: int, attempt_id: int, db: Session):
     """
-    IMPROVEMENT A: Asynchronous hydration of UserWeaknessProfile table.
+    Asynchronous hydration of UserWeaknessProfile table.
     Updates weakness profiles based on the just-completed test attempt.
     This runs in the background after test submission to avoid blocking the user.
     """
@@ -346,8 +351,7 @@ def submit_mock_test(
     db.commit()
     db.refresh(attempt)
 
-    # IMPROVEMENT A: Trigger background task to update UserWeaknessProfile
-    # This hydrates the "ghost table" asynchronously without blocking the user
+    # Trigger background task to update UserWeaknessProfile asynchronously
     background_tasks.add_task(update_user_weakness_cache, current_user.id, attempt.id, db)
 
     # Calculate accuracy
@@ -474,6 +478,8 @@ def get_mock_test_result(
         "total_time_seconds": attempt.total_time_seconds,
         "questions": questions_data
     }
+
+
 @router.post("/", response_model=schemas.MockTestResponse)
 def create_mock_test(
     data: schemas.MockTestCreate,
@@ -488,6 +494,7 @@ def create_mock_test(
     db.commit()
     db.refresh(mock_test)
     return mock_test
+
 
 @router.put("/{test_id}", response_model=schemas.MockTestResponse)
 def update_mock_test(
@@ -511,6 +518,7 @@ def update_mock_test(
     db.refresh(mock_test)
     return mock_test
 
+
 @router.delete("/{test_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_mock_test(
     test_id: int,
@@ -528,6 +536,7 @@ def delete_mock_test(
     db.commit()
     return None
 
+
 @router.post("/generate-personalized", response_model=schemas.MockTestResponse)
 def generate_personalized_mock_test(
     data: schemas.PersonalizedTestRequest,
@@ -537,12 +546,11 @@ def generate_personalized_mock_test(
     """
     Generate an AI personalized mock test based on PYQ weightage and user's weakness profile.
     Requires at least 4 completed mock tests to unlock.
-
-    IMPROVEMENT E: Auto-expire abandoned tests instead of permanently locking users out.
+    Auto-expires abandoned tests.
     """
     # Check if there are any unfinished AI tests
     unfinished_tests = db.query(models.MockTest).filter(
-        models.MockTest.created_by_id == current_user.id,
+        (models.MockTest.created_by_id == current_user.id) | (models.MockTest.user_id == current_user.id),
         models.MockTest.is_baseline == False
     ).all()
 
@@ -554,8 +562,6 @@ def generate_personalized_mock_test(
         )
 
         if incomplete_attempt:
-            # IMPROVEMENT E: Check if the attempt has expired (test duration + 15 min grace period)
-            from datetime import timedelta
             max_duration = timedelta(minutes=t.duration_minutes + 15)
             time_elapsed = datetime.now(timezone.utc) - incomplete_attempt.started_at
 
@@ -606,6 +612,7 @@ def generate_personalized_mock_test(
 
     return mock_test
 
+
 @router.post("/generate-baseline", response_model=schemas.MockTestResponse)
 def generate_baseline_mock_test(
     data: schemas.PersonalizedTestRequest,
@@ -617,7 +624,7 @@ def generate_baseline_mock_test(
     """
     # Check if there are any unfinished baseline tests
     unfinished_tests = db.query(models.MockTest).filter(
-        models.MockTest.created_by_id == current_user.id,
+        (models.MockTest.created_by_id == current_user.id) | (models.MockTest.user_id == current_user.id),
         models.MockTest.is_baseline == True
     ).all()
 
@@ -634,7 +641,6 @@ def generate_baseline_mock_test(
         models.MockTestAttempt.completed_at.isnot(None)
     ).count()
 
-    # Can still allow generating baseline if they passed 4, or you can restrict it.
     test_number = user_attempts_count + 1
 
     # 1. Get PYQ baseline distribution
@@ -663,7 +669,3 @@ def generate_baseline_mock_test(
     )
 
     return mock_test
-
-
-
-
