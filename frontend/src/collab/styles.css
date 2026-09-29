@@ -499,6 +499,39 @@ button {
     color: #6eaa80
 }
 
+/* Top-right subtle theme corner tint overlay for dashboard cards */
+.dashboard-page .card,
+.dashboard-page .stat-card,
+.dashboard-page .exam-card,
+.dashboard-page .hero-card,
+.dashboard-page .dashboard-card,
+.dashboard-page .subject-card,
+.dashboard-page .ai-card,
+.dashboard-page .welcome-hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-page .card::after,
+.dashboard-page .stat-card::after,
+.dashboard-page .exam-card::after,
+.dashboard-page .hero-card::after,
+.dashboard-page .dashboard-card::after,
+.dashboard-page .subject-card::after,
+.dashboard-page .ai-card::after,
+.dashboard-page .welcome-hero::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--primary-color, #7047e7) 12%, transparent) 0%, color-mix(in srgb, var(--primary-color, #7047e7) 4%, transparent) 45%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+    border-top-right-radius: inherit;
+}
+
 .dashboard-grid {
     display: grid;
     grid-template-columns: 1.5fr 1fr;
