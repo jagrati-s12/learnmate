@@ -16,6 +16,8 @@ export interface MockTest {
   duration_minutes: number;
   total_marks: number;
   negative_marking?: number;
+  is_baseline?: boolean;
+  created_by_id?: number;
 }
 
 export interface MockTestStartResponse {
@@ -189,6 +191,27 @@ export const mockTestsAPI = {
     const response = await apiClient.get<MockTestAnalytics>(`/mock-tests/${testId}/analytics/${attemptId}`);
     return response.data;
   },
+
+  // AI Test Generation (requires 4+ completed attempts)
+  async generatePersonalizedTest(data: {
+    branch_id: number,
+    total_questions?: number,
+    adaptation_weight?: number
+  }): Promise<MockTest> {
+    const response = await apiClient.post<MockTest>('/mock-tests/generate-personalized', data);
+    return response.data;
+  },
+
+  // Baseline PYQ Test Generation (for users with <4 attempts)
+  async generateBaselineTest(data: {
+    branch_id: number,
+    total_questions?: number
+  }): Promise<MockTest> {
+    const response = await apiClient.post<MockTest>('/mock-tests/generate-baseline', data);
+    return response.data;
+  },
+
+  // Legacy method - now calls personalized by default
   generateAITest: async (data: { branch_id: number, total_questions?: number, adaptation_weight?: number }) => {
     const response = await apiClient.post<MockTest>('/mock-tests/generate-personalized', data);
     return response.data;

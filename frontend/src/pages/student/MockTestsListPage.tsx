@@ -10,18 +10,19 @@ import { Brain } from 'lucide-react';
 export const MockTestsListPage: React.FC = () => {
   const navigate = useNavigate();
   const [tests, setTests] = useState<MockTest[]>([]);
+  const [completedAttempts, setCompletedAttempts] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [generating, setGenerating] = useState(false);
 
+  const canGenerateAI = completedAttempts >= 4;
 
-  
   const handleGenerateAI = async () => {
     try {
       setGenerating(true);
       setError(null);
       // HARDCODE BRANCH 2 for now based on ProgressPage logic
-      const newTest = await mockTestsAPI.generateAITest({ branch_id: 2, total_questions: 100 });
+      const newTest = await mockTestsAPI.generatePersonalizedTest({ branch_id: 2, total_questions: 100 });
       setTests([newTest, ...tests]);
       navigate(`/tests/${newTest.id}`);
     } catch (err: any) {
@@ -40,8 +41,18 @@ export const MockTestsListPage: React.FC = () => {
     const fetchTests = async () => {
       try {
         setLoading(true);
-        const data = await mockTestsAPI.getAllTests();
-        setTests(data);
+        const [allTests, attempts] = await Promise.all([
+          mockTestsAPI.getAllTests(),
+          mockTestsAPI.getUserAttempts()
+        ]);
+
+        // Filter: Show baseline tests + any AI tests user has already generated
+        const displayTests = allTests.filter(t => t.is_baseline || t.created_by_id);
+        setTests(displayTests);
+
+        // Count completed attempts
+        const completed = attempts.filter(a => a.completed_at).length;
+        setCompletedAttempts(completed);
       } catch (err: any) {
         setError('Failed to load mock tests. Please try again.');
         console.error(err);
@@ -56,18 +67,27 @@ export const MockTestsListPage: React.FC = () => {
     <>
       <Topbar title="Mock Tests" />
       <div className="flex-1 overflow-auto p-6 text-theme-text-primary">
-        
+
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-theme-text-primary">Available Mock Tests</h1>
-          <Button 
-            variant="primary" 
-            onClick={handleGenerateAI} 
-            disabled={generating}
-            className="flex items-center gap-2"
-          >
-            <Brain className="w-4 h-4" />
-            {generating ? 'Analyzing profile...' : 'Generate AI Test'}
-          </Button>
+          <div>
+            <h1 className="text-2xl font-bold text-theme-text-primary">Available Mock Tests</h1>
+            {!canGenerateAI && (
+              <p className="text-sm text-theme-text-muted mt-1">
+                Complete {4 - completedAttempts} more test{(4 - completedAttempts) > 1 ? 's' : ''} to unlock AI Personalized Tests
+              </p>
+            )}
+          </div>
+          {canGenerateAI && (
+            <Button
+              variant="primary"
+              onClick={handleGenerateAI}
+              disabled={generating}
+              className="flex items-center gap-2"
+            >
+              <Brain className="w-4 h-4" />
+              {generating ? 'Analyzing profile...' : 'Generate AI Test'}
+            </Button>
+          )}
         </div>
         
         {loading ? (

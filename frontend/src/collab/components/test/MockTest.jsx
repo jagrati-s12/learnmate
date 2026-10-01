@@ -24,6 +24,7 @@ export default function MockTest() {
   const [testList, setTestList] = useState([]);
   const [selectedTest, setSelectedTest] = useState(null);
   const [attemptData, setAttemptData] = useState(null);
+  const [completedAttempts, setCompletedAttempts] = useState(0);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -33,11 +34,13 @@ export default function MockTest() {
   const [submitted, setSubmitted] = useState(false);
   const [generating, setGenerating] = useState(false);
 
+  const canGenerateAI = completedAttempts >= 4;
+
   const handleGenerateAI = async () => {
     try {
       setGenerating(true);
       setError(null);
-      const newTest = await mockTestsAPI.generateAITest({ branch_id: 2, total_questions: 100 });
+      const newTest = await mockTestsAPI.generatePersonalizedTest({ branch_id: 2, total_questions: 100 });
       setTestList([newTest, ...testList]);
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to generate AI Test');
@@ -53,12 +56,22 @@ export default function MockTest() {
 
   const [questionStats, setQuestionStats] = useState([]);
 
-  // 1. Fetch available tests on mount
+  // 1. Fetch available tests and completed attempts on mount
   useEffect(() => {
     const fetchTests = async () => {
       try {
-        const tests = await mockTestsAPI.getAllTests();
-        setTestList(tests);
+        const [tests, attempts] = await Promise.all([
+          mockTestsAPI.getAllTests(),
+          mockTestsAPI.getUserAttempts()
+        ]);
+
+        // Filter: Show baseline tests + any AI tests user has already generated
+        const displayTests = tests.filter(t => t.is_baseline || t.created_by_id);
+        setTestList(displayTests);
+
+        // Count completed attempts
+        const completed = attempts.filter(a => a.completed_at).length;
+        setCompletedAttempts(completed);
       } catch (err) {
         setError("Failed to load available mock tests.");
       } finally {
@@ -244,15 +257,25 @@ export default function MockTest() {
           subtitle="Select a dynamic test to start practicing."
         />
         {error && <div className="text-red-500 mb-4">{error}</div>}
-              <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Available Mock Tests</h2>
-        <button
-          onClick={handleGenerateAI}
-          disabled={generating}
-          className="flex flex-row items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50"
-        >
-          {generating ? "Analyzing..." : "Generate AI Test"}
-        </button>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h2 className="text-xl font-semibold">Available Mock Tests</h2>
+          {!canGenerateAI && (
+            <p className="text-sm text-theme-text-muted mt-1">
+              Complete {4 - completedAttempts} more test{(4 - completedAttempts) > 1 ? 's' : ''} to unlock AI Personalized Tests
+            </p>
+          )}
+        </div>
+        {canGenerateAI && (
+          <button
+            onClick={handleGenerateAI}
+            disabled={generating}
+            className="flex flex-row items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:opacity-50"
+          >
+            <Brain size={18} />
+            {generating ? "Analyzing..." : "Generate AI Test"}
+          </button>
+        )}
       </div>
       <div className="flex flex-col gap-4">
           {testList.map(t => (
