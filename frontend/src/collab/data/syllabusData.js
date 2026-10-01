@@ -9,15 +9,15 @@ export const syllabusData = [
         type: "core",
         title: "Core Topics",
         topics: [
-          { number: 1, title: "Important Indian Standard Codes", progress: 100 },
-          { number: 2, title: "Cement", progress: 65 },
-          { number: 3, title: "Concrete", progress: 40 },
-          { number: 4, title: "Timber", progress: 15 },
-          { number: 5, title: "Aggregates", progress: 80 },
-          { number: 6, title: "Bricks", progress: 50 },
-          { number: 7, title: "Brick Masonry", progress: 25 },
-          { number: 8, title: "Mortar & Lime", progress: 0 },
-          { number: 9, title: "STONE", progress: 0 }
+          { number: 1, title: "Important Indian Standard Codes" },
+          { number: 2, title: "Cement" },
+          { number: 3, title: "Concrete" },
+          { number: 4, title: "Timber" },
+          { number: 5, title: "Aggregates" },
+          { number: 6, title: "Bricks" },
+          { number: 7, title: "Brick Masonry" },
+          { number: 8, title: "Mortar & Lime" },
+          { number: 9, title: "STONE" }
         ]
       },
       {

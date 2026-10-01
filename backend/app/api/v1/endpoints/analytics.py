@@ -198,12 +198,12 @@ def get_topic_progress(
         total = total_dict.get(t.id, 0)
         attempted = attempted_dict.get(t.id, 0)
         progress = round((attempted / total * 100)) if total > 0 else 0
-
+        
         result.append({
             "topic_id": t.id,
             "progress": progress
         })
-
+        
     return result
 
 @router.get("/ai-profile")
@@ -211,18 +211,18 @@ def get_ai_profile(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    # Reuse existing data functions (hackish but avoids duplication for now)
     perf_data = get_performance(current_user, db)
     weekly_data = get_weekly_activity(current_user, db)
+    
     profile_text = generate_student_profile(perf_data, weekly_data)
+    
     return {
         "profile": profile_text
     }
 
 @router.get("/weakness-profile")
-def get_weakness_profile(
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
+def get_weakness_profile(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     profiles = db.query(UserWeaknessProfile).filter(UserWeaknessProfile.user_id == current_user.id).all()
     result = []
     for p in profiles:
@@ -236,22 +236,14 @@ def get_weakness_profile(
     return {"topics": result}
 
 @router.post("/generate-study-plan")
-def post_study_plan(
-    data: dict = None,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
+def post_study_plan(current_user: User = Depends(get_current_user), db: Session = Depends(get_db), data: dict = None):
     perf = get_performance(current_user, db)
     hours = data.get("available_hours", 2) if data else 2
     upcoming = data.get("upcoming_tests", []) if data else []
     return {"plan": generate_study_plan(perf, hours, upcoming)}
 
 @router.post("/mistake-explanation")
-def post_mistake_explanation(
-    data: dict = None,
-    current_user: User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
+def post_mistake_explanation(current_user: User = Depends(get_current_user), db: Session = Depends(get_db), data: dict = None):
     topic = data.get("topic", "") if data else ""
     wrong = data.get("incorrect_answer", "") if data else ""
     correct = data.get("correct_answer", "") if data else ""

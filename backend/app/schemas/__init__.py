@@ -26,7 +26,6 @@ from app.schemas.mock_test import (
     MockTestResult,
     MockTestGenerateRequest
 )
-from app.schemas.ai_test import PersonalizedTestRequest
 
 __all__ = [
     "UserCreate",
@@ -71,6 +70,5 @@ __all__ = [
     "MockTestAttemptResponse",
     "MockTestResult",
     "MockTestGenerateRequest",
-    "PersonalizedTestRequest",
 ]
 from .ai_test import PersonalizedTestRequest

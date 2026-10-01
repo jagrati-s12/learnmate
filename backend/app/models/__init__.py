@@ -11,7 +11,6 @@ from .bookmark import Bookmark
 from .mock_test import MockTest, MockTestQuestion
 from .goal import Goal
 from .user_profile import UserWeaknessProfile
-from .historical_pyq import HistoricalPYQ
 
 __all__ = [
     'User',
@@ -28,8 +27,7 @@ __all__ = [
     'MockTest',
     'MockTestQuestion',
     'Goal',
-    'UserWeaknessProfile',
-    'HistoricalPYQ'
+    'UserWeaknessProfile'
 ]
 from .note import Note
 __all__.append('Note')
